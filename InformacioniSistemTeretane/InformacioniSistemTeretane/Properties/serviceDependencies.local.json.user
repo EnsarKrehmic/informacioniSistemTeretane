@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "restored": true,
+      "restoreTime": "2025-04-30T15:46:26.5293582Z"
+    }
+  },
+  "parameters": {}
+}
