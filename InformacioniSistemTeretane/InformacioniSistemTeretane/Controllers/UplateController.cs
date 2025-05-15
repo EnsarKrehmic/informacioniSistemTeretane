@@ -24,7 +24,7 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Uplata.Include(u => u.Klijent).Include(u => u.Paket);
+            var applicationDbContext = _context.Uplate.Include(u => u.Klijent).Include(u => u.Paket);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -38,7 +38,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var uplata = await _context.Uplata
+            var uplata = await _context.Uplate
                 .Include(u => u.Klijent)
                 .Include(u => u.Paket)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -55,8 +55,8 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public IActionResult Create()
         {
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime");
-            ViewData["PaketId"] = new SelectList(_context.Paket, "Id", "Naziv");
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime");
+            ViewData["PaketId"] = new SelectList(_context.Paketi, "Id", "Naziv");
             return View();
         }
 
@@ -74,8 +74,8 @@ namespace InformacioniSistemTeretane.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", uplata.KlijentId);
-            ViewData["PaketId"] = new SelectList(_context.Paket, "Id", "Naziv", uplata.PaketId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", uplata.KlijentId);
+            ViewData["PaketId"] = new SelectList(_context.Paketi, "Id", "Naziv", uplata.PaketId);
             return View(uplata);
         }
 
@@ -89,13 +89,13 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var uplata = await _context.Uplata.FindAsync(id);
+            var uplata = await _context.Uplate.FindAsync(id);
             if (uplata == null)
             {
                 return NotFound();
             }
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", uplata.KlijentId);
-            ViewData["PaketId"] = new SelectList(_context.Paket, "Id", "Naziv", uplata.PaketId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", uplata.KlijentId);
+            ViewData["PaketId"] = new SelectList(_context.Paketi, "Id", "Naziv", uplata.PaketId);
             return View(uplata);
         }
 
@@ -132,8 +132,8 @@ namespace InformacioniSistemTeretane.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", uplata.KlijentId);
-            ViewData["PaketId"] = new SelectList(_context.Paket, "Id", "Naziv", uplata.PaketId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", uplata.KlijentId);
+            ViewData["PaketId"] = new SelectList(_context.Paketi, "Id", "Naziv", uplata.PaketId);
             return View(uplata);
         }
 
@@ -147,7 +147,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var uplata = await _context.Uplata
+            var uplata = await _context.Uplate
                 .Include(u => u.Klijent)
                 .Include(u => u.Paket)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -165,10 +165,10 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var uplata = await _context.Uplata.FindAsync(id);
+            var uplata = await _context.Uplate.FindAsync(id);
             if (uplata != null)
             {
-                _context.Uplata.Remove(uplata);
+                _context.Uplate.Remove(uplata);
             }
 
             await _context.SaveChangesAsync();
@@ -177,7 +177,7 @@ namespace InformacioniSistemTeretane.Controllers
 
         private bool UplataExists(int id)
         {
-            return _context.Uplata.Any(e => e.Id == id);
+            return _context.Uplate.Any(e => e.Id == id);
         }
     }
 }

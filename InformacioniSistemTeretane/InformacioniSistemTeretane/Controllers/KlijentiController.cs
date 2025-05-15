@@ -24,7 +24,7 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Klijent.Include(k => k.User);
+            var applicationDbContext = _context.Klijenti.Include(k => k.User);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -38,7 +38,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var klijent = await _context.Klijent
+            var klijent = await _context.Klijenti
                 .Include(k => k.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (klijent == null)
@@ -86,7 +86,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var klijent = await _context.Klijent.FindAsync(id);
+            var klijent = await _context.Klijenti.FindAsync(id);
             if (klijent == null)
             {
                 return NotFound();
@@ -142,7 +142,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var klijent = await _context.Klijent
+            var klijent = await _context.Klijenti
                 .Include(k => k.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (klijent == null)
@@ -159,10 +159,10 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var klijent = await _context.Klijent.FindAsync(id);
+            var klijent = await _context.Klijenti.FindAsync(id);
             if (klijent != null)
             {
-                _context.Klijent.Remove(klijent);
+                _context.Klijenti.Remove(klijent);
             }
 
             await _context.SaveChangesAsync();
@@ -171,7 +171,7 @@ namespace InformacioniSistemTeretane.Controllers
 
         private bool KlijentExists(int id)
         {
-            return _context.Klijent.Any(e => e.Id == id);
+            return _context.Klijenti.Any(e => e.Id == id);
         }
     }
 }

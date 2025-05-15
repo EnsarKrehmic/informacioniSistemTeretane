@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace InformacioniSistemTeretane.Models
 {
@@ -10,7 +11,9 @@ namespace InformacioniSistemTeretane.Models
 
         [Required]
         public int LokacijaId { get; set; }
+
         [ForeignKey(nameof(LokacijaId))]
+        [ValidateNever] // onemogućava validaciju navigacijskog svojstva
         public Lokacija Lokacija { get; set; }
 
         [Required, MaxLength(100)]

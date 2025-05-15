@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace InformacioniSistemTeretane.Models
 {
@@ -10,7 +11,9 @@ namespace InformacioniSistemTeretane.Models
 
         [Required]
         public int LokacijaId { get; set; }
+
         [ForeignKey(nameof(LokacijaId))]
+        [ValidateNever]
         public Lokacija Lokacija { get; set; }
 
         [Required, MaxLength(100)]
@@ -18,6 +21,7 @@ namespace InformacioniSistemTeretane.Models
 
         public int Kapacitet { get; set; }
 
-        public ICollection<IgraonicaPonuda> Ponude { get; set; }
+        [ValidateNever]
+        public ICollection<IgraonicaPonuda> Ponude { get; set; } = new List<IgraonicaPonuda>();
     }
 }

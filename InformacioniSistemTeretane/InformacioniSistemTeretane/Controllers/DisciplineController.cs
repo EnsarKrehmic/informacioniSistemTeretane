@@ -24,7 +24,7 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Disciplina.Include(d => d.Takmicenje);
+            var applicationDbContext = _context.Discipline.Include(d => d.Takmicenje);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -38,7 +38,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var disciplina = await _context.Disciplina
+            var disciplina = await _context.Discipline
                 .Include(d => d.Takmicenje)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (disciplina == null)
@@ -54,7 +54,7 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public IActionResult Create()
         {
-            ViewData["TakmicenjeId"] = new SelectList(_context.Takmicenje, "Id", "Naziv");
+            ViewData["TakmicenjeId"] = new SelectList(_context.Takmicenja, "Id", "Naziv");
             return View();
         }
 
@@ -72,7 +72,7 @@ namespace InformacioniSistemTeretane.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["TakmicenjeId"] = new SelectList(_context.Takmicenje, "Id", "Naziv", disciplina.TakmicenjeId);
+            ViewData["TakmicenjeId"] = new SelectList(_context.Takmicenja, "Id", "Naziv", disciplina.TakmicenjeId);
             return View(disciplina);
         }
 
@@ -86,12 +86,12 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var disciplina = await _context.Disciplina.FindAsync(id);
+            var disciplina = await _context.Discipline.FindAsync(id);
             if (disciplina == null)
             {
                 return NotFound();
             }
-            ViewData["TakmicenjeId"] = new SelectList(_context.Takmicenje, "Id", "Naziv", disciplina.TakmicenjeId);
+            ViewData["TakmicenjeId"] = new SelectList(_context.Takmicenja, "Id", "Naziv", disciplina.TakmicenjeId);
             return View(disciplina);
         }
 
@@ -128,7 +128,7 @@ namespace InformacioniSistemTeretane.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["TakmicenjeId"] = new SelectList(_context.Takmicenje, "Id", "Naziv", disciplina.TakmicenjeId);
+            ViewData["TakmicenjeId"] = new SelectList(_context.Takmicenja, "Id", "Naziv", disciplina.TakmicenjeId);
             return View(disciplina);
         }
 
@@ -142,7 +142,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var disciplina = await _context.Disciplina
+            var disciplina = await _context.Discipline
                 .Include(d => d.Takmicenje)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (disciplina == null)
@@ -159,10 +159,10 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var disciplina = await _context.Disciplina.FindAsync(id);
+            var disciplina = await _context.Discipline.FindAsync(id);
             if (disciplina != null)
             {
-                _context.Disciplina.Remove(disciplina);
+                _context.Discipline.Remove(disciplina);
             }
 
             await _context.SaveChangesAsync();
@@ -171,7 +171,7 @@ namespace InformacioniSistemTeretane.Controllers
 
         private bool DisciplinaExists(int id)
         {
-            return _context.Disciplina.Any(e => e.Id == id);
+            return _context.Discipline.Any(e => e.Id == id);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.ProbniTrening.Include(p => p.Klijent).Include(p => p.Trener);
+            var applicationDbContext = _context.ProbniTreninzi.Include(p => p.Klijent).Include(p => p.Trener);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -38,7 +38,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var probniTrening = await _context.ProbniTrening
+            var probniTrening = await _context.ProbniTreninzi
                 .Include(p => p.Klijent)
                 .Include(p => p.Trener)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -55,8 +55,8 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public IActionResult Create()
         {
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime");
-            ViewData["TrenerId"] = new SelectList(_context.Trener, "Id", "Id");
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime");
+            ViewData["TrenerId"] = new SelectList(_context.Treneri, "Id", "Id");
             return View();
         }
 
@@ -74,8 +74,8 @@ namespace InformacioniSistemTeretane.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", probniTrening.KlijentId);
-            ViewData["TrenerId"] = new SelectList(_context.Trener, "Id", "Id", probniTrening.TrenerId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", probniTrening.KlijentId);
+            ViewData["TrenerId"] = new SelectList(_context.Treneri, "Id", "Id", probniTrening.TrenerId);
             return View(probniTrening);
         }
 
@@ -89,13 +89,13 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var probniTrening = await _context.ProbniTrening.FindAsync(id);
+            var probniTrening = await _context.ProbniTreninzi.FindAsync(id);
             if (probniTrening == null)
             {
                 return NotFound();
             }
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", probniTrening.KlijentId);
-            ViewData["TrenerId"] = new SelectList(_context.Trener, "Id", "Id", probniTrening.TrenerId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", probniTrening.KlijentId);
+            ViewData["TrenerId"] = new SelectList(_context.Treneri, "Id", "Id", probniTrening.TrenerId);
             return View(probniTrening);
         }
 
@@ -132,8 +132,8 @@ namespace InformacioniSistemTeretane.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", probniTrening.KlijentId);
-            ViewData["TrenerId"] = new SelectList(_context.Trener, "Id", "Id", probniTrening.TrenerId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", probniTrening.KlijentId);
+            ViewData["TrenerId"] = new SelectList(_context.Treneri, "Id", "Id", probniTrening.TrenerId);
             return View(probniTrening);
         }
 
@@ -147,7 +147,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var probniTrening = await _context.ProbniTrening
+            var probniTrening = await _context.ProbniTreninzi
                 .Include(p => p.Klijent)
                 .Include(p => p.Trener)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -165,10 +165,10 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var probniTrening = await _context.ProbniTrening.FindAsync(id);
+            var probniTrening = await _context.ProbniTreninzi.FindAsync(id);
             if (probniTrening != null)
             {
-                _context.ProbniTrening.Remove(probniTrening);
+                _context.ProbniTreninzi.Remove(probniTrening);
             }
 
             await _context.SaveChangesAsync();
@@ -177,7 +177,7 @@ namespace InformacioniSistemTeretane.Controllers
 
         private bool ProbniTreningExists(int id)
         {
-            return _context.ProbniTrening.Any(e => e.Id == id);
+            return _context.ProbniTreninzi.Any(e => e.Id == id);
         }
     }
 }

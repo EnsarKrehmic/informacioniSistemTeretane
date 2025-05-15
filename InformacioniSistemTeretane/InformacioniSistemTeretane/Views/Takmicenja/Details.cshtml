@@ -1,48 +1,60 @@
 ﻿@model InformacioniSistemTeretane.Models.Takmicenje
 
-@{
-    ViewData["Title"] = "Details";
-}
+<h1>Detalji takmičenja</h1>
 
-<h1>Details</h1>
+<div class="row">
+    <div class="col-md-6">
+        <dl class="row">
+            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Naziv)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(m => m.Naziv)</dd>
 
-<div>
-    <h4>Takmicenje</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Naziv)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Naziv)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Datum)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Datum)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Lokacija)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Lokacija.Adresa)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Opis)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Opis)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Kotizacija)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Kotizacija)
-        </dd>
-    </dl>
+            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Datum)</dt>
+            <dd class="col-sm-8">@Model.Datum.ToShortDateString()</dd>
+
+            <dt class="col-sm-4">Lokacija</dt>
+            <dd class="col-sm-8">@Model.Lokacija?.Naziv</dd>
+
+            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Kotizacija)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(m => m.Kotizacija)</dd>
+
+            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Opis)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(m => m.Opis)</dd>
+        </dl>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="mt-4">
+    <h4>Discipline</h4>
+    @if (Model.Discipline != null && Model.Discipline.Any())
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Naziv</th>
+                    <th>Opis</th>
+                    <th>Max ucesnika</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var d in Model.Discipline)
+                {
+                    <tr>
+                        <td>@d.Naziv</td>
+                        <td>@d.Opis</td>
+                        <td>@d.MaxUcesnika</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Ne postoje discipline za ovo takmičenje.</p>
+    }
 </div>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
+    <a asp-action="Index" class="btn btn-secondary">Nazad na listu</a>
+</p>

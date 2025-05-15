@@ -1,42 +1,27 @@
 ﻿@model InformacioniSistemTeretane.Models.Sala
 
-@{
-    ViewData["Title"] = "Create";
-}
-
-<h1>Create</h1>
-
-<h4>Sala</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="LokacijaId" class="control-label"></label>
-                <select asp-for="LokacijaId" class ="form-control" asp-items="ViewBag.LokacijaId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Naziv" class="control-label"></label>
-                <input asp-for="Naziv" class="form-control" />
-                <span asp-validation-for="Naziv" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Kapacitet" class="control-label"></label>
-                <input asp-for="Kapacitet" class="form-control" />
-                <span asp-validation-for="Kapacitet" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<h1>Dodaj salu</h1>
+<form asp-action="Create">
+    <div class="form-group">
+        <label asp-for="Naziv"></label>
+        <input asp-for="Naziv" class="form-control" />
+        <span asp-validation-for="Naziv" class="text-danger"></span>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+    <div class="form-group">
+        <label asp-for="Kapacitet"></label>
+        <input asp-for="Kapacitet" class="form-control" type="number" />
+        <span asp-validation-for="Kapacitet" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="LokacijaId"></label>
+        <select asp-for="LokacijaId" class="form-control" asp-items="ViewBag.LokacijaId"></select>
+        <span asp-validation-for="LokacijaId" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Spremi</button>
+    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+</form>
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

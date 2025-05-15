@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using InformacioniSistemTeretane.Data;
 using InformacioniSistemTeretane.Models;
 
@@ -13,165 +12,154 @@ namespace InformacioniSistemTeretane.Controllers
     public class SaleController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<SaleController> _logger;
 
-        public SaleController(ApplicationDbContext context)
+        public SaleController(ApplicationDbContext context, ILogger<SaleController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: Sale
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.Sala.Include(s => s.Lokacija);
-            return View(await applicationDbContext.ToListAsync());
-        }
+            => View(await _context.Sale.Include(s => s.Lokacija).ToListAsync());
 
         // GET: Sale/Details/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var sala = await _context.Sala
+            if (id == null) return NotFound();
+            var sala = await _context.Sale
                 .Include(s => s.Lokacija)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (sala == null)
-            {
-                return NotFound();
-            }
-
+            if (sala == null) return NotFound();
             return View(sala);
         }
 
         // GET: Sale/Create
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public IActionResult Create()
         {
-            ViewData["LokacijaId"] = new SelectList(_context.Lokacija, "Id", "Adresa");
+            ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv");
             return View();
         }
 
         // POST: Sale/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
-        public async Task<IActionResult> Create([Bind("Id,LokacijaId,Naziv,Kapacitet")] Sala sala)
+        public async Task<IActionResult> Create([Bind("Naziv,Kapacitet,LokacijaId")] Sala sala)
         {
-            if (ModelState.IsValid)
+            // 1) Ispiši bindane vrijednosti
+            _logger.LogInformation("----- Create Sala bind values -----");
+            _logger.LogInformation("Naziv: {Naziv}", sala.Naziv);
+            _logger.LogInformation("Kapacitet: {Kapacitet}", sala.Kapacitet);
+            _logger.LogInformation("LokacijaId: {LokacijaId}", sala.LokacijaId);
+
+            // 2) Ako validacija ne prođe, ispiši ModelState greške
+            if (!ModelState.IsValid)
             {
-                _context.Add(sala);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                _logger.LogWarning("ModelState is invalid. Errors:");
+                foreach (var entry in ModelState)
+                {
+                    if (entry.Value.Errors.Count > 0)
+                    {
+                        foreach (var error in entry.Value.Errors)
+                        {
+                            _logger.LogWarning(
+                                " - Field '{Field}' attempted value '{AttemptedValue}': {ErrorMessage}",
+                                entry.Key,
+                                entry.Value.AttemptedValue,
+                                error.ErrorMessage);
+                        }
+                    }
+                }
+
+                ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", sala.LokacijaId);
+                return View(sala);
             }
-            ViewData["LokacijaId"] = new SelectList(_context.Lokacija, "Id", "Adresa", sala.LokacijaId);
-            return View(sala);
+
+            // 3) Spremi u bazu
+            _context.Add(sala);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Sale/Edit/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var sala = await _context.Sala.FindAsync(id);
-            if (sala == null)
-            {
-                return NotFound();
-            }
-            ViewData["LokacijaId"] = new SelectList(_context.Lokacija, "Id", "Adresa", sala.LokacijaId);
+            if (id == null) return NotFound();
+            var sala = await _context.Sale.FindAsync(id);
+            if (sala == null) return NotFound();
+            ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", sala.LokacijaId);
             return View(sala);
         }
 
         // POST: Sale/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,LokacijaId,Naziv,Kapacitet")] Sala sala)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Naziv,Kapacitet,LokacijaId")] Sala sala)
         {
-            if (id != sala.Id)
+            // Log bind values
+            _logger.LogInformation("----- Edit Sala bind values -----");
+            _logger.LogInformation("Id: {Id}", sala.Id);
+            _logger.LogInformation("Naziv: {Naziv}", sala.Naziv);
+            _logger.LogInformation("Kapacitet: {Kapacitet}", sala.Kapacitet);
+            _logger.LogInformation("LokacijaId: {LokacijaId}", sala.LokacijaId);
+
+            if (id != sala.Id) return NotFound();
+
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                _logger.LogWarning("ModelState is invalid. Errors:");
+                foreach (var entry in ModelState)
+                {
+                    if (entry.Value.Errors.Count > 0)
+                    {
+                        foreach (var error in entry.Value.Errors)
+                        {
+                            _logger.LogWarning(
+                                " - Field '{Field}' attempted value '{AttemptedValue}': {ErrorMessage}",
+                                entry.Key,
+                                entry.Value.AttemptedValue,
+                                error.ErrorMessage);
+                        }
+                    }
+                }
+                ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", sala.LokacijaId);
+                return View(sala);
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    _context.Update(sala);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SalaExists(sala.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(sala);
+                await _context.SaveChangesAsync();
             }
-            ViewData["LokacijaId"] = new SelectList(_context.Lokacija, "Id", "Adresa", sala.LokacijaId);
-            return View(sala);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Sale.Any(e => e.Id == id)) return NotFound();
+                throw;
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Sale/Delete/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var sala = await _context.Sala
+            if (id == null) return NotFound();
+            var sala = await _context.Sale
                 .Include(s => s.Lokacija)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (sala == null)
-            {
-                return NotFound();
-            }
-
+            if (sala == null) return NotFound();
             return View(sala);
         }
 
         // POST: Sale/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var sala = await _context.Sala.FindAsync(id);
-            if (sala != null)
-            {
-                _context.Sala.Remove(sala);
-            }
-
+            var sala = await _context.Sale.FindAsync(id);
+            _context.Sale.Remove(sala);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool SalaExists(int id)
-        {
-            return _context.Sala.Any(e => e.Id == id);
         }
     }
 }

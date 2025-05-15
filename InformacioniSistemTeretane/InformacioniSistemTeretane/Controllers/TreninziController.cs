@@ -24,7 +24,7 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Trening.ToListAsync());
+            return View(await _context.Treninzi.ToListAsync());
         }
 
         // GET: Treninzi/Details/5
@@ -37,7 +37,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var trening = await _context.Trening
+            var trening = await _context.Treninzi
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (trening == null)
             {
@@ -82,7 +82,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var trening = await _context.Trening.FindAsync(id);
+            var trening = await _context.Treninzi.FindAsync(id);
             if (trening == null)
             {
                 return NotFound();
@@ -136,7 +136,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var trening = await _context.Trening
+            var trening = await _context.Treninzi
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (trening == null)
             {
@@ -152,10 +152,10 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var trening = await _context.Trening.FindAsync(id);
+            var trening = await _context.Treninzi.FindAsync(id);
             if (trening != null)
             {
-                _context.Trening.Remove(trening);
+                _context.Treninzi.Remove(trening);
             }
 
             await _context.SaveChangesAsync();
@@ -164,7 +164,7 @@ namespace InformacioniSistemTeretane.Controllers
 
         private bool TreningExists(int id)
         {
-            return _context.Trening.Any(e => e.Id == id);
+            return _context.Treninzi.Any(e => e.Id == id);
         }
     }
 }

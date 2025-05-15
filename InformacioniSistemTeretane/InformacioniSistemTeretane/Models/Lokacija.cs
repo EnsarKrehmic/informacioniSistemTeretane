@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace InformacioniSistemTeretane.Models
 {
@@ -19,8 +20,14 @@ namespace InformacioniSistemTeretane.Models
         [MaxLength(100), EmailAddress]
         public string Email { get; set; }
 
-        public ICollection<Sala> Sale { get; set; }
-        public ICollection<Igraonica> Igraonice { get; set; }
-        public ICollection<Takmicenje> Takmicenja { get; set; }
+        // Ove kolekcije NEĆE se validirati i inicijalno su prazne liste
+        [ValidateNever]
+        public ICollection<Sala> Sale { get; set; } = new List<Sala>();
+
+        [ValidateNever]
+        public ICollection<Igraonica> Igraonice { get; set; } = new List<Igraonica>();
+
+        [ValidateNever]
+        public ICollection<Takmicenje> Takmicenja { get; set; } = new List<Takmicenje>();
     }
 }

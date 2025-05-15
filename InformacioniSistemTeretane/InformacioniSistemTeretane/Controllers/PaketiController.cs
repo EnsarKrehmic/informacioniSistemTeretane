@@ -24,7 +24,7 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Paket.ToListAsync());
+            return View(await _context.Paketi.ToListAsync());
         }
 
         // GET: Paketi/Details/5
@@ -37,7 +37,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var paket = await _context.Paket
+            var paket = await _context.Paketi
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (paket == null)
             {
@@ -82,7 +82,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var paket = await _context.Paket.FindAsync(id);
+            var paket = await _context.Paketi.FindAsync(id);
             if (paket == null)
             {
                 return NotFound();
@@ -136,7 +136,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var paket = await _context.Paket
+            var paket = await _context.Paketi
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (paket == null)
             {
@@ -152,10 +152,10 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var paket = await _context.Paket.FindAsync(id);
+            var paket = await _context.Paketi.FindAsync(id);
             if (paket != null)
             {
-                _context.Paket.Remove(paket);
+                _context.Paketi.Remove(paket);
             }
 
             await _context.SaveChangesAsync();
@@ -164,7 +164,7 @@ namespace InformacioniSistemTeretane.Controllers
 
         private bool PaketExists(int id)
         {
-            return _context.Paket.Any(e => e.Id == id);
+            return _context.Paketi.Any(e => e.Id == id);
         }
     }
 }

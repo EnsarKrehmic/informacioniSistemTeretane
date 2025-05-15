@@ -7,27 +7,27 @@ namespace InformacioniSistemTeretane.Data
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
-        public DbSet<Disciplina> Disciplina { get; set; }
-        public DbSet<GrupniTrening> GrupniTrening { get; set; }
-        public DbSet<Igraonica> Igraonica { get; set; }
-        public DbSet<IgraonicaPonuda> IgraonicaPonuda { get; set; }
-        public DbSet<Klijent> Klijent { get; set; }
-        public DbSet<Licenca> Licenca { get; set; }
-        public DbSet<LicencniProgram> LicencniProgram { get; set; }
-        public DbSet<Lokacija> Lokacija { get; set; }
-        public DbSet<Paket> Paket { get; set; }
-        public DbSet<PersonalniTrening> PersonalniTrening { get; set; }
+        public DbSet<Disciplina> Discipline { get; set; }
+        public DbSet<GrupniTrening> GrupniTreninzi { get; set; }
+        public DbSet<Igraonica> Igraonice { get; set; }
+        public DbSet<IgraonicaPonuda> IgraonicaPonude { get; set; }
+        public DbSet<Klijent> Klijenti { get; set; }
+        public DbSet<Licenca> Licence { get; set; }
+        public DbSet<LicencniProgram> LicencniProgrami { get; set; }
+        public DbSet<Lokacija> Lokacije { get; set; }
+        public DbSet<Paket> Paketi { get; set; }
+        public DbSet<PersonalniTrening> PersonalniTreninzi { get; set; }
         public DbSet<PrijavljeniGrupni> PrijavljeniGrupni { get; set; }
-        public DbSet<ProbniTrening> ProbniTrening { get; set; }
-        public DbSet<Sala> Sala { get; set; }
-        public DbSet<Sudija> Sudija { get; set; }
-        public DbSet<Takmicar> Takmicar { get; set; }
-        public DbSet<Takmicenje> Takmicenje { get; set; }
-        public DbSet<Trener> Trener { get; set; }
-        public DbSet<Trening> Trening { get; set; }
-        public DbSet<Uplata> Uplata { get; set; }
+        public DbSet<ProbniTrening> ProbniTreninzi { get; set; }
+        public DbSet<Sala> Sale { get; set; }
+        public DbSet<Sudija> Sudije { get; set; }
+        public DbSet<Takmicar> Takmicari { get; set; }
+        public DbSet<Takmicenje> Takmicenja { get; set; }
+        public DbSet<Trener> Treneri { get; set; }
+        public DbSet<Trening> Treninzi { get; set; }
+        public DbSet<Uplata> Uplate { get; set; }
         public DbSet<ZakazaniGrupni> ZakazaniGrupni { get; set; }
-        public DbSet<Zaposlenik> Zaposlenik { get; set; }
+        public DbSet<Zaposlenik> Zaposlenici { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

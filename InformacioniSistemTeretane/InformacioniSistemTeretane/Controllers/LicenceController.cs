@@ -24,7 +24,7 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Licenca.Include(l => l.Klijent).Include(l => l.Program);
+            var applicationDbContext = _context.Licence.Include(l => l.Klijent).Include(l => l.Program);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -38,7 +38,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var licenca = await _context.Licenca
+            var licenca = await _context.Licence
                 .Include(l => l.Klijent)
                 .Include(l => l.Program)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -55,8 +55,8 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public IActionResult Create()
         {
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime");
-            ViewData["ProgramId"] = new SelectList(_context.LicencniProgram, "Id", "Naziv");
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime");
+            ViewData["ProgramId"] = new SelectList(_context.LicencniProgrami, "Id", "Naziv");
             return View();
         }
 
@@ -74,8 +74,8 @@ namespace InformacioniSistemTeretane.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", licenca.KlijentId);
-            ViewData["ProgramId"] = new SelectList(_context.LicencniProgram, "Id", "Naziv", licenca.ProgramId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", licenca.KlijentId);
+            ViewData["ProgramId"] = new SelectList(_context.LicencniProgrami, "Id", "Naziv", licenca.ProgramId);
             return View(licenca);
         }
 
@@ -89,13 +89,13 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var licenca = await _context.Licenca.FindAsync(id);
+            var licenca = await _context.Licence.FindAsync(id);
             if (licenca == null)
             {
                 return NotFound();
             }
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", licenca.KlijentId);
-            ViewData["ProgramId"] = new SelectList(_context.LicencniProgram, "Id", "Naziv", licenca.ProgramId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", licenca.KlijentId);
+            ViewData["ProgramId"] = new SelectList(_context.LicencniProgrami, "Id", "Naziv", licenca.ProgramId);
             return View(licenca);
         }
 
@@ -132,8 +132,8 @@ namespace InformacioniSistemTeretane.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", licenca.KlijentId);
-            ViewData["ProgramId"] = new SelectList(_context.LicencniProgram, "Id", "Naziv", licenca.ProgramId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", licenca.KlijentId);
+            ViewData["ProgramId"] = new SelectList(_context.LicencniProgrami, "Id", "Naziv", licenca.ProgramId);
             return View(licenca);
         }
 
@@ -147,7 +147,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var licenca = await _context.Licenca
+            var licenca = await _context.Licence
                 .Include(l => l.Klijent)
                 .Include(l => l.Program)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -165,10 +165,10 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var licenca = await _context.Licenca.FindAsync(id);
+            var licenca = await _context.Licence.FindAsync(id);
             if (licenca != null)
             {
-                _context.Licenca.Remove(licenca);
+                _context.Licence.Remove(licenca);
             }
 
             await _context.SaveChangesAsync();
@@ -177,7 +177,7 @@ namespace InformacioniSistemTeretane.Controllers
 
         private bool LicencaExists(int id)
         {
-            return _context.Licenca.Any(e => e.Id == id);
+            return _context.Licence.Any(e => e.Id == id);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Zaposlenik.Include(z => z.User);
+            var applicationDbContext = _context.Zaposlenici.Include(z => z.User);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -38,7 +38,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var zaposlenik = await _context.Zaposlenik
+            var zaposlenik = await _context.Zaposlenici
                 .Include(z => z.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (zaposlenik == null)
@@ -86,7 +86,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var zaposlenik = await _context.Zaposlenik.FindAsync(id);
+            var zaposlenik = await _context.Zaposlenici.FindAsync(id);
             if (zaposlenik == null)
             {
                 return NotFound();
@@ -142,7 +142,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var zaposlenik = await _context.Zaposlenik
+            var zaposlenik = await _context.Zaposlenici
                 .Include(z => z.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (zaposlenik == null)
@@ -159,10 +159,10 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var zaposlenik = await _context.Zaposlenik.FindAsync(id);
+            var zaposlenik = await _context.Zaposlenici.FindAsync(id);
             if (zaposlenik != null)
             {
-                _context.Zaposlenik.Remove(zaposlenik);
+                _context.Zaposlenici.Remove(zaposlenik);
             }
 
             await _context.SaveChangesAsync();
@@ -171,7 +171,7 @@ namespace InformacioniSistemTeretane.Controllers
 
         private bool ZaposlenikExists(int id)
         {
-            return _context.Zaposlenik.Any(e => e.Id == id);
+            return _context.Zaposlenici.Any(e => e.Id == id);
         }
     }
 }

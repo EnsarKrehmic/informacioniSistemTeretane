@@ -1,8 +1,72 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Početna stranica";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<div class="jumbotron text-center py-5 bg-light">
+    <h1 class="display-4 fw-bold">Dobrodošli u GymChain IST</h1>
+    <p class="lead">Vaš novi informacioni sistem za upravljanje teretanom, treningom i takmičenjima.</p>
+    <hr class="my-4" />
+    <p>Izaberite jednu od sljedećih opcija za početak:</p>
+    <div class="row justify-content-center">
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Paketi" asp-action="Index" class="btn btn-primary btn-lg w-100">
+                Upravljanje paketima
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Uplate" asp-action="Index" class="btn btn-secondary btn-lg w-100">
+                Članarine
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a asp-controller="GrupniTreninzi" asp-action="Index" class="btn btn-success btn-lg w-100">
+                Grupni treninzi
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a asp-controller="PersonalniTreninzi" asp-action="Index" class="btn btn-success btn-lg w-100">
+                Personalni treninzi
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a asp-controller="ProbniTreninzi" asp-action="Index" class="btn btn-success btn-lg w-100">
+                Probni treninzi
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Igraonice" asp-action="Index" class="btn btn-info btn-lg w-100">
+                Igraonice
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Takmicenja" asp-action="Index" class="btn btn-warning btn-lg w-100">
+                Takmičenja
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Lokacije" asp-action="Index" class="btn btn-dark btn-lg w-100">
+                Lokacije
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Sale" asp-action="Index" class="btn btn-dark btn-lg w-100">
+                Sale
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Klijenti" asp-action="Index" class="btn btn-primary btn-lg w-100">
+                Klijenti
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Zaposlenici" asp-action="Index" class="btn btn-primary btn-lg w-100">
+                Zaposlenici
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Licence" asp-action="Index" class="btn btn-secondary btn-lg w-100">
+                Licence
+            </a>
+        </div>
+    </div>
+    </section>

@@ -55,8 +55,8 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public IActionResult Create()
         {
-            ViewData["GrupniTreningId"] = new SelectList(_context.GrupniTrening, "Id", "Naziv");
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime");
+            ViewData["GrupniTreningId"] = new SelectList(_context.GrupniTreninzi, "Id", "Naziv");
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime");
             return View();
         }
 
@@ -74,8 +74,8 @@ namespace InformacioniSistemTeretane.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GrupniTreningId"] = new SelectList(_context.GrupniTrening, "Id", "Naziv", prijavljeniGrupni.GrupniTreningId);
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", prijavljeniGrupni.KlijentId);
+            ViewData["GrupniTreningId"] = new SelectList(_context.GrupniTreninzi, "Id", "Naziv", prijavljeniGrupni.GrupniTreningId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", prijavljeniGrupni.KlijentId);
             return View(prijavljeniGrupni);
         }
 
@@ -94,8 +94,8 @@ namespace InformacioniSistemTeretane.Controllers
             {
                 return NotFound();
             }
-            ViewData["GrupniTreningId"] = new SelectList(_context.GrupniTrening, "Id", "Naziv", prijavljeniGrupni.GrupniTreningId);
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", prijavljeniGrupni.KlijentId);
+            ViewData["GrupniTreningId"] = new SelectList(_context.GrupniTreninzi, "Id", "Naziv", prijavljeniGrupni.GrupniTreningId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", prijavljeniGrupni.KlijentId);
             return View(prijavljeniGrupni);
         }
 
@@ -132,8 +132,8 @@ namespace InformacioniSistemTeretane.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GrupniTreningId"] = new SelectList(_context.GrupniTrening, "Id", "Naziv", prijavljeniGrupni.GrupniTreningId);
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", prijavljeniGrupni.KlijentId);
+            ViewData["GrupniTreningId"] = new SelectList(_context.GrupniTreninzi, "Id", "Naziv", prijavljeniGrupni.GrupniTreningId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", prijavljeniGrupni.KlijentId);
             return View(prijavljeniGrupni);
         }
 

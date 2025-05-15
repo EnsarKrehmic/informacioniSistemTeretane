@@ -24,7 +24,7 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Sudija.Include(s => s.Disciplina).Include(s => s.Zaposlenik);
+            var applicationDbContext = _context.Sudije.Include(s => s.Disciplina).Include(s => s.Zaposlenik);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -38,7 +38,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var sudija = await _context.Sudija
+            var sudija = await _context.Sudije
                 .Include(s => s.Disciplina)
                 .Include(s => s.Zaposlenik)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -55,8 +55,8 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public IActionResult Create()
         {
-            ViewData["DisciplinaId"] = new SelectList(_context.Disciplina, "Id", "Naziv");
-            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenik, "Id", "Ime");
+            ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv");
+            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Ime");
             return View();
         }
 
@@ -74,8 +74,8 @@ namespace InformacioniSistemTeretane.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DisciplinaId"] = new SelectList(_context.Disciplina, "Id", "Naziv", sudija.DisciplinaId);
-            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenik, "Id", "Ime", sudija.ZaposlenikId);
+            ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv", sudija.DisciplinaId);
+            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Ime", sudija.ZaposlenikId);
             return View(sudija);
         }
 
@@ -89,13 +89,13 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var sudija = await _context.Sudija.FindAsync(id);
+            var sudija = await _context.Sudije.FindAsync(id);
             if (sudija == null)
             {
                 return NotFound();
             }
-            ViewData["DisciplinaId"] = new SelectList(_context.Disciplina, "Id", "Naziv", sudija.DisciplinaId);
-            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenik, "Id", "Ime", sudija.ZaposlenikId);
+            ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv", sudija.DisciplinaId);
+            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Ime", sudija.ZaposlenikId);
             return View(sudija);
         }
 
@@ -132,8 +132,8 @@ namespace InformacioniSistemTeretane.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DisciplinaId"] = new SelectList(_context.Disciplina, "Id", "Naziv", sudija.DisciplinaId);
-            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenik, "Id", "Ime", sudija.ZaposlenikId);
+            ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv", sudija.DisciplinaId);
+            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Ime", sudija.ZaposlenikId);
             return View(sudija);
         }
 
@@ -147,7 +147,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var sudija = await _context.Sudija
+            var sudija = await _context.Sudije
                 .Include(s => s.Disciplina)
                 .Include(s => s.Zaposlenik)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -165,10 +165,10 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var sudija = await _context.Sudija.FindAsync(id);
+            var sudija = await _context.Sudije.FindAsync(id);
             if (sudija != null)
             {
-                _context.Sudija.Remove(sudija);
+                _context.Sudije.Remove(sudija);
             }
 
             await _context.SaveChangesAsync();
@@ -177,7 +177,7 @@ namespace InformacioniSistemTeretane.Controllers
 
         private bool SudijaExists(int id)
         {
-            return _context.Sudija.Any(e => e.Id == id);
+            return _context.Sudije.Any(e => e.Id == id);
         }
     }
 }

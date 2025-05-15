@@ -24,7 +24,7 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Takmicar.Include(t => t.Disciplina).Include(t => t.Klijent);
+            var applicationDbContext = _context.Takmicari.Include(t => t.Disciplina).Include(t => t.Klijent);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -38,7 +38,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var takmicar = await _context.Takmicar
+            var takmicar = await _context.Takmicari
                 .Include(t => t.Disciplina)
                 .Include(t => t.Klijent)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -55,8 +55,8 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public IActionResult Create()
         {
-            ViewData["DisciplinaId"] = new SelectList(_context.Disciplina, "Id", "Naziv");
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime");
+            ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv");
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime");
             return View();
         }
 
@@ -74,8 +74,8 @@ namespace InformacioniSistemTeretane.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DisciplinaId"] = new SelectList(_context.Disciplina, "Id", "Naziv", takmicar.DisciplinaId);
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", takmicar.KlijentId);
+            ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv", takmicar.DisciplinaId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", takmicar.KlijentId);
             return View(takmicar);
         }
 
@@ -89,13 +89,13 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var takmicar = await _context.Takmicar.FindAsync(id);
+            var takmicar = await _context.Takmicari.FindAsync(id);
             if (takmicar == null)
             {
                 return NotFound();
             }
-            ViewData["DisciplinaId"] = new SelectList(_context.Disciplina, "Id", "Naziv", takmicar.DisciplinaId);
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", takmicar.KlijentId);
+            ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv", takmicar.DisciplinaId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", takmicar.KlijentId);
             return View(takmicar);
         }
 
@@ -132,8 +132,8 @@ namespace InformacioniSistemTeretane.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DisciplinaId"] = new SelectList(_context.Disciplina, "Id", "Naziv", takmicar.DisciplinaId);
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", takmicar.KlijentId);
+            ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv", takmicar.DisciplinaId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", takmicar.KlijentId);
             return View(takmicar);
         }
 
@@ -147,7 +147,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var takmicar = await _context.Takmicar
+            var takmicar = await _context.Takmicari
                 .Include(t => t.Disciplina)
                 .Include(t => t.Klijent)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -165,10 +165,10 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var takmicar = await _context.Takmicar.FindAsync(id);
+            var takmicar = await _context.Takmicari.FindAsync(id);
             if (takmicar != null)
             {
-                _context.Takmicar.Remove(takmicar);
+                _context.Takmicari.Remove(takmicar);
             }
 
             await _context.SaveChangesAsync();
@@ -177,7 +177,7 @@ namespace InformacioniSistemTeretane.Controllers
 
         private bool TakmicarExists(int id)
         {
-            return _context.Takmicar.Any(e => e.Id == id);
+            return _context.Takmicari.Any(e => e.Id == id);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.IgraonicaPonuda.Include(i => i.Igraonica);
+            var applicationDbContext = _context.IgraonicaPonude.Include(i => i.Igraonica);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -38,7 +38,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var igraonicaPonuda = await _context.IgraonicaPonuda
+            var igraonicaPonuda = await _context.IgraonicaPonude
                 .Include(i => i.Igraonica)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (igraonicaPonuda == null)
@@ -54,7 +54,7 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public IActionResult Create()
         {
-            ViewData["IgraonicaId"] = new SelectList(_context.Igraonica, "Id", "Naziv");
+            ViewData["IgraonicaId"] = new SelectList(_context.Igraonice, "Id", "Naziv");
             return View();
         }
 
@@ -72,7 +72,7 @@ namespace InformacioniSistemTeretane.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IgraonicaId"] = new SelectList(_context.Igraonica, "Id", "Naziv", igraonicaPonuda.IgraonicaId);
+            ViewData["IgraonicaId"] = new SelectList(_context.Igraonice, "Id", "Naziv", igraonicaPonuda.IgraonicaId);
             return View(igraonicaPonuda);
         }
 
@@ -86,12 +86,12 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var igraonicaPonuda = await _context.IgraonicaPonuda.FindAsync(id);
+            var igraonicaPonuda = await _context.IgraonicaPonude.FindAsync(id);
             if (igraonicaPonuda == null)
             {
                 return NotFound();
             }
-            ViewData["IgraonicaId"] = new SelectList(_context.Igraonica, "Id", "Naziv", igraonicaPonuda.IgraonicaId);
+            ViewData["IgraonicaId"] = new SelectList(_context.Igraonice, "Id", "Naziv", igraonicaPonuda.IgraonicaId);
             return View(igraonicaPonuda);
         }
 
@@ -128,7 +128,7 @@ namespace InformacioniSistemTeretane.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IgraonicaId"] = new SelectList(_context.Igraonica, "Id", "Naziv", igraonicaPonuda.IgraonicaId);
+            ViewData["IgraonicaId"] = new SelectList(_context.Igraonice, "Id", "Naziv", igraonicaPonuda.IgraonicaId);
             return View(igraonicaPonuda);
         }
 
@@ -142,7 +142,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var igraonicaPonuda = await _context.IgraonicaPonuda
+            var igraonicaPonuda = await _context.IgraonicaPonude
                 .Include(i => i.Igraonica)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (igraonicaPonuda == null)
@@ -159,10 +159,10 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var igraonicaPonuda = await _context.IgraonicaPonuda.FindAsync(id);
+            var igraonicaPonuda = await _context.IgraonicaPonude.FindAsync(id);
             if (igraonicaPonuda != null)
             {
-                _context.IgraonicaPonuda.Remove(igraonicaPonuda);
+                _context.IgraonicaPonude.Remove(igraonicaPonuda);
             }
 
             await _context.SaveChangesAsync();
@@ -171,7 +171,7 @@ namespace InformacioniSistemTeretane.Controllers
 
         private bool IgraonicaPonudaExists(int id)
         {
-            return _context.IgraonicaPonuda.Any(e => e.Id == id);
+            return _context.IgraonicaPonude.Any(e => e.Id == id);
         }
     }
 }

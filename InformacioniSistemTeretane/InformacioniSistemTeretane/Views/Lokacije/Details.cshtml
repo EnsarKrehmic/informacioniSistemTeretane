@@ -1,42 +1,21 @@
 ﻿@model InformacioniSistemTeretane.Models.Lokacija
 
-@{
-    ViewData["Title"] = "Details";
-}
-
-<h1>Details</h1>
-
-<div>
-    <h4>Lokacija</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Naziv)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Naziv)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Adresa)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Adresa)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.KontaktTelefon)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.KontaktTelefon)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-    </dl>
+<h1>Detalji lokacije</h1>
+<div class="row">
+    <div class="col-md-6">
+        <dl class="row">
+            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Naziv)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(m => m.Naziv)</dd>
+            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Adresa)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(m => m.Adresa)</dd>
+            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.KontaktTelefon)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(m => m.KontaktTelefon)</dd>
+            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Email)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(m => m.Email)</dd>
+        </dl>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
+    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+</p>

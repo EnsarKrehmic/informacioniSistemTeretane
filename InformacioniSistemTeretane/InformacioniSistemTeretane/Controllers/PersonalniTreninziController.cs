@@ -24,7 +24,7 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.PersonalniTrening.Include(p => p.Klijent).Include(p => p.Trener);
+            var applicationDbContext = _context.PersonalniTreninzi.Include(p => p.Klijent).Include(p => p.Trener);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -38,7 +38,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var personalniTrening = await _context.PersonalniTrening
+            var personalniTrening = await _context.PersonalniTreninzi
                 .Include(p => p.Klijent)
                 .Include(p => p.Trener)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -55,8 +55,8 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public IActionResult Create()
         {
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime");
-            ViewData["TrenerId"] = new SelectList(_context.Trener, "Id", "Id");
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime");
+            ViewData["TrenerId"] = new SelectList(_context.Treneri, "Id", "Id");
             return View();
         }
 
@@ -74,8 +74,8 @@ namespace InformacioniSistemTeretane.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", personalniTrening.KlijentId);
-            ViewData["TrenerId"] = new SelectList(_context.Trener, "Id", "Id", personalniTrening.TrenerId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", personalniTrening.KlijentId);
+            ViewData["TrenerId"] = new SelectList(_context.Treneri, "Id", "Id", personalniTrening.TrenerId);
             return View(personalniTrening);
         }
 
@@ -89,13 +89,13 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var personalniTrening = await _context.PersonalniTrening.FindAsync(id);
+            var personalniTrening = await _context.PersonalniTreninzi.FindAsync(id);
             if (personalniTrening == null)
             {
                 return NotFound();
             }
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", personalniTrening.KlijentId);
-            ViewData["TrenerId"] = new SelectList(_context.Trener, "Id", "Id", personalniTrening.TrenerId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", personalniTrening.KlijentId);
+            ViewData["TrenerId"] = new SelectList(_context.Treneri, "Id", "Id", personalniTrening.TrenerId);
             return View(personalniTrening);
         }
 
@@ -132,8 +132,8 @@ namespace InformacioniSistemTeretane.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["KlijentId"] = new SelectList(_context.Klijent, "Id", "Ime", personalniTrening.KlijentId);
-            ViewData["TrenerId"] = new SelectList(_context.Trener, "Id", "Id", personalniTrening.TrenerId);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", personalniTrening.KlijentId);
+            ViewData["TrenerId"] = new SelectList(_context.Treneri, "Id", "Id", personalniTrening.TrenerId);
             return View(personalniTrening);
         }
 
@@ -147,7 +147,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var personalniTrening = await _context.PersonalniTrening
+            var personalniTrening = await _context.PersonalniTreninzi
                 .Include(p => p.Klijent)
                 .Include(p => p.Trener)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -165,10 +165,10 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var personalniTrening = await _context.PersonalniTrening.FindAsync(id);
+            var personalniTrening = await _context.PersonalniTreninzi.FindAsync(id);
             if (personalniTrening != null)
             {
-                _context.PersonalniTrening.Remove(personalniTrening);
+                _context.PersonalniTreninzi.Remove(personalniTrening);
             }
 
             await _context.SaveChangesAsync();
@@ -177,7 +177,7 @@ namespace InformacioniSistemTeretane.Controllers
 
         private bool PersonalniTreningExists(int id)
         {
-            return _context.PersonalniTrening.Any(e => e.Id == id);
+            return _context.PersonalniTreninzi.Any(e => e.Id == id);
         }
     }
 }

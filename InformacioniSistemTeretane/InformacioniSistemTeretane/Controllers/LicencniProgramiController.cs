@@ -24,7 +24,7 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.LicencniProgram.ToListAsync());
+            return View(await _context.LicencniProgrami.ToListAsync());
         }
 
         // GET: LicencniProgrami/Details/5
@@ -37,7 +37,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var licencniProgram = await _context.LicencniProgram
+            var licencniProgram = await _context.LicencniProgrami
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (licencniProgram == null)
             {
@@ -82,7 +82,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var licencniProgram = await _context.LicencniProgram.FindAsync(id);
+            var licencniProgram = await _context.LicencniProgrami.FindAsync(id);
             if (licencniProgram == null)
             {
                 return NotFound();
@@ -136,7 +136,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var licencniProgram = await _context.LicencniProgram
+            var licencniProgram = await _context.LicencniProgrami
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (licencniProgram == null)
             {
@@ -152,10 +152,10 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var licencniProgram = await _context.LicencniProgram.FindAsync(id);
+            var licencniProgram = await _context.LicencniProgrami.FindAsync(id);
             if (licencniProgram != null)
             {
-                _context.LicencniProgram.Remove(licencniProgram);
+                _context.LicencniProgrami.Remove(licencniProgram);
             }
 
             await _context.SaveChangesAsync();
@@ -164,7 +164,7 @@ namespace InformacioniSistemTeretane.Controllers
 
         private bool LicencniProgramExists(int id)
         {
-            return _context.LicencniProgram.Any(e => e.Id == id);
+            return _context.LicencniProgrami.Any(e => e.Id == id);
         }
     }
 }

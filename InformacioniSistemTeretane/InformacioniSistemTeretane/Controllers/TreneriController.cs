@@ -24,7 +24,7 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Trener.Include(t => t.Zaposlenik);
+            var applicationDbContext = _context.Treneri.Include(t => t.Zaposlenik);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -38,7 +38,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var trener = await _context.Trener
+            var trener = await _context.Treneri
                 .Include(t => t.Zaposlenik)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (trener == null)
@@ -54,7 +54,7 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public IActionResult Create()
         {
-            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenik, "Id", "Ime");
+            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Ime");
             return View();
         }
 
@@ -72,7 +72,7 @@ namespace InformacioniSistemTeretane.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenik, "Id", "Ime", trener.ZaposlenikId);
+            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Ime", trener.ZaposlenikId);
             return View(trener);
         }
 
@@ -86,12 +86,12 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var trener = await _context.Trener.FindAsync(id);
+            var trener = await _context.Treneri.FindAsync(id);
             if (trener == null)
             {
                 return NotFound();
             }
-            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenik, "Id", "Ime", trener.ZaposlenikId);
+            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Ime", trener.ZaposlenikId);
             return View(trener);
         }
 
@@ -128,7 +128,7 @@ namespace InformacioniSistemTeretane.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenik, "Id", "Ime", trener.ZaposlenikId);
+            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Ime", trener.ZaposlenikId);
             return View(trener);
         }
 
@@ -142,7 +142,7 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            var trener = await _context.Trener
+            var trener = await _context.Treneri
                 .Include(t => t.Zaposlenik)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (trener == null)
@@ -159,10 +159,10 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var trener = await _context.Trener.FindAsync(id);
+            var trener = await _context.Treneri.FindAsync(id);
             if (trener != null)
             {
-                _context.Trener.Remove(trener);
+                _context.Treneri.Remove(trener);
             }
 
             await _context.SaveChangesAsync();
@@ -171,7 +171,7 @@ namespace InformacioniSistemTeretane.Controllers
 
         private bool TrenerExists(int id)
         {
-            return _context.Trener.Any(e => e.Id == id);
+            return _context.Treneri.Any(e => e.Id == id);
         }
     }
 }

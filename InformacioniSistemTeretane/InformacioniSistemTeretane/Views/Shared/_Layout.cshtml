@@ -1,50 +1,110 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@using System.Linq
+@functions {
+    bool IsActive(params string[] controllers)
+    {
+        var current = ViewContext.RouteData.Values["controller"]?.ToString();
+        return controllers.Contains(current);
+    }
+}
+<!DOCTYPE html>
+<html lang="bs">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - InformacioniSistemTeretane</title>
+    <title>@ViewData["Title"] – GymChain IST</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/InformacioniSistemTeretane.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/bootstrap.lux.min.css" />  @* Lux tema *@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">InformacioniSistemTeretane</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-4">
+            <div class="container">
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">GymChain IST</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#mainNavbar" aria-controls="mainNavbar"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                        <li class="nav-item dropdown @(IsActive("Paketi","Uplate") ? "active" : "")">
+                            <a class="nav-link dropdown-toggle" href="#" id="financeDropdown" role="button" data-bs-toggle="dropdown">
+                                Finansije
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Paketi" asp-action="Index">Paketi</a></li>
+                                <li><a class="dropdown-item" asp-controller="Uplate" asp-action="Index">Članarine</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+
+                        <li class="nav-item dropdown @(IsActive("GrupniTreninzi","PersonalniTreninzi","ProbniTreninzi") ? "active" : "")">
+                            <a class="nav-link dropdown-toggle" href="#" id="trainingsDropdown" role="button" data-bs-toggle="dropdown">
+                                Treninzi
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="GrupniTreninzi" asp-action="Index">Grupni treninzi</a></li>
+                                <li><a class="dropdown-item" asp-controller="PersonalniTreninzi" asp-action="Index">Personalni treninzi</a></li>
+                                <li><a class="dropdown-item" asp-controller="ProbniTreninzi" asp-action="Index">Probni treninzi</a></li>
+                            </ul>
                         </li>
+
+                        <li class="nav-item dropdown @(IsActive("Igraonice","IgraonicaPonuda") ? "active" : "")">
+                            <a class="nav-link dropdown-toggle" href="#" id="playroomDropdown" role="button" data-bs-toggle="dropdown">
+                                Igraonice
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Igraonice" asp-action="Index">Igraonice</a></li>
+                                <li><a class="dropdown-item" asp-controller="IgraonicaPonude" asp-action="Index">Ponude</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item dropdown @(IsActive("Takmicenja","Disciplina","Takmicar") ? "active" : "")">
+                            <a class="nav-link dropdown-toggle" href="#" id="competitionDropdown" role="button" data-bs-toggle="dropdown">
+                                Takmičenja
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Takmicenja" asp-action="Index">Takmičenja</a></li>
+                                <li><a class="dropdown-item" asp-controller="Discipline" asp-action="Index">Disciplina</a></li>
+                                <li><a class="dropdown-item" asp-controller="Takmicari" asp-action="Index">Takmičari</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item dropdown @(IsActive("Lokacije","Sale","Klijenti","Zaposlenici","Licence") ? "active" : "")">
+                            <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
+                                Administracija
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Lokacije" asp-action="Index">Lokacije</a></li>
+                                <li><a class="dropdown-item" asp-controller="Sale" asp-action="Index">Sale</a></li>
+                                <li><a class="dropdown-item" asp-controller="Klijenti" asp-action="Index">Klijenti</a></li>
+                                <li><a class="dropdown-item" asp-controller="Zaposlenici" asp-action="Index">Zaposlenici</a></li>
+                                <li><a class="dropdown-item" asp-controller="Licence" asp-action="Index">Licence</a></li>
+                            </ul>
+                        </li>
+
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-4">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - InformacioniSistemTeretane - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="footer mt-auto py-3 bg-light border-top">
+        <div class="container text-center">
+            &copy; @DateTime.Now.Year – GymChain IST
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
