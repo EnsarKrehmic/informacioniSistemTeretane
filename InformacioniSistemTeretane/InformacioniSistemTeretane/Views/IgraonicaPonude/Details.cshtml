@@ -1,42 +1,25 @@
 ﻿@model InformacioniSistemTeretane.Models.IgraonicaPonuda
 
-@{
-    ViewData["Title"] = "Details";
-}
+<h1>Detalji ponude igraonice</h1>
+<div class="row">
+    <div class="col-md-6">
+        <dl class="row">
+            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.IgraonicaId)</dt>
+            <dd class="col-sm-8">@Model.Igraonica?.Naziv (@Model.IgraonicaId)</dd>
 
-<h1>Details</h1>
+            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.OpisUsluge)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(m => m.OpisUsluge)</dd>
 
-<div>
-    <h4>IgraonicaPonuda</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Igraonica)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Igraonica.Naziv)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OpisUsluge)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OpisUsluge)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cijena)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cijena)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Trajanje)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Trajanje)
-        </dd>
-    </dl>
+            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Cijena)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(m => m.Cijena)</dd>
+
+            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Trajanje)</dt>
+            <dd class="col-sm-8">@Model.Trajanje.ToString(@"hh\:mm")</dd>
+        </dl>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
+    <a asp-action="Index" class="btn btn-secondary">Nazad na listu</a>
+</p>

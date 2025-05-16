@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using InformacioniSistemTeretane.Data;
 using InformacioniSistemTeretane.Models;
 
@@ -13,165 +12,131 @@ namespace InformacioniSistemTeretane.Controllers
     public class TreneriController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<TreneriController> _logger;
 
-        public TreneriController(ApplicationDbContext context)
+        public TreneriController(ApplicationDbContext context, ILogger<TreneriController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: Treneri
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Treneri.Include(t => t.Zaposlenik);
-            return View(await applicationDbContext.ToListAsync());
+            var treneri = _context.Treneri.Include(t => t.Zaposlenik);
+            return View(await treneri.ToListAsync());
         }
 
         // GET: Treneri/Details/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var trener = await _context.Treneri
                 .Include(t => t.Zaposlenik)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (trener == null)
-            {
-                return NotFound();
-            }
-
+                .Include(t => t.GrupniTreninzi)
+                .Include(t => t.PersonalniTreninzi)
+                .Include(t => t.ProbniTreninzi)
+                .FirstOrDefaultAsync(t => t.Id == id);
+            if (trener == null) return NotFound();
             return View(trener);
         }
 
         // GET: Treneri/Create
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public IActionResult Create()
         {
-            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Ime");
+            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Prezime");
             return View();
         }
 
         // POST: Treneri/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
-        public async Task<IActionResult> Create([Bind("Id,ZaposlenikId")] Trener trener)
+        public async Task<IActionResult> Create([Bind("ZaposlenikId")] Trener trener)
         {
-            if (ModelState.IsValid)
+            _logger.LogInformation("----- Create Trener bind values -----");
+            _logger.LogInformation("ZaposlenikId: {ZaposlenikId}", trener.ZaposlenikId);
+
+            if (!ModelState.IsValid)
             {
-                _context.Add(trener);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                _logger.LogWarning("ModelState is invalid for Trener:");
+                foreach (var e in ModelState)
+                    foreach (var err in e.Value.Errors)
+                        _logger.LogWarning(" - {Field}: '{Value}' => {Error}",
+                            e.Key, e.Value.AttemptedValue, err.ErrorMessage);
+
+                ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Prezime", trener.ZaposlenikId);
+                return View(trener);
             }
-            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Ime", trener.ZaposlenikId);
-            return View(trener);
+
+            _context.Add(trener);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Treneri/Edit/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var trener = await _context.Treneri.FindAsync(id);
-            if (trener == null)
-            {
-                return NotFound();
-            }
-            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Ime", trener.ZaposlenikId);
+            if (trener == null) return NotFound();
+            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Prezime", trener.ZaposlenikId);
             return View(trener);
         }
 
         // POST: Treneri/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ZaposlenikId")] Trener trener)
         {
-            if (id != trener.Id)
+            _logger.LogInformation("----- Edit Trener bind values -----");
+            _logger.LogInformation("Id: {Id}, ZaposlenikId: {ZaposlenikId}", trener.Id, trener.ZaposlenikId);
+
+            if (id != trener.Id) return NotFound();
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                _logger.LogWarning("ModelState is invalid for Trener:");
+                foreach (var e in ModelState)
+                    foreach (var err in e.Value.Errors)
+                        _logger.LogWarning(" - {Field}: '{Value}' => {Error}",
+                            e.Key, e.Value.AttemptedValue, err.ErrorMessage);
+
+                ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Prezime", trener.ZaposlenikId);
+                return View(trener);
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    _context.Update(trener);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TrenerExists(trener.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(trener);
+                await _context.SaveChangesAsync();
             }
-            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Ime", trener.ZaposlenikId);
-            return View(trener);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Treneri.Any(e => e.Id == trener.Id)) return NotFound();
+                throw;
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Treneri/Delete/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var trener = await _context.Treneri
                 .Include(t => t.Zaposlenik)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (trener == null)
-            {
-                return NotFound();
-            }
-
+                .FirstOrDefaultAsync(t => t.Id == id);
+            if (trener == null) return NotFound();
             return View(trener);
         }
 
         // POST: Treneri/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var trener = await _context.Treneri.FindAsync(id);
-            if (trener != null)
-            {
-                _context.Treneri.Remove(trener);
-            }
-
+            _context.Treneri.Remove(trener);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool TrenerExists(int id)
-        {
-            return _context.Treneri.Any(e => e.Id == id);
         }
     }
 }

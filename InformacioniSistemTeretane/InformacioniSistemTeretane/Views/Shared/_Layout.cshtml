@@ -34,6 +34,7 @@
                                 Finansije
                             </a>
                             <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Klijenti" asp-action="Index">Klijenti</a></li>
                                 <li><a class="dropdown-item" asp-controller="Paketi" asp-action="Index">Paketi</a></li>
                                 <li><a class="dropdown-item" asp-controller="Uplate" asp-action="Index">Članarine</a></li>
                             </ul>
@@ -44,9 +45,11 @@
                                 Treninzi
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-controller="GrupniTreninzi" asp-action="Index">Grupni treninzi</a></li>
-                                <li><a class="dropdown-item" asp-controller="PersonalniTreninzi" asp-action="Index">Personalni treninzi</a></li>
+                                <li><a class="dropdown-item" asp-controller="Treneri" asp-action="Index">Treneri</a></li>
+                                <li><a class="dropdown-item" asp-controller="Treninzi" asp-action="Index">Treninzi</a></li>
                                 <li><a class="dropdown-item" asp-controller="ProbniTreninzi" asp-action="Index">Probni treninzi</a></li>
+                                <li><a class="dropdown-item" asp-controller="PersonalniTreninzi" asp-action="Index">Personalni treninzi</a></li>
+                                <li><a class="dropdown-item" asp-controller="GrupniTreninzi" asp-action="Index">Grupni treninzi</a></li>
                             </ul>
                         </li>
 
@@ -78,7 +81,6 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-controller="Lokacije" asp-action="Index">Lokacije</a></li>
                                 <li><a class="dropdown-item" asp-controller="Sale" asp-action="Index">Sale</a></li>
-                                <li><a class="dropdown-item" asp-controller="Klijenti" asp-action="Index">Klijenti</a></li>
                                 <li><a class="dropdown-item" asp-controller="Zaposlenici" asp-action="Index">Zaposlenici</a></li>
                                 <li><a class="dropdown-item" asp-controller="Licence" asp-action="Index">Licence</a></li>
                             </ul>

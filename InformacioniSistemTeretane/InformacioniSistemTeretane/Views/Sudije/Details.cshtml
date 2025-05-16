@@ -1,30 +1,17 @@
 ﻿@model InformacioniSistemTeretane.Models.Sudija
 
-@{
-    ViewData["Title"] = "Details";
-}
+<h1>Detalji sudije</h1>
 
-<h1>Details</h1>
+<dl class="row">
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.ZaposlenikId)</dt>
+    <dd class="col-sm-8">@Model.Zaposlenik?.Prezime, @Model.Zaposlenik?.Ime (@Model.ZaposlenikId)</dd>
 
-<div>
-    <h4>Sudija</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Zaposlenik)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Zaposlenik.Ime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Disciplina)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Disciplina.Naziv)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.DisciplinaId)</dt>
+    <dd class="col-sm-8">@Model.Disciplina?.Naziv (@Model.DisciplinaId)</dd>
+</dl>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
+    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+</p>

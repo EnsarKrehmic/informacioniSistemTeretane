@@ -1,48 +1,26 @@
 ﻿@model InformacioniSistemTeretane.Models.Zaposlenik
 
-@{
-    ViewData["Title"] = "Details";
-}
+<h1>Detalji zaposlenika</h1>
 
-<h1>Details</h1>
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Ime)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Ime)</dd>
 
-<div>
-    <h4>Zaposlenik</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Prezime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Prezime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Pozicija)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Pozicija)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Telefon)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Telefon)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Prezime)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Prezime)</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Pozicija)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Pozicija)</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Telefon)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Telefon)</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.UserId)</dt>
+    <dd class="col-sm-9">@Model.User?.UserName (@Model.UserId)</dd>
+</dl>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
+    <a asp-action="Index" class="btn btn-secondary">Nazad na listu</a>
+</p>

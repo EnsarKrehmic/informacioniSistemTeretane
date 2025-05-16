@@ -1,46 +1,38 @@
 ﻿@model InformacioniSistemTeretane.Models.Takmicar
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Novi takmičar";
 }
 
-<h1>Create</h1>
+<h1>@ViewData["Title"]</h1>
 
-<h4>Takmicar</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="KlijentId" class="control-label"></label>
-                <select asp-for="KlijentId" class ="form-control" asp-items="ViewBag.KlijentId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="DisciplinaId" class="control-label"></label>
-                <select asp-for="DisciplinaId" class ="form-control" asp-items="ViewBag.DisciplinaId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Rezultat" class="control-label"></label>
-                <input asp-for="Rezultat" class="form-control" />
-                <span asp-validation-for="Rezultat" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Pozicija" class="control-label"></label>
-                <input asp-for="Pozicija" class="form-control" />
-                <span asp-validation-for="Pozicija" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="KlijentId" class="form-label"></label>
+        <select asp-for="KlijentId" class="form-control" asp-items="ViewBag.KlijentId"></select>
+        <span asp-validation-for="KlijentId" class="text-danger"></span>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="mb-3">
+        <label asp-for="DisciplinaId" class="form-label"></label>
+        <select asp-for="DisciplinaId" class="form-control" asp-items="ViewBag.DisciplinaId"></select>
+        <span asp-validation-for="DisciplinaId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Rezultat" class="form-label"></label>
+        <input asp-for="Rezultat" type="number" step="0.01" class="form-control" />
+        <span asp-validation-for="Rezultat" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Pozicija" class="form-label"></label>
+        <input asp-for="Pozicija" type="number" class="form-control" />
+        <span asp-validation-for="Pozicija" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Spremi</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
+</form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

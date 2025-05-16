@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace InformacioniSistemTeretane.Models
 {
@@ -22,10 +24,15 @@ namespace InformacioniSistemTeretane.Models
 
         [Required]
         public string UserId { get; set; }
+
         [ForeignKey(nameof(UserId))]
+        [ValidateNever]
         public ApplicationUser User { get; set; }
 
-        public ICollection<Trener> TrenerskiPodaci { get; set; }
-        public ICollection<Sudija> Sudije { get; set; }
+        [ValidateNever]
+        public ICollection<Trener> TrenerskiPodaci { get; set; } = new List<Trener>();
+
+        [ValidateNever]
+        public ICollection<Sudija> Sudije { get; set; } = new List<Sudija>();
     }
 }

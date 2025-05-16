@@ -1,47 +1,42 @@
 ﻿@model InformacioniSistemTeretane.Models.Disciplina
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nova disciplina";
 }
 
-<h1>Create</h1>
+<h1>@ViewData["Title"]</h1>
 
-<h4>Disciplina</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="TakmicenjeId" class="control-label"></label>
-                <select asp-for="TakmicenjeId" class ="form-control" asp-items="ViewBag.TakmicenjeId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Naziv" class="control-label"></label>
-                <input asp-for="Naziv" class="form-control" />
-                <span asp-validation-for="Naziv" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Opis" class="control-label"></label>
-                <input asp-for="Opis" class="form-control" />
-                <span asp-validation-for="Opis" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MaxUcesnika" class="control-label"></label>
-                <input asp-for="MaxUcesnika" class="form-control" />
-                <span asp-validation-for="MaxUcesnika" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="TakmicenjeId" class="form-label"></label>
+        <select asp-for="TakmicenjeId" class="form-control" asp-items="ViewBag.TakmicenjeId"></select>
+        <span asp-validation-for="TakmicenjeId" class="text-danger"></span>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="mb-3">
+        <label asp-for="Naziv" class="form-label"></label>
+        <input asp-for="Naziv" class="form-control" />
+        <span asp-validation-for="Naziv" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Opis" class="form-label"></label>
+        <textarea asp-for="Opis" class="form-control"></textarea>
+        <span asp-validation-for="Opis" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="MaxUcesnika" class="form-label"></label>
+        <input asp-for="MaxUcesnika" type="number" class="form-control" />
+        <span asp-validation-for="MaxUcesnika" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Spremi</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
+</form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

@@ -1,53 +1,36 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.IgraonicaPonuda>
+@using InformacioniSistemTeretane.Models
 
-@{
-    ViewData["Title"] = "Index";
-}
-
-<h1>Index</h1>
-
+<h1>Ponude igraonice</h1>
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Nova ponuda</a>
 </p>
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Igraonica)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OpisUsluge)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cijena)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Trajanje)
-            </th>
+            <th>@Html.DisplayNameFor((IgraonicaPonuda m) => m.IgraonicaId)</th>
+            <th>Igraonica</th>
+            <th>@Html.DisplayNameFor((IgraonicaPonuda m) => m.OpisUsluge)</th>
+            <th>@Html.DisplayNameFor((IgraonicaPonuda m) => m.Cijena)</th>
+            <th>@Html.DisplayNameFor((IgraonicaPonuda m) => m.Trajanje)</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Igraonica.Naziv)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OpisUsluge)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cijena)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Trajanje)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.IgraonicaId</td>
+                <td>@item.Igraonica?.Naziv</td>
+                <td>@item.OpisUsluge</td>
+                <td>@Html.DisplayFor(mi => item.Cijena)</td>
+                <td>@item.Trajanje.ToString(@"hh\:mm")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

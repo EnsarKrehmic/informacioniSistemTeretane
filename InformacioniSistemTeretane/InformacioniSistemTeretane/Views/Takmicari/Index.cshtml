@@ -1,53 +1,37 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.Takmicar>
+@using InformacioniSistemTeretane.Models
 
-@{
-    ViewData["Title"] = "Index";
-}
+<h1>Takmičari</h1>
+<p><a asp-action="Create" class="btn btn-primary">Novi takmičar</a></p>
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Klijent)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Disciplina)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rezultat)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Pozicija)
-            </th>
+            <th>@Html.DisplayNameFor((Takmicar m) => m.KlijentId)</th>
+            <th>Klijent</th>
+            <th>@Html.DisplayNameFor((Takmicar m) => m.DisciplinaId)</th>
+            <th>Disciplina</th>
+            <th>@Html.DisplayNameFor((Takmicar m) => m.Rezultat)</th>
+            <th>@Html.DisplayNameFor((Takmicar m) => m.Pozicija)</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Klijent.Ime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Disciplina.Naziv)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rezultat)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pozicija)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.KlijentId</td>
+                <td>@item.Klijent?.Prezime, @item.Klijent?.Ime</td>
+                <td>@item.DisciplinaId</td>
+                <td>@item.Disciplina?.Naziv</td>
+                <td>@Html.DisplayFor(mi => item.Rezultat)</td>
+                <td>@Html.DisplayFor(mi => item.Pozicija)</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

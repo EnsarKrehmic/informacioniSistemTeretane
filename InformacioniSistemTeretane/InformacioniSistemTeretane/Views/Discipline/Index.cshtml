@@ -1,53 +1,33 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.Disciplina>
+@using InformacioniSistemTeretane.Models
 
-@{
-    ViewData["Title"] = "Index";
-}
+<h1>Discipline</h1>
+<p><a asp-action="Create" class="btn btn-primary">Nova disciplina</a></p>
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Takmicenje)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Naziv)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Opis)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaxUcesnika)
-            </th>
+            <th>@Html.DisplayNameFor((Disciplina m) => m.TakmicenjeId)</th>
+            <th>Takmičenje</th>
+            <th>@Html.DisplayNameFor((Disciplina m) => m.Naziv)</th>
+            <th>@Html.DisplayNameFor((Disciplina m) => m.MaxUcesnika)</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Takmicenje.Naziv)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Naziv)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Opis)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaxUcesnika)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.TakmicenjeId</td>
+                <td>@item.Takmicenje?.Naziv</td>
+                <td>@item.Naziv</td>
+                <td>@item.MaxUcesnika</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

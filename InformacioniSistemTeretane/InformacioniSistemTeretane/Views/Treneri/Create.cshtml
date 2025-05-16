@@ -1,32 +1,23 @@
 ﻿@model InformacioniSistemTeretane.Models.Trener
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Novi trener";
 }
 
-<h1>Create</h1>
+<h1>@ViewData["Title"]</h1>
 
-<h4>Trener</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="ZaposlenikId" class="control-label"></label>
-                <select asp-for="ZaposlenikId" class ="form-control" asp-items="ViewBag.ZaposlenikId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="ZaposlenikId" class="form-label"></label>
+        <select asp-for="ZaposlenikId" class="form-control" asp-items="ViewBag.ZaposlenikId"></select>
+        <span asp-validation-for="ZaposlenikId" class="text-danger"></span>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <button type="submit" class="btn btn-primary">Spremi</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
+</form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

@@ -1,24 +1,65 @@
 ﻿@model InformacioniSistemTeretane.Models.Trener
 
-@{
-    ViewData["Title"] = "Details";
-}
+<h1>Detalji trenera</h1>
 
-<h1>Details</h1>
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.ZaposlenikId)</dt>
+    <dd class="col-sm-9">@Model.Zaposlenik?.Prezime, @Model.Zaposlenik?.Ime (@Model.ZaposlenikId)</dd>
+</dl>
 
-<div>
-    <h4>Trener</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Zaposlenik)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Zaposlenik.Ime)
-        </dd>
-    </dl>
+<div class="mt-4">
+    <h4>Grupni treninzi</h4>
+    @if (Model.GrupniTreninzi.Any())
+    {
+        <ul class="list-group">
+            @foreach (var gt in Model.GrupniTreninzi)
+            {
+                <li class="list-group-item">@gt?.Naziv ?? gt.Id.ToString()</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>Nema grupnih treninga.</p>
+    }
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="mt-4">
+    <h4>Personalni treninzi</h4>
+    @if (Model.PersonalniTreninzi.Any())
+    {
+        <ul class="list-group">
+            @foreach (var pt in Model.PersonalniTreninzi)
+            {
+                <li class="list-group-item">@pt.Datum.ToShortDateString()</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>Nema personalnih treninga.</p>
+    }
 </div>
+
+<div class="mt-4">
+    <h4>Probni treninzi</h4>
+    @if (Model.ProbniTreninzi.Any())
+    {
+        <ul class="list-group">
+            @foreach (var pr in Model.ProbniTreninzi)
+            {
+                <li class="list-group-item">@pr.Datum.ToShortDateString()</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>Nema probnih treninga.</p>
+    }
+</div>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
+    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+</p>

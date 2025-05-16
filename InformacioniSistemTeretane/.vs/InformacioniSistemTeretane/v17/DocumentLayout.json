@@ -3,10 +3,6 @@
   "WorkspaceRootPath": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{BBF468EC-1D5D-4B83-BB03-6DC4B1F701BE}|InformacioniSistemTeretane\\InformacioniSistemTeretane.csproj|c:\\users\\me\\source\\repos\\informacionisistemteretane\\informacionisistemteretane\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{BBF468EC-1D5D-4B83-BB03-6DC4B1F701BE}|InformacioniSistemTeretane\\InformacioniSistemTeretane.csproj|solutionrelative:informacionisistemteretane\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{BBF468EC-1D5D-4B83-BB03-6DC4B1F701BE}|InformacioniSistemTeretane\\InformacioniSistemTeretane.csproj|c:\\users\\me\\source\\repos\\informacionisistemteretane\\informacionisistemteretane\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{BBF468EC-1D5D-4B83-BB03-6DC4B1F701BE}|InformacioniSistemTeretane\\InformacioniSistemTeretane.csproj|solutionrelative:informacionisistemteretane\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
@@ -22,17 +18,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 901,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "_Layout.cshtml",
               "DocumentMoniker": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\InformacioniSistemTeretane\\Views\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "InformacioniSistemTeretane\\Views\\Shared\\_Layout.cshtml",
               "ToolTip": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\InformacioniSistemTeretane\\Views\\Shared\\_Layout.cshtml",
               "RelativeToolTip": "InformacioniSistemTeretane\\Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAABEAAAAAAAAAAAAuwEUAAABWAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-05-15T15:15:23.734Z",
               "IsPinned": true,
@@ -60,20 +56,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\InformacioniSistemTeretane\\Views\\Home\\Index.cshtml",
-              "RelativeDocumentMoniker": "InformacioniSistemTeretane\\Views\\Home\\Index.cshtml",
-              "ToolTip": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\InformacioniSistemTeretane\\Views\\Home\\Index.cshtml",
-              "RelativeToolTip": "InformacioniSistemTeretane\\Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-15T16:00:55.69Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "ApplicationDbContext.cs",
               "DocumentMoniker": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\InformacioniSistemTeretane\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "InformacioniSistemTeretane\\Data\\ApplicationDbContext.cs",

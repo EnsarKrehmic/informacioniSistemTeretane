@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace InformacioniSistemTeretane.Models
 {
@@ -10,12 +11,16 @@ namespace InformacioniSistemTeretane.Models
 
         [Required]
         public int ZaposlenikId { get; set; }
+
         [ForeignKey(nameof(ZaposlenikId))]
+        [ValidateNever]
         public Zaposlenik Zaposlenik { get; set; }
 
         [Required]
         public int DisciplinaId { get; set; }
+
         [ForeignKey(nameof(DisciplinaId))]
+        [ValidateNever]
         public Disciplina Disciplina { get; set; }
     }
 }

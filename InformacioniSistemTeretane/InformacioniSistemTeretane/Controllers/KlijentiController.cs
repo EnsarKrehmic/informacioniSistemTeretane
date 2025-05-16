@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using InformacioniSistemTeretane.Data;
 using InformacioniSistemTeretane.Models;
 
@@ -13,165 +13,153 @@ namespace InformacioniSistemTeretane.Controllers
     public class KlijentiController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<KlijentiController> _logger;
 
-        public KlijentiController(ApplicationDbContext context)
+        public KlijentiController(ApplicationDbContext context, ILogger<KlijentiController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: Klijenti
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Klijenti.Include(k => k.User);
-            return View(await applicationDbContext.ToListAsync());
+            var klijenti = _context.Klijenti.Include(k => k.User);
+            return View(await klijenti.ToListAsync());
         }
 
         // GET: Klijenti/Details/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var klijent = await _context.Klijenti
                 .Include(k => k.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (klijent == null)
-            {
-                return NotFound();
-            }
 
+            if (klijent == null) return NotFound();
             return View(klijent);
         }
 
         // GET: Klijenti/Create
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
             return View();
         }
 
         // POST: Klijenti/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
-        public async Task<IActionResult> Create([Bind("Id,Ime,Prezime,DatumRodjenja,UserId")] Klijent klijent)
+        public async Task<IActionResult> Create([Bind("Ime,Prezime,DatumRodjenja,UserId")] Klijent klijent)
         {
-            if (ModelState.IsValid)
+            _logger.LogInformation("----- Create Klijent bind values -----");
+            _logger.LogInformation("Ime: {Ime}", klijent.Ime);
+            _logger.LogInformation("Prezime: {Prezime}", klijent.Prezime);
+            _logger.LogInformation("DatumRodjenja: {DatumRodjenja}", klijent.DatumRodjenja);
+            _logger.LogInformation("UserId: {UserId}", klijent.UserId);
+
+            if (!ModelState.IsValid)
             {
-                _context.Add(klijent);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                _logger.LogWarning("ModelState is invalid. Errors:");
+                foreach (var entry in ModelState)
+                {
+                    if (entry.Value.Errors.Count > 0)
+                    {
+                        foreach (var err in entry.Value.Errors)
+                        {
+                            _logger.LogWarning(
+                                " - Field '{Field}' attempted value '{Value}': {Error}",
+                                entry.Key, entry.Value.AttemptedValue, err.ErrorMessage);
+                        }
+                    }
+                }
+                ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", klijent.UserId);
+                return View(klijent);
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", klijent.UserId);
-            return View(klijent);
+
+            _context.Add(klijent);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Klijenti/Edit/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var klijent = await _context.Klijenti.FindAsync(id);
-            if (klijent == null)
-            {
-                return NotFound();
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", klijent.UserId);
+            if (klijent == null) return NotFound();
+
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", klijent.UserId);
             return View(klijent);
         }
 
         // POST: Klijenti/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Ime,Prezime,DatumRodjenja,UserId")] Klijent klijent)
         {
-            if (id != klijent.Id)
+            _logger.LogInformation("----- Edit Klijent bind values -----");
+            _logger.LogInformation("Id: {Id}", klijent.Id);
+            _logger.LogInformation("Ime: {Ime}", klijent.Ime);
+            _logger.LogInformation("Prezime: {Prezime}", klijent.Prezime);
+            _logger.LogInformation("DatumRodjenja: {DatumRodjenja}", klijent.DatumRodjenja);
+            _logger.LogInformation("UserId: {UserId}", klijent.UserId);
+
+            if (id != klijent.Id) return NotFound();
+
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                _logger.LogWarning("ModelState is invalid. Errors:");
+                foreach (var entry in ModelState)
+                {
+                    if (entry.Value.Errors.Count > 0)
+                    {
+                        foreach (var err in entry.Value.Errors)
+                        {
+                            _logger.LogWarning(
+                                " - Field '{Field}' attempted value '{Value}': {Error}",
+                                entry.Key, entry.Value.AttemptedValue, err.ErrorMessage);
+                        }
+                    }
+                }
+                ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", klijent.UserId);
+                return View(klijent);
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    _context.Update(klijent);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!KlijentExists(klijent.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(klijent);
+                await _context.SaveChangesAsync();
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", klijent.UserId);
-            return View(klijent);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Klijenti.Any(e => e.Id == id)) return NotFound();
+                throw;
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Klijenti/Delete/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var klijent = await _context.Klijenti
                 .Include(k => k.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (klijent == null)
-            {
-                return NotFound();
-            }
-
+            if (klijent == null) return NotFound();
             return View(klijent);
         }
 
         // POST: Klijenti/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var klijent = await _context.Klijenti.FindAsync(id);
-            if (klijent != null)
-            {
-                _context.Klijenti.Remove(klijent);
-            }
-
+            _context.Klijenti.Remove(klijent);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool KlijentExists(int id)
-        {
-            return _context.Klijenti.Any(e => e.Id == id);
         }
     }
 }

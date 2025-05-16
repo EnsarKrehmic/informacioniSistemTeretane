@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Controllers/TakmicariController.cs
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using InformacioniSistemTeretane.Data;
 using InformacioniSistemTeretane.Models;
 
@@ -13,171 +13,139 @@ namespace InformacioniSistemTeretane.Controllers
     public class TakmicariController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<TakmicariController> _logger;
 
-        public TakmicariController(ApplicationDbContext context)
+        public TakmicariController(ApplicationDbContext context, ILogger<TakmicariController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: Takmicari
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Takmicari.Include(t => t.Disciplina).Include(t => t.Klijent);
-            return View(await applicationDbContext.ToListAsync());
+            var takmicari = _context.Takmicari
+                .Include(t => t.Klijent)
+                .Include(t => t.Disciplina);
+            return View(await takmicari.ToListAsync());
         }
 
         // GET: Takmicari/Details/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var takmicar = await _context.Takmicari
-                .Include(t => t.Disciplina)
-                .Include(t => t.Klijent)
+            if (id == null) return NotFound();
+            var t = await _context.Takmicari
+                .Include(x => x.Klijent)
+                .Include(x => x.Disciplina)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (takmicar == null)
-            {
-                return NotFound();
-            }
-
-            return View(takmicar);
+            if (t == null) return NotFound();
+            return View(t);
         }
 
         // GET: Takmicari/Create
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public IActionResult Create()
         {
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Prezime");
             ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv");
-            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime");
             return View();
         }
 
         // POST: Takmicari/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
-        public async Task<IActionResult> Create([Bind("Id,KlijentId,DisciplinaId,Rezultat,Pozicija")] Takmicar takmicar)
+        public async Task<IActionResult> Create([Bind("KlijentId,DisciplinaId,Rezultat,Pozicija")] Takmicar t)
         {
-            if (ModelState.IsValid)
+            _logger.LogInformation("----- Create Takmicar bind -----");
+            _logger.LogInformation("KlijentId: {0}, DisciplinaId: {1}, Rezultat: {2}, Pozicija: {3}",
+                t.KlijentId, t.DisciplinaId, t.Rezultat, t.Pozicija);
+
+            if (!ModelState.IsValid)
             {
-                _context.Add(takmicar);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                _logger.LogWarning("ModelState invalid for Takmicar:");
+                foreach (var e in ModelState)
+                    foreach (var err in e.Value.Errors)
+                        _logger.LogWarning(" - {Field}: '{Value}' => {Error}",
+                            e.Key, e.Value.AttemptedValue, err.ErrorMessage);
+
+                ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Prezime", t.KlijentId);
+                ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv", t.DisciplinaId);
+                return View(t);
             }
-            ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv", takmicar.DisciplinaId);
-            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", takmicar.KlijentId);
-            return View(takmicar);
+
+            _context.Add(t);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Takmicari/Edit/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
+            var t = await _context.Takmicari.FindAsync(id);
+            if (t == null) return NotFound();
 
-            var takmicar = await _context.Takmicari.FindAsync(id);
-            if (takmicar == null)
-            {
-                return NotFound();
-            }
-            ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv", takmicar.DisciplinaId);
-            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", takmicar.KlijentId);
-            return View(takmicar);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Prezime", t.KlijentId);
+            ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv", t.DisciplinaId);
+            return View(t);
         }
 
         // POST: Takmicari/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,KlijentId,DisciplinaId,Rezultat,Pozicija")] Takmicar takmicar)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,KlijentId,DisciplinaId,Rezultat,Pozicija")] Takmicar t)
         {
-            if (id != takmicar.Id)
+            _logger.LogInformation("----- Edit Takmicar bind -----");
+            _logger.LogInformation("Id: {0}, KlijentId: {1}, DisciplinaId: {2}, Rezultat: {3}, Pozicija: {4}",
+                t.Id, t.KlijentId, t.DisciplinaId, t.Rezultat, t.Pozicija);
+
+            if (id != t.Id) return NotFound();
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                _logger.LogWarning("ModelState invalid for Takmicar:");
+                foreach (var e in ModelState)
+                    foreach (var err in e.Value.Errors)
+                        _logger.LogWarning(" - {Field}: '{Value}' => {Error}",
+                            e.Key, e.Value.AttemptedValue, err.ErrorMessage);
+
+                ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Prezime", t.KlijentId);
+                ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv", t.DisciplinaId);
+                return View(t);
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    _context.Update(takmicar);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TakmicarExists(takmicar.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(t);
+                await _context.SaveChangesAsync();
             }
-            ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv", takmicar.DisciplinaId);
-            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", takmicar.KlijentId);
-            return View(takmicar);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Takmicari.Any(e => e.Id == t.Id)) return NotFound();
+                throw;
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Takmicari/Delete/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var takmicar = await _context.Takmicari
-                .Include(t => t.Disciplina)
-                .Include(t => t.Klijent)
+            if (id == null) return NotFound();
+            var t = await _context.Takmicari
+                .Include(x => x.Klijent)
+                .Include(x => x.Disciplina)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (takmicar == null)
-            {
-                return NotFound();
-            }
-
-            return View(takmicar);
+            if (t == null) return NotFound();
+            return View(t);
         }
 
         // POST: Takmicari/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var takmicar = await _context.Takmicari.FindAsync(id);
-            if (takmicar != null)
-            {
-                _context.Takmicari.Remove(takmicar);
-            }
-
+            var t = await _context.Takmicari.FindAsync(id);
+            _context.Takmicari.Remove(t);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool TakmicarExists(int id)
-        {
-            return _context.Takmicari.Any(e => e.Id == id);
         }
     }
 }
