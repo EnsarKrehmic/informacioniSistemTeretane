@@ -1,53 +1,37 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.Licenca>
+@using InformacioniSistemTeretane.Models
 
-@{
-    ViewData["Title"] = "Index";
-}
+<h1>Licence</h1>
+<p><a asp-action="Create" class="btn btn-primary">Nova licenca</a></p>
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Klijent)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Program)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DatumIzdavanja)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ValidnaDo)
-            </th>
+            <th>@Html.DisplayNameFor((Licenca m) => m.KlijentId)</th>
+            <th>Klijent</th>
+            <th>@Html.DisplayNameFor((Licenca m) => m.ProgramId)</th>
+            <th>Program</th>
+            <th>@Html.DisplayNameFor((Licenca m) => m.DatumIzdavanja)</th>
+            <th>@Html.DisplayNameFor((Licenca m) => m.ValidnaDo)</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Klijent.Ime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Program.Naziv)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DatumIzdavanja)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ValidnaDo)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.KlijentId</td>
+                <td>@item.Klijent?.Prezime, @item.Klijent?.Ime</td>
+                <td>@item.ProgramId</td>
+                <td>@item.Program?.Naziv</td>
+                <td>@item.DatumIzdavanja.ToShortDateString()</td>
+                <td>@item.ValidnaDo.ToShortDateString()</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

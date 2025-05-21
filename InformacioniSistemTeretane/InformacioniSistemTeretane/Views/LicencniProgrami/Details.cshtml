@@ -1,42 +1,53 @@
 ﻿@model InformacioniSistemTeretane.Models.LicencniProgram
 
-@{
-    ViewData["Title"] = "Details";
-}
+<h1>Detalji licencnog programa</h1>
 
-<h1>Details</h1>
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Naziv)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Naziv)</dd>
 
-<div>
-    <h4>LicencniProgram</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Naziv)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Naziv)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Opis)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Opis)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TrajanjeDana)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TrajanjeDana)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cijena)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cijena)
-        </dd>
-    </dl>
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Opis)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Opis)</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.TrajanjeDana)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.TrajanjeDana)</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Cijena)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Cijena)</dd>
+</dl>
+
+<div class="mt-4">
+    <h4>Licence</h4>
+    @if (Model.Licence.Any())
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Datum izdavanja</th>
+                    <th>Validna do</th>
+                    <th>Klijent</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var l in Model.Licence)
+                {
+                    <tr>
+                        <td>@l.DatumIzdavanja.ToShortDateString()</td>
+                        <td>@l.ValidnaDo.ToShortDateString()</td>
+                        <td>@l.Klijent?.Prezime, @l.Klijent?.Ime</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Nema izdatih licenci.</p>
+    }
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
+    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+</p>

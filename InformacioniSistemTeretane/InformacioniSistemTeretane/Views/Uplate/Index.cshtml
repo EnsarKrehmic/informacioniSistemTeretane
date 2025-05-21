@@ -1,59 +1,39 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.Uplata>
+@using InformacioniSistemTeretane.Models
 
-@{
-    ViewData["Title"] = "Index";
-}
+<h1>Uplate</h1>
+<p><a asp-action="Create" class="btn btn-primary">Nova uplata</a></p>
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Klijent)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Paket)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DatumUplate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NacinUplate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Iznos)
-            </th>
+            <th>@Html.DisplayNameFor((Uplata m) => m.KlijentId)</th>
+            <th>Klijent</th>
+            <th>@Html.DisplayNameFor((Uplata m) => m.PaketId)</th>
+            <th>Paket</th>
+            <th>@Html.DisplayNameFor((Uplata m) => m.DatumUplate)</th>
+            <th>@Html.DisplayNameFor((Uplata m) => m.NacinUplate)</th>
+            <th>@Html.DisplayNameFor((Uplata m) => m.Iznos)</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Klijent.Ime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Paket.Naziv)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DatumUplate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NacinUplate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Iznos)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.KlijentId</td>
+                <td>@item.Klijent?.Prezime, @item.Klijent?.Ime</td>
+                <td>@item.PaketId</td>
+                <td>@item.Paket?.Naziv</td>
+                <td>@item.DatumUplate.ToShortDateString()</td>
+                <td>@Html.DisplayFor(mi => item.NacinUplate)</td>
+                <td>@Html.DisplayFor(mi => item.Iznos)</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

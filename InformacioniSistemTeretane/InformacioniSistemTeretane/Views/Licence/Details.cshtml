@@ -1,42 +1,23 @@
 ﻿@model InformacioniSistemTeretane.Models.Licenca
 
-@{
-    ViewData["Title"] = "Details";
-}
+<h1>Detalji licence</h1>
 
-<h1>Details</h1>
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.KlijentId)</dt>
+    <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime (@Model.KlijentId)</dd>
 
-<div>
-    <h4>Licenca</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Klijent)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Klijent.Ime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Program)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Program.Naziv)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DatumIzdavanja)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DatumIzdavanja)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ValidnaDo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ValidnaDo)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.ProgramId)</dt>
+    <dd class="col-sm-9">@Model.Program?.Naziv (@Model.ProgramId)</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.DatumIzdavanja)</dt>
+    <dd class="col-sm-9">@Model.DatumIzdavanja.ToShortDateString()</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.ValidnaDo)</dt>
+    <dd class="col-sm-9">@Model.ValidnaDo.ToShortDateString()</dd>
+</dl>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
+    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+</p>

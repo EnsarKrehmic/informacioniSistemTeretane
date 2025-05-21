@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using InformacioniSistemTeretane.Data;
 using InformacioniSistemTeretane.Models;
 
@@ -13,158 +11,134 @@ namespace InformacioniSistemTeretane.Controllers
     public class PaketiController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<PaketiController> _logger;
 
-        public PaketiController(ApplicationDbContext context)
+        public PaketiController(ApplicationDbContext context, ILogger<PaketiController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: Paketi
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Paketi.ToListAsync());
         }
 
         // GET: Paketi/Details/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var paket = await _context.Paketi
+                .Include(p => p.Uplate)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (paket == null)
-            {
-                return NotFound();
-            }
+            if (paket == null) return NotFound();
 
             return View(paket);
         }
 
         // GET: Paketi/Create
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
         // POST: Paketi/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
-        public async Task<IActionResult> Create([Bind("Id,Naziv,Opis,Cijena,TrajanjeDana")] Paket paket)
+        public async Task<IActionResult> Create([Bind("Naziv,Opis,Cijena,TrajanjeDana")] Paket paket)
         {
-            if (ModelState.IsValid)
+            _logger.LogInformation("----- Create Paket bind values -----");
+            _logger.LogInformation("Naziv: {Naziv}", paket.Naziv);
+            _logger.LogInformation("Opis: {Opis}", paket.Opis);
+            _logger.LogInformation("Cijena: {Cijena}", paket.Cijena);
+            _logger.LogInformation("TrajanjeDana: {TrajanjeDana}", paket.TrajanjeDana);
+
+            if (!ModelState.IsValid)
             {
-                _context.Add(paket);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                _logger.LogWarning("ModelState invalid for Paket:");
+                foreach (var entry in ModelState)
+                {
+                    if (entry.Value.Errors.Any())
+                        foreach (var err in entry.Value.Errors)
+                            _logger.LogWarning(
+                                " - Field '{Field}' attempted value '{Value}': {Error}",
+                                entry.Key, entry.Value.AttemptedValue, err.ErrorMessage);
+                }
+                return View(paket);
             }
-            return View(paket);
+
+            _context.Add(paket);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Paketi/Edit/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var paket = await _context.Paketi.FindAsync(id);
-            if (paket == null)
-            {
-                return NotFound();
-            }
+            if (paket == null) return NotFound();
             return View(paket);
         }
 
         // POST: Paketi/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Naziv,Opis,Cijena,TrajanjeDana")] Paket paket)
         {
-            if (id != paket.Id)
+            _logger.LogInformation("----- Edit Paket bind values -----");
+            _logger.LogInformation("Id: {Id}", paket.Id);
+            _logger.LogInformation("Naziv: {Naziv}", paket.Naziv);
+            _logger.LogInformation("Opis: {Opis}", paket.Opis);
+            _logger.LogInformation("Cijena: {Cijena}", paket.Cijena);
+            _logger.LogInformation("TrajanjeDana: {TrajanjeDana}", paket.TrajanjeDana);
+
+            if (id != paket.Id) return NotFound();
+
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                _logger.LogWarning("ModelState invalid for Paket:");
+                foreach (var entry in ModelState)
+                {
+                    if (entry.Value.Errors.Any())
+                        foreach (var err in entry.Value.Errors)
+                            _logger.LogWarning(
+                                " - Field '{Field}' attempted value '{Value}': {Error}",
+                                entry.Key, entry.Value.AttemptedValue, err.ErrorMessage);
+                }
+                return View(paket);
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    _context.Update(paket);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PaketExists(paket.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(paket);
+                await _context.SaveChangesAsync();
             }
-            return View(paket);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Paketi.Any(e => e.Id == paket.Id)) return NotFound();
+                throw;
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Paketi/Delete/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var paket = await _context.Paketi
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (paket == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
+            var paket = await _context.Paketi.FirstOrDefaultAsync(m => m.Id == id);
+            if (paket == null) return NotFound();
             return View(paket);
         }
 
         // POST: Paketi/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var paket = await _context.Paketi.FindAsync(id);
-            if (paket != null)
-            {
-                _context.Paketi.Remove(paket);
-            }
-
+            _context.Paketi.Remove(paket);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool PaketExists(int id)
-        {
-            return _context.Paketi.Any(e => e.Id == id);
         }
     }
 }

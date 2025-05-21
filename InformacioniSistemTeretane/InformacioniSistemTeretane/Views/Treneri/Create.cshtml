@@ -7,8 +7,8 @@
 <h1>@ViewData["Title"]</h1>
 
 <form asp-action="Create" method="post">
-    <div class="mb-3">
-        <label asp-for="ZaposlenikId" class="form-label"></label>
+    <div class="form-group mb-3">
+        <label asp-for="ZaposlenikId"></label>
         <select asp-for="ZaposlenikId" class="form-control" asp-items="ViewBag.ZaposlenikId"></select>
         <span asp-validation-for="ZaposlenikId" class="text-danger"></span>
     </div>

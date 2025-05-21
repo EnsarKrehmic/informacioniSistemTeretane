@@ -1,54 +1,44 @@
 ﻿@model InformacioniSistemTeretane.Models.Uplata
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Uredi uplatu";
 }
 
-<h1>Edit</h1>
+<h1>@ViewData["Title"]</h1>
 
-<h4>Uplata</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="KlijentId" class="control-label"></label>
-                <select asp-for="KlijentId" class="form-control" asp-items="ViewBag.KlijentId"></select>
-                <span asp-validation-for="KlijentId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PaketId" class="control-label"></label>
-                <select asp-for="PaketId" class="form-control" asp-items="ViewBag.PaketId"></select>
-                <span asp-validation-for="PaketId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DatumUplate" class="control-label"></label>
-                <input asp-for="DatumUplate" class="form-control" />
-                <span asp-validation-for="DatumUplate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NacinUplate" class="control-label"></label>
-                <input asp-for="NacinUplate" class="form-control" />
-                <span asp-validation-for="NacinUplate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Iznos" class="control-label"></label>
-                <input asp-for="Iznos" class="form-control" />
-                <span asp-validation-for="Iznos" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="KlijentId"></label>
+        <select asp-for="KlijentId" class="form-control" asp-items="ViewBag.KlijentId"></select>
+        <span asp-validation-for="KlijentId" class="text-danger"></span>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="form-group">
+        <label asp-for="PaketId"></label>
+        <select asp-for="PaketId" class="form-control" asp-items="ViewBag.PaketId"></select>
+        <span asp-validation-for="PaketId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="DatumUplate" class="form-label"></label>
+        <input asp-for="DatumUplate" type="date" class="form-control" />
+        <span asp-validation-for="DatumUplate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="NacinUplate" class="form-label"></label>
+        <input asp-for="NacinUplate" class="form-control" />
+        <span asp-validation-for="NacinUplate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Iznos" class="form-label"></label>
+        <input asp-for="Iznos" type="number" step="0.01" class="form-control" />
+        <span asp-validation-for="Iznos" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Spremi</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
+</form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

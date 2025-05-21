@@ -9,13 +9,13 @@
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="Id" />
 
-    <div class="mb-3">
-        <label asp-for="KlijentId" class="form-label"></label>
+    <div class="form-group mb-3">
+        <label asp-for="KlijentId"></label>
         <select asp-for="KlijentId" class="form-control" asp-items="ViewBag.KlijentId"></select>
         <span asp-validation-for="KlijentId" class="text-danger"></span>
     </div>
-    <div class="mb-3">
-        <label asp-for="DisciplinaId" class="form-label"></label>
+    <div class="form-group mb-3">
+        <label asp-for="DisciplinaId"></label>
         <select asp-for="DisciplinaId" class="form-control" asp-items="ViewBag.DisciplinaId"></select>
         <span asp-validation-for="DisciplinaId" class="text-danger"></span>
     </div>

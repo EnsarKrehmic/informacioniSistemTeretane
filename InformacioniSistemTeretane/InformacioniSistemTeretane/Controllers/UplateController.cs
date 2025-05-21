@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using InformacioniSistemTeretane.Data;
 using InformacioniSistemTeretane.Models;
 
@@ -13,171 +12,146 @@ namespace InformacioniSistemTeretane.Controllers
     public class UplateController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<UplateController> _logger;
 
-        public UplateController(ApplicationDbContext context)
+        public UplateController(ApplicationDbContext context, ILogger<UplateController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: Uplate
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Uplate.Include(u => u.Klijent).Include(u => u.Paket);
-            return View(await applicationDbContext.ToListAsync());
+            var uplate = _context.Uplate
+                .Include(u => u.Klijent)
+                .Include(u => u.Paket);
+            return View(await uplate.ToListAsync());
         }
 
         // GET: Uplate/Details/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var uplata = await _context.Uplate
                 .Include(u => u.Klijent)
                 .Include(u => u.Paket)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (uplata == null)
-            {
-                return NotFound();
-            }
+            if (uplata == null) return NotFound();
 
             return View(uplata);
         }
 
         // GET: Uplate/Create
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public IActionResult Create()
         {
-            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime");
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Prezime");
             ViewData["PaketId"] = new SelectList(_context.Paketi, "Id", "Naziv");
             return View();
         }
 
         // POST: Uplate/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
-        public async Task<IActionResult> Create([Bind("Id,KlijentId,PaketId,DatumUplate,NacinUplate,Iznos")] Uplata uplata)
+        public async Task<IActionResult> Create([Bind("KlijentId,PaketId,DatumUplate,NacinUplate,Iznos")] Uplata u)
         {
-            if (ModelState.IsValid)
+            _logger.LogInformation("----- Create Uplata bind values -----");
+            _logger.LogInformation("KlijentId: {KlijentId}", u.KlijentId);
+            _logger.LogInformation("PaketId: {PaketId}", u.PaketId);
+            _logger.LogInformation("DatumUplate: {Datum}", u.DatumUplate);
+            _logger.LogInformation("NacinUplate: {Nacin}", u.NacinUplate);
+            _logger.LogInformation("Iznos: {Iznos}", u.Iznos);
+
+            if (!ModelState.IsValid)
             {
-                _context.Add(uplata);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                _logger.LogWarning("ModelState invalid for Uplata:");
+                foreach (var e in ModelState)
+                    foreach (var err in e.Value.Errors)
+                        _logger.LogWarning(
+                            " - Field '{Field}' attempted value '{Value}': {Error}",
+                            e.Key, e.Value.AttemptedValue, err.ErrorMessage);
+
+                ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Prezime", u.KlijentId);
+                ViewData["PaketId"] = new SelectList(_context.Paketi, "Id", "Naziv", u.PaketId);
+                return View(u);
             }
-            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", uplata.KlijentId);
-            ViewData["PaketId"] = new SelectList(_context.Paketi, "Id", "Naziv", uplata.PaketId);
-            return View(uplata);
+
+            _context.Add(u);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Uplate/Edit/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
+            var u = await _context.Uplate.FindAsync(id);
+            if (u == null) return NotFound();
 
-            var uplata = await _context.Uplate.FindAsync(id);
-            if (uplata == null)
-            {
-                return NotFound();
-            }
-            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", uplata.KlijentId);
-            ViewData["PaketId"] = new SelectList(_context.Paketi, "Id", "Naziv", uplata.PaketId);
-            return View(uplata);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Prezime", u.KlijentId);
+            ViewData["PaketId"] = new SelectList(_context.Paketi, "Id", "Naziv", u.PaketId);
+            return View(u);
         }
 
         // POST: Uplate/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,KlijentId,PaketId,DatumUplate,NacinUplate,Iznos")] Uplata uplata)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,KlijentId,PaketId,DatumUplate,NacinUplate,Iznos")] Uplata u)
         {
-            if (id != uplata.Id)
+            _logger.LogInformation("----- Edit Uplata bind values -----");
+            _logger.LogInformation("Id: {Id}, KlijentId: {KlijentId}, PaketId: {PaketId}, DatumUplate: {Datum}, NacinUplate: {Nacin}, Iznos: {Iznos}",
+                u.Id, u.KlijentId, u.PaketId, u.DatumUplate, u.NacinUplate, u.Iznos);
+
+            if (id != u.Id) return NotFound();
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                _logger.LogWarning("ModelState invalid for Uplata:");
+                foreach (var e in ModelState)
+                    foreach (var err in e.Value.Errors)
+                        _logger.LogWarning(
+                            " - Field '{Field}' attempted value '{Value}': {Error}",
+                            e.Key, e.Value.AttemptedValue, err.ErrorMessage);
+
+                ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Prezime", u.KlijentId);
+                ViewData["PaketId"] = new SelectList(_context.Paketi, "Id", "Naziv", u.PaketId);
+                return View(u);
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    _context.Update(uplata);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UplataExists(uplata.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(u);
+                await _context.SaveChangesAsync();
             }
-            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", uplata.KlijentId);
-            ViewData["PaketId"] = new SelectList(_context.Paketi, "Id", "Naziv", uplata.PaketId);
-            return View(uplata);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Uplate.Any(e => e.Id == u.Id)) return NotFound();
+                throw;
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Uplate/Delete/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var uplata = await _context.Uplate
-                .Include(u => u.Klijent)
-                .Include(u => u.Paket)
+            if (id == null) return NotFound();
+            var u = await _context.Uplate
+                .Include(x => x.Klijent)
+                .Include(x => x.Paket)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (uplata == null)
-            {
-                return NotFound();
-            }
-
-            return View(uplata);
+            if (u == null) return NotFound();
+            return View(u);
         }
 
         // POST: Uplate/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var uplata = await _context.Uplate.FindAsync(id);
-            if (uplata != null)
-            {
-                _context.Uplate.Remove(uplata);
-            }
-
+            var u = await _context.Uplate.FindAsync(id);
+            _context.Uplate.Remove(u);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool UplataExists(int id)
-        {
-            return _context.Uplate.Any(e => e.Id == id);
         }
     }
 }

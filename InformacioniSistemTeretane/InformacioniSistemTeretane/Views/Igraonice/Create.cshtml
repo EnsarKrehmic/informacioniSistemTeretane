@@ -2,17 +2,17 @@
 
 <h1>Dodaj igraonicu</h1>
 <form asp-action="Create">
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label asp-for="Naziv"></label>
         <input asp-for="Naziv" class="form-control" />
         <span asp-validation-for="Naziv" class="text-danger"></span>
     </div>
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label asp-for="Kapacitet"></label>
         <input asp-for="Kapacitet" type="number" class="form-control" />
         <span asp-validation-for="Kapacitet" class="text-danger"></span>
     </div>
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label asp-for="LokacijaId"></label>
         <select asp-for="LokacijaId" class="form-control" asp-items="ViewBag.LokacijaId"></select>
         <span asp-validation-for="LokacijaId" class="text-danger"></span>

@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿// Models/LicencniProgram.cs
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace InformacioniSistemTeretane.Models
 {
@@ -15,8 +17,10 @@ namespace InformacioniSistemTeretane.Models
         public string Opis { get; set; }
 
         public int TrajanjeDana { get; set; }
+
         public decimal Cijena { get; set; }
 
-        public ICollection<Licenca> Licence { get; set; }
+        [ValidateNever]
+        public ICollection<Licenca> Licence { get; set; } = new List<Licenca>();
     }
 }

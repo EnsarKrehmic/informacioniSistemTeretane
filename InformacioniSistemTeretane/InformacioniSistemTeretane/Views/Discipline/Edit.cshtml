@@ -9,8 +9,8 @@
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="Id" />
 
-    <div class="mb-3">
-        <label asp-for="TakmicenjeId" class="form-label"></label>
+    <div class="form-group mb-3">
+        <label asp-for="TakmicenjeId"></label>
         <select asp-for="TakmicenjeId" class="form-control" asp-items="ViewBag.TakmicenjeId"></select>
         <span asp-validation-for="TakmicenjeId" class="text-danger"></span>
     </div>

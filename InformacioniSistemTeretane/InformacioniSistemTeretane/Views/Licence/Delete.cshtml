@@ -1,45 +1,24 @@
 ﻿@model InformacioniSistemTeretane.Models.Licenca
 
-@{
-    ViewData["Title"] = "Delete";
-}
+<h1>Obriši licencu</h1>
+<h3>Jeste li sigurni?</h3>
 
-<h1>Delete</h1>
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.KlijentId)</dt>
+    <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime (@Model.KlijentId)</dd>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Licenca</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Klijent)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Klijent.Ime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Program)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Program.Naziv)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DatumIzdavanja)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DatumIzdavanja)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ValidnaDo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ValidnaDo)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
-</div>
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.ProgramId)</dt>
+    <dd class="col-sm-9">@Model.Program?.Naziv (@Model.ProgramId)</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.DatumIzdavanja)</dt>
+    <dd class="col-sm-9">@Model.DatumIzdavanja.ToShortDateString()</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.ValidnaDo)</dt>
+    <dd class="col-sm-9">@Model.ValidnaDo.ToShortDateString()</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Obriši</button>
+    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+</form>

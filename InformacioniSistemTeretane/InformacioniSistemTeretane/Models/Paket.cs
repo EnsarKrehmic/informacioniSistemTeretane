@@ -1,5 +1,6 @@
-﻿using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace InformacioniSistemTeretane.Models
 {
@@ -19,6 +20,7 @@ namespace InformacioniSistemTeretane.Models
 
         public int TrajanjeDana { get; set; }
 
-        public ICollection<Uplata> Uplate { get; set; }
+        [ValidateNever]
+        public ICollection<Uplata> Uplate { get; set; } = new List<Uplata>();
     }
 }

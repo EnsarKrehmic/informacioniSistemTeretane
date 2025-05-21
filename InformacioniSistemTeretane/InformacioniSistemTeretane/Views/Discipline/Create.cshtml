@@ -7,12 +7,11 @@
 <h1>@ViewData["Title"]</h1>
 
 <form asp-action="Create" method="post">
-    <div class="mb-3">
-        <label asp-for="TakmicenjeId" class="form-label"></label>
+    <div class="form-group mb-3">
+        <label asp-for="TakmicenjeId"></label>
         <select asp-for="TakmicenjeId" class="form-control" asp-items="ViewBag.TakmicenjeId"></select>
         <span asp-validation-for="TakmicenjeId" class="text-danger"></span>
     </div>
-
     <div class="mb-3">
         <label asp-for="Naziv" class="form-label"></label>
         <input asp-for="Naziv" class="form-control" />
