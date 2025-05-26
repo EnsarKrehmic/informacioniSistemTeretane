@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,171 +11,129 @@ namespace InformacioniSistemTeretane.Controllers
     public class PersonalniTreninziController : Controller
     {
         private readonly ApplicationDbContext _context;
-
         public PersonalniTreninziController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+            => _context = context;
 
         // GET: PersonalniTreninzi
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.PersonalniTreninzi.Include(p => p.Klijent).Include(p => p.Trener);
-            return View(await applicationDbContext.ToListAsync());
+            var q = _context.PersonalniTreninzi
+                .Include(p => p.Trener).ThenInclude(t => t.Zaposlenik)
+                .Include(p => p.Klijent);
+            return View(await q.ToListAsync());
         }
 
         // GET: PersonalniTreninzi/Details/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var personalniTrening = await _context.PersonalniTreninzi
-                .Include(p => p.Klijent)
-                .Include(p => p.Trener)
+            if (id == null) return NotFound();
+            var p = await _context.PersonalniTreninzi
+                .Include(x => x.Trener).ThenInclude(t => t.Zaposlenik)
+                .Include(x => x.Klijent)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (personalniTrening == null)
-            {
-                return NotFound();
-            }
-
-            return View(personalniTrening);
+            if (p == null) return NotFound();
+            return View(p);
         }
 
         // GET: PersonalniTreninzi/Create
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public IActionResult Create()
         {
-            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime");
-            ViewData["TrenerId"] = new SelectList(_context.Treneri, "Id", "Id");
+            ViewBag.TrenerId = new SelectList(
+                _context.Treneri
+                    .Include(t => t.Zaposlenik)
+                    .Select(t => new { t.Id, Name = t.Zaposlenik.Prezime + ", " + t.Zaposlenik.Ime }),
+                "Id", "Name"
+            );
+            ViewBag.KlijentId = new SelectList(_context.Klijenti, "Id", "Prezime");
             return View();
         }
 
         // POST: PersonalniTreninzi/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
-        public async Task<IActionResult> Create([Bind("TrenerId,KlijentId,Datum,Vrijeme,Napredak,Id,Naziv,Opis,VrstaTreninga")] PersonalniTrening personalniTrening)
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Naziv,Opis,TrenerId,KlijentId,Datum,Vrijeme,Napredak")] PersonalniTrening p)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(personalniTrening);
+                _context.Add(p);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", personalniTrening.KlijentId);
-            ViewData["TrenerId"] = new SelectList(_context.Treneri, "Id", "Id", personalniTrening.TrenerId);
-            return View(personalniTrening);
+            ViewBag.TrenerId = new SelectList(
+                _context.Treneri
+                    .Include(t => t.Zaposlenik)
+                    .Select(t => new { t.Id, Name = t.Zaposlenik.Prezime + ", " + t.Zaposlenik.Ime }),
+                "Id", "Name", p.TrenerId
+            );
+            ViewBag.KlijentId = new SelectList(_context.Klijenti, "Id", "Prezime", p.KlijentId);
+            return View(p);
         }
 
         // GET: PersonalniTreninzi/Edit/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var personalniTrening = await _context.PersonalniTreninzi.FindAsync(id);
-            if (personalniTrening == null)
-            {
-                return NotFound();
-            }
-            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", personalniTrening.KlijentId);
-            ViewData["TrenerId"] = new SelectList(_context.Treneri, "Id", "Id", personalniTrening.TrenerId);
-            return View(personalniTrening);
+            if (id == null) return NotFound();
+            var p = await _context.PersonalniTreninzi.FindAsync(id);
+            if (p == null) return NotFound();
+            ViewBag.TrenerId = new SelectList(
+                _context.Treneri
+                    .Include(t => t.Zaposlenik)
+                    .Select(t => new { t.Id, Name = t.Zaposlenik.Prezime + ", " + t.Zaposlenik.Ime }),
+                "Id", "Name", p.TrenerId
+            );
+            ViewBag.KlijentId = new SelectList(_context.Klijenti, "Id", "Prezime", p.KlijentId);
+            return View(p);
         }
 
         // POST: PersonalniTreninzi/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
-        public async Task<IActionResult> Edit(int id, [Bind("TrenerId,KlijentId,Datum,Vrijeme,Napredak,Id,Naziv,Opis,VrstaTreninga")] PersonalniTrening personalniTrening)
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Naziv,Opis,TrenerId,KlijentId,Datum,Vrijeme,Napredak")] PersonalniTrening p)
         {
-            if (id != personalniTrening.Id)
-            {
-                return NotFound();
-            }
-
+            if (id != p.Id) return NotFound();
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(personalniTrening);
+                    _context.Update(p);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PersonalniTreningExists(personalniTrening.Id))
-                    {
+                    if (!_context.PersonalniTreninzi.Any(e => e.Id == p.Id))
                         return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", personalniTrening.KlijentId);
-            ViewData["TrenerId"] = new SelectList(_context.Treneri, "Id", "Id", personalniTrening.TrenerId);
-            return View(personalniTrening);
+            ViewBag.TrenerId = new SelectList(
+                _context.Treneri
+                    .Include(t => t.Zaposlenik)
+                    .Select(t => new { t.Id, Name = t.Zaposlenik.Prezime + ", " + t.Zaposlenik.Ime }),
+                "Id", "Name", p.TrenerId
+            );
+            ViewBag.KlijentId = new SelectList(_context.Klijenti, "Id", "Prezime", p.KlijentId);
+            return View(p);
         }
 
         // GET: PersonalniTreninzi/Delete/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var personalniTrening = await _context.PersonalniTreninzi
-                .Include(p => p.Klijent)
-                .Include(p => p.Trener)
+            if (id == null) return NotFound();
+            var p = await _context.PersonalniTreninzi
+                .Include(x => x.Trener).ThenInclude(t => t.Zaposlenik)
+                .Include(x => x.Klijent)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (personalniTrening == null)
-            {
-                return NotFound();
-            }
-
-            return View(personalniTrening);
+            if (p == null) return NotFound();
+            return View(p);
         }
 
         // POST: PersonalniTreninzi/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var personalniTrening = await _context.PersonalniTreninzi.FindAsync(id);
-            if (personalniTrening != null)
-            {
-                _context.PersonalniTreninzi.Remove(personalniTrening);
-            }
-
+            var p = await _context.PersonalniTreninzi.FindAsync(id);
+            _context.PersonalniTreninzi.Remove(p);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool PersonalniTreningExists(int id)
-        {
-            return _context.PersonalniTreninzi.Any(e => e.Id == id);
         }
     }
 }

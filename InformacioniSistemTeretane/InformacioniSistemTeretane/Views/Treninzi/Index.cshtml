@@ -1,47 +1,28 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.Trening>
+@using InformacioniSistemTeretane.Models
 
-@{
-    ViewData["Title"] = "Index";
-}
+<h1>Treninzi</h1>
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Naziv)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Opis)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.VrstaTreninga)
-            </th>
+            <th>@Html.DisplayNameFor((Trening t) => t.Naziv)</th>
+            <th>@Html.DisplayNameFor((Trening t) => t.Opis)</th>
+            <th>@Html.DisplayNameFor((Trening t) => t.VrstaTreninga)</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Naziv)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Opis)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.VrstaTreninga)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var t in Model)
+        {
+            <tr>
+                <td>@t.Naziv</td>
+                <td>@t.Opis</td>
+                <td>@t.VrstaTreninga</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@t.Id">Detalji</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

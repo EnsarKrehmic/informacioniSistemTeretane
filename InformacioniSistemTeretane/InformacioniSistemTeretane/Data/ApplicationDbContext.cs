@@ -34,7 +34,6 @@ namespace InformacioniSistemTeretane.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Disciplina>().ToTable("Disciplina");
-            modelBuilder.Entity<GrupniTrening>().ToTable("GrupniTrening");
             modelBuilder.Entity<Igraonica>().ToTable("Igraonica");
             modelBuilder.Entity<IgraonicaPonuda>().ToTable("IgraonicaPonuda");
             modelBuilder.Entity<Klijent>().ToTable("Klijent");
@@ -42,9 +41,7 @@ namespace InformacioniSistemTeretane.Data
             modelBuilder.Entity<LicencniProgram>().ToTable("LicencniProgram");
             modelBuilder.Entity<Lokacija>().ToTable("Lokacija");
             modelBuilder.Entity<Paket>().ToTable("Paket");
-            modelBuilder.Entity<PersonalniTrening>().ToTable("PersonalniTrening");
             modelBuilder.Entity<PrijavljeniGrupni>().ToTable("PrijavljeniGrupni");
-            modelBuilder.Entity<ProbniTrening>().ToTable("ProbniTrening");
             modelBuilder.Entity<Sala>().ToTable("Sala");
             modelBuilder.Entity<Sudija>().ToTable("Sudija");
             modelBuilder.Entity<Takmicar>().ToTable("Takmicar");
@@ -55,10 +52,12 @@ namespace InformacioniSistemTeretane.Data
             modelBuilder.Entity<ZakazaniGrupni>().ToTable("ZakazaniGrupni");
             modelBuilder.Entity<Zaposlenik>().ToTable("Zaposlenik");
 
-            // Konfiguracija naslijeđivanja treninga
-            modelBuilder.Entity<GrupniTrening>().HasBaseType<Trening>();
-            modelBuilder.Entity<PersonalniTrening>().HasBaseType<Trening>();
-            modelBuilder.Entity<ProbniTrening>().HasBaseType<Trening>();
+            // TPH mapiranje za sve treninge u jednoj tablici "Treninzi"
+            modelBuilder.Entity<Trening>()
+                .HasDiscriminator<string>("VrstaTreninga")
+                .HasValue<GrupniTrening>("Grupni")
+                .HasValue<PersonalniTrening>("Personalni")
+                .HasValue<ProbniTrening>("Probni");
 
             modelBuilder.Entity<Uplata>()
                 .Property(u => u.Iznos)

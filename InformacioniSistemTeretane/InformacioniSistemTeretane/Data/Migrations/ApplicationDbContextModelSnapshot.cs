@@ -517,7 +517,9 @@ namespace InformacioniSistemTeretane.Data.Migrations
 
                     b.ToTable("Trening", (string)null);
 
-                    b.UseTptMappingStrategy();
+                    b.HasDiscriminator<string>("VrstaTreninga").HasValue("Trening");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("InformacioniSistemTeretane.Models.Uplata", b =>
@@ -701,12 +703,10 @@ namespace InformacioniSistemTeretane.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -743,12 +743,10 @@ namespace InformacioniSistemTeretane.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -781,7 +779,19 @@ namespace InformacioniSistemTeretane.Data.Migrations
 
                     b.HasIndex("TrenerId");
 
-                    b.ToTable("GrupniTrening", (string)null);
+                    b.ToTable("Trening", t =>
+                        {
+                            t.Property("Datum")
+                                .HasColumnName("GrupniTrening_Datum");
+
+                            t.Property("TrenerId")
+                                .HasColumnName("GrupniTrening_TrenerId");
+
+                            t.Property("Vrijeme")
+                                .HasColumnName("GrupniTrening_Vrijeme");
+                        });
+
+                    b.HasDiscriminator().HasValue("Grupni");
                 });
 
             modelBuilder.Entity("InformacioniSistemTeretane.Models.PersonalniTrening", b =>
@@ -809,7 +819,19 @@ namespace InformacioniSistemTeretane.Data.Migrations
 
                     b.HasIndex("TrenerId");
 
-                    b.ToTable("PersonalniTrening", (string)null);
+                    b.ToTable("Trening", t =>
+                        {
+                            t.Property("Datum")
+                                .HasColumnName("PersonalniTrening_Datum");
+
+                            t.Property("KlijentId")
+                                .HasColumnName("PersonalniTrening_KlijentId");
+
+                            t.Property("TrenerId")
+                                .HasColumnName("PersonalniTrening_TrenerId");
+                        });
+
+                    b.HasDiscriminator().HasValue("Personalni");
                 });
 
             modelBuilder.Entity("InformacioniSistemTeretane.Models.ProbniTrening", b =>
@@ -832,7 +854,7 @@ namespace InformacioniSistemTeretane.Data.Migrations
 
                     b.HasIndex("TrenerId");
 
-                    b.ToTable("ProbniTrening", (string)null);
+                    b.HasDiscriminator().HasValue("Probni");
                 });
 
             modelBuilder.Entity("InformacioniSistemTeretane.Models.Disciplina", b =>
@@ -1090,12 +1112,6 @@ namespace InformacioniSistemTeretane.Data.Migrations
 
             modelBuilder.Entity("InformacioniSistemTeretane.Models.GrupniTrening", b =>
                 {
-                    b.HasOne("InformacioniSistemTeretane.Models.Trening", null)
-                        .WithOne()
-                        .HasForeignKey("InformacioniSistemTeretane.Models.GrupniTrening", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("InformacioniSistemTeretane.Models.Sala", "Sala")
                         .WithMany()
                         .HasForeignKey("SalaId")
@@ -1115,12 +1131,6 @@ namespace InformacioniSistemTeretane.Data.Migrations
 
             modelBuilder.Entity("InformacioniSistemTeretane.Models.PersonalniTrening", b =>
                 {
-                    b.HasOne("InformacioniSistemTeretane.Models.Trening", null)
-                        .WithOne()
-                        .HasForeignKey("InformacioniSistemTeretane.Models.PersonalniTrening", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("InformacioniSistemTeretane.Models.Klijent", "Klijent")
                         .WithMany("PersonalniTreninzi")
                         .HasForeignKey("KlijentId")
@@ -1140,12 +1150,6 @@ namespace InformacioniSistemTeretane.Data.Migrations
 
             modelBuilder.Entity("InformacioniSistemTeretane.Models.ProbniTrening", b =>
                 {
-                    b.HasOne("InformacioniSistemTeretane.Models.Trening", null)
-                        .WithOne()
-                        .HasForeignKey("InformacioniSistemTeretane.Models.ProbniTrening", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("InformacioniSistemTeretane.Models.Klijent", "Klijent")
                         .WithMany("ProbniTreninzi")
                         .HasForeignKey("KlijentId")

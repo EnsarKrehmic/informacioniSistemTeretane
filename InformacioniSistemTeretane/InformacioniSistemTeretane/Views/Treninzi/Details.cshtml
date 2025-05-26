@@ -1,36 +1,32 @@
 ﻿@model InformacioniSistemTeretane.Models.Trening
 
-@{
-    ViewData["Title"] = "Details";
-}
+<h1>Detalji treninga</h1>
 
-<h1>Details</h1>
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Naziv)</dt>
+    <dd class="col-sm-9">@Model.Naziv</dd>
 
-<div>
-    <h4>Trening</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Naziv)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Naziv)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Opis)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Opis)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.VrstaTreninga)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.VrstaTreninga)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Opis)</dt>
+    <dd class="col-sm-9">@Model.Opis</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.VrstaTreninga)</dt>
+    <dd class="col-sm-9">@Model.VrstaTreninga</dd>
+</dl>
+
+<p>
+    @* Ako želimo, ovdje možemo dodati link na odgovarajući detaljni Edit za tu vrstu: *@
+    @if (Model.VrstaTreninga == "Grupni")
+    {
+        <a asp-controller="GrupniTreninzi" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi grupni</a>
+    }
+    else if (Model.VrstaTreninga == "Personalni")
+    {
+        <a asp-controller="PersonalniTreninzi" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi personalni</a>
+    }
+    else if (Model.VrstaTreninga == "Probni")
+    {
+        <a asp-controller="ProbniTreninzi" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi probni</a>
+    }
+
+    <a asp-controller="Treninzi" asp-action="Index" class="btn btn-secondary">Nazad</a>
+</p>

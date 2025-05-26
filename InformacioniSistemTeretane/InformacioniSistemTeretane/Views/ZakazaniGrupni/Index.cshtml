@@ -1,47 +1,31 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.ZakazaniGrupni>
+@using InformacioniSistemTeretane.Models
 
-@{
-    ViewData["Title"] = "Index";
-}
+<h1>Rezervacije grupnih treninga</h1>
+<p><a asp-action="Create" class="btn btn-primary">Nova rezervacija</a></p>
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.GrupniTrening)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Klijent)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DatumPrijave)
-            </th>
+            <th>@Html.DisplayNameFor((ZakazaniGrupni m) => m.GrupniTrening.Naziv)</th>
+            <th>@Html.DisplayNameFor((ZakazaniGrupni m) => m.Klijent.Prezime)</th>
+            <th>@Html.DisplayNameFor((ZakazaniGrupni m) => m.DatumPrijave)</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.GrupniTrening.Naziv)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Klijent.Ime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DatumPrijave)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.GrupniTrening?.Naziv</td>
+                <td>@item.Klijent?.Prezime, @item.Klijent?.Ime</td>
+                <td>@item.DatumPrijave.ToShortDateString()</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

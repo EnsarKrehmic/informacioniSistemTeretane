@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Controllers/PrijavljeniGrupniController.cs
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -13,171 +12,109 @@ namespace InformacioniSistemTeretane.Controllers
     public class PrijavljeniGrupniController : Controller
     {
         private readonly ApplicationDbContext _context;
-
         public PrijavljeniGrupniController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+            => _context = context;
 
         // GET: PrijavljeniGrupni
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.PrijavljeniGrupni.Include(p => p.GrupniTrening).Include(p => p.Klijent);
-            return View(await applicationDbContext.ToListAsync());
+            var q = _context.PrijavljeniGrupni
+                .Include(p => p.GrupniTrening)
+                .Include(p => p.Klijent);
+            return View(await q.ToListAsync());
         }
 
         // GET: PrijavljeniGrupni/Details/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var prijavljeniGrupni = await _context.PrijavljeniGrupni
-                .Include(p => p.GrupniTrening)
-                .Include(p => p.Klijent)
+            if (id == null) return NotFound();
+            var p = await _context.PrijavljeniGrupni
+                .Include(x => x.GrupniTrening)
+                .Include(x => x.Klijent)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (prijavljeniGrupni == null)
-            {
-                return NotFound();
-            }
-
-            return View(prijavljeniGrupni);
+            if (p == null) return NotFound();
+            return View(p);
         }
 
         // GET: PrijavljeniGrupni/Create
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public IActionResult Create()
         {
-            ViewData["GrupniTreningId"] = new SelectList(_context.GrupniTreninzi, "Id", "Naziv");
-            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime");
+            ViewBag.GrupniTreningId = new SelectList(_context.GrupniTreninzi, "Id", "Naziv");
+            ViewBag.KlijentId = new SelectList(_context.Klijenti, "Id", "Prezime");
             return View();
         }
 
         // POST: PrijavljeniGrupni/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
-        public async Task<IActionResult> Create([Bind("Id,GrupniTreningId,KlijentId,Prisutan,VrijemeDolaska")] PrijavljeniGrupni prijavljeniGrupni)
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("GrupniTreningId,KlijentId,Prisutan,VrijemeDolaska")] PrijavljeniGrupni p)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(prijavljeniGrupni);
+                _context.Add(p);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GrupniTreningId"] = new SelectList(_context.GrupniTreninzi, "Id", "Naziv", prijavljeniGrupni.GrupniTreningId);
-            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", prijavljeniGrupni.KlijentId);
-            return View(prijavljeniGrupni);
+            ViewBag.GrupniTreningId = new SelectList(_context.GrupniTreninzi, "Id", "Naziv", p.GrupniTreningId);
+            ViewBag.KlijentId = new SelectList(_context.Klijenti, "Id", "Prezime", p.KlijentId);
+            return View(p);
         }
 
         // GET: PrijavljeniGrupni/Edit/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var prijavljeniGrupni = await _context.PrijavljeniGrupni.FindAsync(id);
-            if (prijavljeniGrupni == null)
-            {
-                return NotFound();
-            }
-            ViewData["GrupniTreningId"] = new SelectList(_context.GrupniTreninzi, "Id", "Naziv", prijavljeniGrupni.GrupniTreningId);
-            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", prijavljeniGrupni.KlijentId);
-            return View(prijavljeniGrupni);
+            if (id == null) return NotFound();
+            var p = await _context.PrijavljeniGrupni.FindAsync(id);
+            if (p == null) return NotFound();
+            ViewBag.GrupniTreningId = new SelectList(_context.GrupniTreninzi, "Id", "Naziv", p.GrupniTreningId);
+            ViewBag.KlijentId = new SelectList(_context.Klijenti, "Id", "Prezime", p.KlijentId);
+            return View(p);
         }
 
         // POST: PrijavljeniGrupni/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,GrupniTreningId,KlijentId,Prisutan,VrijemeDolaska")] PrijavljeniGrupni prijavljeniGrupni)
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,GrupniTreningId,KlijentId,Prisutan,VrijemeDolaska")] PrijavljeniGrupni p)
         {
-            if (id != prijavljeniGrupni.Id)
-            {
-                return NotFound();
-            }
-
+            if (id != p.Id) return NotFound();
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(prijavljeniGrupni);
+                    _context.Update(p);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PrijavljeniGrupniExists(prijavljeniGrupni.Id))
-                    {
+                    if (!_context.PrijavljeniGrupni.Any(e => e.Id == p.Id))
                         return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GrupniTreningId"] = new SelectList(_context.GrupniTreninzi, "Id", "Naziv", prijavljeniGrupni.GrupniTreningId);
-            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Ime", prijavljeniGrupni.KlijentId);
-            return View(prijavljeniGrupni);
+            ViewBag.GrupniTreningId = new SelectList(_context.GrupniTreninzi, "Id", "Naziv", p.GrupniTreningId);
+            ViewBag.KlijentId = new SelectList(_context.Klijenti, "Id", "Prezime", p.KlijentId);
+            return View(p);
         }
 
         // GET: PrijavljeniGrupni/Delete/5
-        [HttpGet]
-        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var prijavljeniGrupni = await _context.PrijavljeniGrupni
-                .Include(p => p.GrupniTrening)
-                .Include(p => p.Klijent)
+            if (id == null) return NotFound();
+            var p = await _context.PrijavljeniGrupni
+                .Include(x => x.GrupniTrening)
+                .Include(x => x.Klijent)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (prijavljeniGrupni == null)
-            {
-                return NotFound();
-            }
-
-            return View(prijavljeniGrupni);
+            if (p == null) return NotFound();
+            return View(p);
         }
 
         // POST: PrijavljeniGrupni/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]")]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var prijavljeniGrupni = await _context.PrijavljeniGrupni.FindAsync(id);
-            if (prijavljeniGrupni != null)
-            {
-                _context.PrijavljeniGrupni.Remove(prijavljeniGrupni);
-            }
-
+            var p = await _context.PrijavljeniGrupni.FindAsync(id);
+            _context.PrijavljeniGrupni.Remove(p);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool PrijavljeniGrupniExists(int id)
-        {
-            return _context.PrijavljeniGrupni.Any(e => e.Id == id);
         }
     }
 }

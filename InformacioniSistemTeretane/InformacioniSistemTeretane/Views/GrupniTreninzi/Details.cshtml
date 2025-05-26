@@ -1,66 +1,66 @@
 ﻿@model InformacioniSistemTeretane.Models.GrupniTrening
 
-@{
-    ViewData["Title"] = "Details";
-}
+<h1>Detalji grupnog treninga</h1>
 
-<h1>Details</h1>
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Naziv)</dt>
+    <dd class="col-sm-9">@Model.Naziv</dd>
 
-<div>
-    <h4>GrupniTrening</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Sala)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Sala.Naziv)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Trener)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Trener.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Datum)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Datum)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Vrijeme)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Vrijeme)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MaxUcesnika)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MaxUcesnika)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Naziv)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Naziv)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Opis)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Opis)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.VrstaTreninga)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.VrstaTreninga)
-        </dd>
-    </dl>
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Opis)</dt>
+    <dd class="col-sm-9">@Model.Opis</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Sala.Naziv)</dt>
+    <dd class="col-sm-9">@Model.Sala?.Naziv</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Trener.Zaposlenik.Prezime)</dt>
+    <dd class="col-sm-9">@Model.Trener?.Zaposlenik?.Prezime, @Model.Trener?.Zaposlenik?.Ime</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Datum)</dt>
+    <dd class="col-sm-9">@Model.Datum.ToShortDateString()</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Vrijeme)</dt>
+    <dd class="col-sm-9">@Model.Vrijeme.ToString(@"hh\:mm")</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.MaxUcesnika)</dt>
+    <dd class="col-sm-9">@Model.MaxUcesnika</dd>
+</dl>
+
+<div class="mt-4">
+    <h4>Rezervacije</h4>
+    @if (Model.Rezervacije != null && Model.Rezervacije.Any())
+    {
+        <ul class="list-group">
+            @foreach (var r in Model.Rezervacije)
+            {
+                <li class="list-group-item">@r.KlijentId (@r.DatumPrijave.ToShortDateString())</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>Nema rezervacija.</p>
+    }
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="mt-4">
+    <h4>Prisustva</h4>
+    @if (Model.Prisustva != null && Model.Prisustva.Any())
+    {
+        <ul class="list-group">
+            @foreach (var p in Model.Prisustva)
+            {
+                <li class="list-group-item">@p.KlijentId (@p.VrijemeDolaska.ToShortDateString())</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>Nema evidentiranih prisustava.</p>
+    }
 </div>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
+    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+</p>

@@ -1,44 +1,34 @@
 ﻿@model InformacioniSistemTeretane.Models.ZakazaniGrupni
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Uredi rezervaciju";
 }
 
-<h1>Edit</h1>
+<h1>@ViewData["Title"]</h1>
 
-<h4>ZakazaniGrupni</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="GrupniTreningId" class="control-label"></label>
-                <select asp-for="GrupniTreningId" class="form-control" asp-items="ViewBag.GrupniTreningId"></select>
-                <span asp-validation-for="GrupniTreningId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="KlijentId" class="control-label"></label>
-                <select asp-for="KlijentId" class="form-control" asp-items="ViewBag.KlijentId"></select>
-                <span asp-validation-for="KlijentId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DatumPrijave" class="control-label"></label>
-                <input asp-for="DatumPrijave" class="form-control" />
-                <span asp-validation-for="DatumPrijave" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group mb-3">
+        <label asp-for="GrupniTreningId"></label>
+        <select asp-for="GrupniTreningId" class="form-control" asp-items="ViewBag.GrupniTreningId"></select>
+        <span asp-validation-for="GrupniTreningId" class="text-danger"></span>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="form-group mb-3">
+        <label asp-for="KlijentId"></label>
+        <select asp-for="KlijentId" class="form-control" asp-items="ViewBag.KlijentId"></select>
+        <span asp-validation-for="KlijentId" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <label asp-for="DatumPrijave"></label>
+        <input asp-for="DatumPrijave" type="date" class="form-control" />
+        <span asp-validation-for="DatumPrijave" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Spremi</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
+</form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
