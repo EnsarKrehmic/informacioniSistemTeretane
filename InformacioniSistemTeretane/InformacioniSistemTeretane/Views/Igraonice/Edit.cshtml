@@ -1,28 +1,66 @@
 ﻿@model InformacioniSistemTeretane.Models.Igraonica
 
-<h1>Uredi igraonicu</h1>
-<form asp-action="Edit">
-    <input type="hidden" asp-for="Id" />
-    <div class="form-group">
-        <label asp-for="Naziv"></label>
-        <input asp-for="Naziv" class="form-control" />
-        <span asp-validation-for="Naziv" class="text-danger"></span>
+@{
+    ViewData["Title"] = "Uredi igraonicu";
+}
+
+<div class="card shadow border-0">
+    <div class="card-header bg-warning text-dark py-3">
+        <h2 class="mb-0">
+            <i class="bi bi-pencil me-2"></i>@ViewData["Title"]
+        </h2>
     </div>
-    <div class="form-group">
-        <label asp-for="Kapacitet"></label>
-        <input asp-for="Kapacitet" type="number" class="form-control" />
-        <span asp-validation-for="Kapacitet" class="text-danger"></span>
+    <div class="card-body">
+        @if (TempData["Greska"] != null)
+        {
+            <div class="alert alert-danger mb-4">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Greska"]
+            </div>
+        }
+
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Naziv" class="form-label fw-bold"></label>
+                        <input asp-for="Naziv" class="form-control" />
+                        <span asp-validation-for="Naziv" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Kapacitet" class="form-label fw-bold"></label>
+                        <input asp-for="Kapacitet" type="number" class="form-control"
+                               min="1" max="100" />
+                        <span asp-validation-for="Kapacitet" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="LokacijaId" class="form-label fw-bold">Lokacija</label>
+                        <select asp-for="LokacijaId" class="form-select"
+                                asp-items="ViewBag.LokacijaId">
+                            <option value="">-- Odaberite lokaciju --</option>
+                        </select>
+                        <span asp-validation-for="LokacijaId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit" class="btn btn-warning">
+                    <i class="bi bi-save me-2"></i>Ažuriraj
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2">
+                    <i class="bi bi-x-circle me-2"></i>Odustani
+                </a>
+            </div>
+        </form>
     </div>
-    <div class="form-group">
-        <label asp-for="LokacijaId"></label>
-        <select asp-for="LokacijaId" class="form-control" asp-items="ViewBag.LokacijaId"></select>
-        <span asp-validation-for="LokacijaId" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Spremi</button>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
-</form>
+</div>
+
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

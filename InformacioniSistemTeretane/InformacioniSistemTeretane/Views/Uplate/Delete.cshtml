@@ -1,27 +1,31 @@
 ﻿@model InformacioniSistemTeretane.Models.Uplata
 
-<h1>Obriši uplatu</h1>
+@{
+    ViewData["Title"] = "Obriši uplatu";
+}
+
+<h1>@ViewData["Title"]</h1>
 <h3>Jeste li sigurni?</h3>
 
 <dl class="row">
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.KlijentId)</dt>
-    <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime (@Model.KlijentId)</dd>
+    <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
 
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.PaketId)</dt>
-    <dd class="col-sm-9">@Model.Paket?.Naziv (@Model.PaketId)</dd>
+    <dd class="col-sm-9">@Model.Paket?.Naziv</dd>
 
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.DatumUplate)</dt>
     <dd class="col-sm-9">@Model.DatumUplate.ToShortDateString()</dd>
 
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.NacinUplate)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.NacinUplate)</dd>
+    <dd class="col-sm-9">@Model.NacinUplate</dd>
 
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Iznos)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Iznos)</dd>
+    <dd class="col-sm-9">@Model.Iznos.ToString("C")</dd>
 </dl>
 
 <form asp-action="Delete" method="post">
     <input type="hidden" asp-for="Id" />
     <button type="submit" class="btn btn-danger">Obriši</button>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
 </form>

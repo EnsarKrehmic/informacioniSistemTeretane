@@ -1,23 +1,56 @@
 ﻿@model InformacioniSistemTeretane.Models.Licenca
 
-<h1>Detalji licence</h1>
+@{
+    ViewData["Title"] = "Detalji licence";
+    var status = Model.ValidnaDo < DateTime.Now ? "Istekla" : "Aktivna";
+    var badgeClass = status == "Aktivna" ? "badge bg-success" : "badge bg-secondary";
+}
 
-<dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.KlijentId)</dt>
-    <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime (@Model.KlijentId)</dd>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">Detalji licence</h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad
+        </a>
+    </div>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.ProgramId)</dt>
-    <dd class="col-sm-9">@Model.Program?.Naziv (@Model.ProgramId)</dd>
+    <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">Licenca za: @Model.Klijent?.Prezime, @Model.Klijent?.Ime</h5>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-4">Klijent</dt>
+                <dd class="col-sm-8">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.DatumIzdavanja)</dt>
-    <dd class="col-sm-9">@Model.DatumIzdavanja.ToShortDateString()</dd>
+                <dt class="col-sm-4">Program</dt>
+                <dd class="col-sm-8">@Model.Program?.Naziv</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.ValidnaDo)</dt>
-    <dd class="col-sm-9">@Model.ValidnaDo.ToShortDateString()</dd>
-</dl>
+                <dt class="col-sm-4">Datum izdavanja</dt>
+                <dd class="col-sm-8">@Model.DatumIzdavanja.ToShortDateString()</dd>
 
-<p>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
-</p>
+                <dt class="col-sm-4">Vrijedi do</dt>
+                <dd class="col-sm-8">@Model.ValidnaDo.ToShortDateString()</dd>
+
+                <dt class="col-sm-4">Status</dt>
+                <dd class="col-sm-8"><span class="@badgeClass">@status</span></dd>
+            </dl>
+        </div>
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-end">
+                @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">
+                        <i class="fas fa-edit"></i> Uredi
+                    </a>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Obriši
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

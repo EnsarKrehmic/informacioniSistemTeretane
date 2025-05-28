@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.Sudija>
-@using InformacioniSistemTeretane.Models
 
 <h1>Sudije</h1>
 <p><a asp-action="Create" class="btn btn-primary">Novi sudija</a></p>
@@ -8,9 +7,7 @@
     <thead>
         <tr>
             <th>@Html.DisplayNameFor((Sudija m) => m.ZaposlenikId)</th>
-            <th>Zaposlenik</th>
             <th>@Html.DisplayNameFor((Sudija m) => m.DisciplinaId)</th>
-            <th>Disciplina</th>
             <th></th>
         </tr>
     </thead>
@@ -18,9 +15,7 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.ZaposlenikId</td>
                 <td>@item.Zaposlenik?.Prezime, @item.Zaposlenik?.Ime</td>
-                <td>@item.DisciplinaId</td>
                 <td>@item.Disciplina?.Naziv</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |

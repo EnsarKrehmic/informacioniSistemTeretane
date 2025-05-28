@@ -11,6 +11,7 @@ namespace InformacioniSistemTeretane.Models
         public int Id { get; set; }
 
         [Required]
+        [Display(Name = "Klijent")]
         public int KlijentId { get; set; }
 
         [ForeignKey(nameof(KlijentId))]
@@ -18,6 +19,7 @@ namespace InformacioniSistemTeretane.Models
         public Klijent Klijent { get; set; }
 
         [Required]
+        [Display(Name = "Program")]
         public int ProgramId { get; set; }
 
         [ForeignKey(nameof(ProgramId))]
@@ -25,9 +27,11 @@ namespace InformacioniSistemTeretane.Models
         public LicencniProgram Program { get; set; }
 
         [DataType(DataType.Date)]
+        [Display(Name = "Datum izdavanja")]
         public DateTime DatumIzdavanja { get; set; }
 
         [DataType(DataType.Date)]
+        [Display(Name = "Validna do")]
         public DateTime ValidnaDo { get; set; }
     }
 }

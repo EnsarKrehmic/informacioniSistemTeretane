@@ -1,24 +1,72 @@
 ﻿@model InformacioniSistemTeretane.Models.Licenca
 
-<h1>Obriši licencu</h1>
-<h3>Jeste li sigurni?</h3>
+@{
+    ViewData["Title"] = "Obriši licencu";
+    var status = Model.ValidnaDo < DateTime.Now ? "Istekla" : "Aktivna";
+    var badgeClass = status == "Aktivna" ? "badge bg-success" : "badge bg-secondary";
+}
 
-<dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.KlijentId)</dt>
-    <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime (@Model.KlijentId)</dd>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad
+        </a>
+    </div>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.ProgramId)</dt>
-    <dd class="col-sm-9">@Model.Program?.Naziv (@Model.ProgramId)</dd>
+    <!-- Prijak poruka -->
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.DatumIzdavanja)</dt>
-    <dd class="col-sm-9">@Model.DatumIzdavanja.ToShortDateString()</dd>
+    <div class="card shadow-sm border-danger">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">Potvrda brisanja</h5>
+        </div>
+        <div class="card-body">
+            <h3 class="text-danger">Jeste li sigurni da želite obrisati ovu licencu?</h3>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.ValidnaDo)</dt>
-    <dd class="col-sm-9">@Model.ValidnaDo.ToShortDateString()</dd>
-</dl>
+            <div class="alert alert-warning">
+                <h5 class="alert-heading">Upozorenje!</h5>
+                @if (status == "Aktivna")
+                {
+                    <p class="mb-0">Brisanjem aktivne licence klijent će izgubiti pristup programu.</p>
+                }
+                else
+                {
+                    <p class="mb-0">Ova licenca je istekla i nema aktivnih usluga.</p>
+                }
+            </div>
 
-<form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Obriši</button>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
-</form>
+            <dl class="row mt-4">
+                <dt class="col-sm-4">Klijent</dt>
+                <dd class="col-sm-8">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
+
+                <dt class="col-sm-4">Program</dt>
+                <dd class="col-sm-8">@Model.Program?.Naziv</dd>
+
+                <dt class="col-sm-4">Datum izdavanja</dt>
+                <dd class="col-sm-8">@Model.DatumIzdavanja.ToShortDateString()</dd>
+
+                <dt class="col-sm-4">Vrijedi do</dt>
+                <dd class="col-sm-8">@Model.ValidnaDo.ToShortDateString()</dd>
+
+                <dt class="col-sm-4">Status</dt>
+                <dd class="col-sm-8"><span class="@badgeClass">@status</span></dd>
+            </dl>
+
+            <form asp-action="Delete" method="post" class="mt-4">
+                <input type="hidden" asp-for="Id" />
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Potvrdi brisanje
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,8 +1,6 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.Takmicenje>
-@using InformacioniSistemTeretane.Models
 
 <h1>Lista takmičenja</h1>
-
 <p>
     <a asp-action="Create" class="btn btn-primary">Novi unos</a>
 </p>
@@ -10,18 +8,10 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor((Takmicenje m) => m.Naziv)
-            </th>
-            <th>
-                @Html.DisplayNameFor((Takmicenje m) => m.Datum)
-            </th>
-            <th>
-                Lokacija
-            </th>
-            <th>
-                @Html.DisplayNameFor((Takmicenje m) => m.Kotizacija)
-            </th>
+            <th>@Html.DisplayNameFor(m => m.First().Naziv)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Datum)</th>
+            <th>@Html.DisplayNameFor(m => m.First().LokacijaId)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Kotizacija)</th>
             <th></th>
         </tr>
     </thead>
@@ -29,18 +19,10 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Naziv)
-                </td>
-                <td>
-                    @item.Datum.ToShortDateString()
-                </td>
-                <td>
-                    @item.Lokacija?.Naziv
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Kotizacija)
-                </td>
+                <td>@item.Naziv</td>
+                <td>@item.Datum.ToShortDateString()</td>
+                <td>@item.Lokacija?.Naziv</td>
+                <td>@item.Kotizacija.ToString("C")</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
                     <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |

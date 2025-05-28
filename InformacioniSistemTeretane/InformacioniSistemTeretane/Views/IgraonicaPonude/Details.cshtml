@@ -1,25 +1,58 @@
 ﻿@model InformacioniSistemTeretane.Models.IgraonicaPonuda
 
-<h1>Detalji ponude igraonice</h1>
-<div class="row">
-    <div class="col-md-6">
-        <dl class="row">
-            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.IgraonicaId)</dt>
-            <dd class="col-sm-8">@Model.Igraonica?.Naziv (@Model.IgraonicaId)</dd>
+@{
+    ViewData["Title"] = "Detalji ponude igraonice";
+}
 
-            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.OpisUsluge)</dt>
-            <dd class="col-sm-8">@Html.DisplayFor(m => m.OpisUsluge)</dd>
+<div class="card shadow border-0">
+    <div class="card-header bg-primary text-white py-3">
+        <h2 class="mb-0">
+            <i class="bi bi-info-circle me-2"></i>@ViewData["Title"]
+        </h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Igraonica</dt>
+                    <dd class="col-sm-8">@Model.Igraonica?.Naziv</dd>
 
-            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Cijena)</dt>
-            <dd class="col-sm-8">@Html.DisplayFor(m => m.Cijena)</dd>
+                    <dt class="col-sm-4">Usluga</dt>
+                    <dd class="col-sm-8">@Model.OpisUsluge</dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Cijena</dt>
+                    <dd class="col-sm-8">@Model.Cijena.ToString("C")</dd>
 
-            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Trajanje)</dt>
-            <dd class="col-sm-8">@Model.Trajanje.ToString(@"hh\:mm")</dd>
-        </dl>
+                    <dt class="col-sm-4">Trajanje</dt>
+                    <dd class="col-sm-8">@Model.Trajanje.ToString(@"hh\:mm")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer bg-light">
+        <div class="d-flex justify-content-between">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Nazad na listu
+            </a>
+            <div>
+                @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id"
+                       class="btn btn-warning me-2">
+                        <i class="bi bi-pencil me-2"></i>Uredi
+                    </a>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Delete" asp-route-id="@Model.Id"
+                       class="btn btn-danger">
+                        <i class="bi bi-trash me-2"></i>Obriši
+                    </a>
+                }
+            </div>
+        </div>
     </div>
 </div>
-<p>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
-    <a asp-action="Index" class="btn btn-secondary">Nazad na listu</a>
-</p>

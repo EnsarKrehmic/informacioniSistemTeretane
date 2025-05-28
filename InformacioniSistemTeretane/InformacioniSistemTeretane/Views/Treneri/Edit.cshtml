@@ -8,17 +8,17 @@
 
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="Id" />
+
     <div class="form-group mb-3">
         <label asp-for="ZaposlenikId"></label>
         <select asp-for="ZaposlenikId" class="form-control" asp-items="ViewBag.ZaposlenikId"></select>
         <span asp-validation-for="ZaposlenikId" class="text-danger"></span>
     </div>
+
     <button type="submit" class="btn btn-primary">Spremi</button>
     <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

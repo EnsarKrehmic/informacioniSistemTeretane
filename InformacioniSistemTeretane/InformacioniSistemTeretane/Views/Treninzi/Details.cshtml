@@ -1,6 +1,10 @@
 ﻿@model InformacioniSistemTeretane.Models.Trening
 
-<h1>Detalji treninga</h1>
+@{
+    ViewData["Title"] = "Detalji treninga";
+}
+
+<h1>@ViewData["Title"]</h1>
 
 <dl class="row">
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Naziv)</dt>
@@ -13,8 +17,8 @@
     <dd class="col-sm-9">@Model.VrstaTreninga</dd>
 </dl>
 
-<p>
-    @* Ako želimo, ovdje možemo dodati link na odgovarajući detaljni Edit za tu vrstu: *@
+<p class="mt-3">
+    @* Linkovi na specifične edit strane *@
     @if (Model.VrstaTreninga == "Grupni")
     {
         <a asp-controller="GrupniTreninzi" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi grupni</a>
@@ -28,5 +32,5 @@
         <a asp-controller="ProbniTreninzi" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi probni</a>
     }
 
-    <a asp-controller="Treninzi" asp-action="Index" class="btn btn-secondary">Nazad</a>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
 </p>

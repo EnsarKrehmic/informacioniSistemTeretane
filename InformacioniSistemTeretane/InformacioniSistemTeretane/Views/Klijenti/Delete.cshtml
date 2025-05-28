@@ -1,24 +1,61 @@
 ﻿@model InformacioniSistemTeretane.Models.Klijent
 
-<h1>Obriši klijenta</h1>
-<h3>Jeste li sigurni?</h3>
+@{
+    ViewData["Title"] = "Obriši klijenta";
+}
 
-<dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Ime)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Ime)</dd>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad
+        </a>
+    </div>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Prezime)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Prezime)</dd>
+    <!-- Prikaz poruka -->
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.DatumRodjenja)</dt>
-    <dd class="col-sm-9">@Model.DatumRodjenja.ToShortDateString()</dd>
+    <div class="card shadow-sm border-danger">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">Potvrda brisanja</h5>
+        </div>
+        <div class="card-body">
+            <h3 class="text-danger">Jeste li sigurni da želite obrisati ovog klijenta?</h3>
+            <p class="text-muted">Ova akcija je nepovratna i trajno će obrisati sve podatke vezane za klijenta.</p>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.UserId)</dt>
-    <dd class="col-sm-9">@Model.User?.UserName (@Model.UserId)</dd>
-</dl>
+            <div class="alert alert-warning">
+                <h5 class="alert-heading">Upozorenje!</h5>
+                <p class="mb-0">Brisanjem klijenta ćete automatski obrisati sve njegove članarine i evidencije prisustva.</p>
+            </div>
 
-<form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Obriši</button>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
-</form>
+            <dl class="row mt-4">
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Ime)</dt>
+                <dd class="col-sm-8">@Model.Ime</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Prezime)</dt>
+                <dd class="col-sm-8">@Model.Prezime</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.DatumRodjenja)</dt>
+                <dd class="col-sm-8">@Model.DatumRodjenja.ToShortDateString()</dd>
+
+                <dt class="col-sm-4">Korisnički račun</dt>
+                <dd class="col-sm-8">@Model.User?.UserName</dd>
+            </dl>
+
+            <form asp-action="Delete" method="post" class="mt-4">
+                <input type="hidden" asp-for="Id" />
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Potvrdi brisanje
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

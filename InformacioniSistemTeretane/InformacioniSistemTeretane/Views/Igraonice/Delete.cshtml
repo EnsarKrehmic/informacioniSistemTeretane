@@ -1,19 +1,80 @@
 ﻿@model InformacioniSistemTeretane.Models.Igraonica
 
-<h1>Obriši igraonicu</h1>
-<h3>Jeste li sigurni?</h3>
-<div>
-    <dl class="row">
-        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Naziv)</dt>
-        <dd class="col-sm-8">@Html.DisplayFor(m => m.Naziv)</dd>
-        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Kapacitet)</dt>
-        <dd class="col-sm-8">@Html.DisplayFor(m => m.Kapacitet)</dd>
-        <dt class="col-sm-4">Lokacija</dt>
-        <dd class="col-sm-8">@Model.Lokacija?.Naziv</dd>
-    </dl>
+@{
+    ViewData["Title"] = "Obriši igraonicu";
+}
+
+<div class="card shadow border-0">
+    <div class="card-header bg-danger text-white py-3">
+        <h2 class="mb-0">
+            <i class="bi bi-exclamation-triangle me-2"></i>@ViewData["Title"]
+        </h2>
+    </div>
+    <div class="card-body">
+        @if (TempData["Greska"] != null)
+        {
+            <div class="alert alert-danger mb-4">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Greska"]
+            </div>
+        }
+
+        <div class="alert alert-warning">
+            <h5 class="alert-heading">Upozorenje!</h5>
+            <p class="mb-0">
+                Jeste li sigurni da želite obrisati ovu igraonicu? Ova radnja je nepovratna.
+            </p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Naziv</dt>
+                    <dd class="col-sm-8">@Model.Naziv</dd>
+
+                    <dt class="col-sm-4">Lokacija</dt>
+                    <dd class="col-sm-8">@Model.Lokacija?.Naziv</dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Kapacitet</dt>
+                    <dd class="col-sm-8">@Model.Kapacitet</dd>
+
+                    <dt class="col-sm-4">Broj ponuda</dt>
+                    <dd class="col-sm-8">@(Model.Ponude?.Count ?? 0)</dd>
+                </dl>
+            </div>
+        </div>
+
+        @if (Model.Ponude?.Any() == true)
+        {
+            <div class="alert alert-danger mt-4">
+                <h6 class="alert-heading">
+                    <i class="bi bi-exclamation-octagon-fill me-2"></i>Ova igraonica ima povezane ponude!
+                </h6>
+                <p class="mb-0">
+                    Brisanje nije moguće dok postoje aktivne ponude.
+                    Broj ponuda: <span class="fw-bold">@Model.Ponude.Count</span>
+                </p>
+            </div>
+        }
+    </div>
+    <div class="card-footer bg-light">
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Nazad na listu
+                </a>
+
+                @if (Model.Ponude == null || !Model.Ponude.Any())
+                {
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-2"></i>Potvrdi brisanje
+                    </button>
+                }
+            </div>
+        </form>
+    </div>
 </div>
-<form asp-action="Delete">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Obriši</button>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
-</form>

@@ -1,37 +1,94 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.Licenca>
-@using InformacioniSistemTeretane.Models
 
-<h1>Licence</h1>
-<p><a asp-action="Create" class="btn btn-primary">Nova licenca</a></p>
+@{
+    ViewData["Title"] = "Licence";
+}
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor((Licenca m) => m.KlijentId)</th>
-            <th>Klijent</th>
-            <th>@Html.DisplayNameFor((Licenca m) => m.ProgramId)</th>
-            <th>Program</th>
-            <th>@Html.DisplayNameFor((Licenca m) => m.DatumIzdavanja)</th>
-            <th>@Html.DisplayNameFor((Licenca m) => m.ValidnaDo)</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">Licence</h1>
+        @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
         {
-            <tr>
-                <td>@item.KlijentId</td>
-                <td>@item.Klijent?.Prezime, @item.Klijent?.Ime</td>
-                <td>@item.ProgramId</td>
-                <td>@item.Program?.Naziv</td>
-                <td>@item.DatumIzdavanja.ToShortDateString()</td>
-                <td>@item.ValidnaDo.ToShortDateString()</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
-                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
-                </td>
-            </tr>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> Nova licenca
+            </a>
         }
-    </tbody>
-</table>
+    </div>
+
+    <!-- Prikaz poruka -->
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Uspjeh"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Lista licenci</h5>
+        </div>
+        <div class="card-body">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info">Nema registrovanih licenci</div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Klijent</th>
+                                <th>Program</th>
+                                <th>Datum izdavanja</th>
+                                <th>Vrijedi do</th>
+                                <th>Status</th>
+                                <th class="text-center">Akcije</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                var status = item.ValidnaDo < DateTime.Now ? "Istekla" : "Aktivna";
+                                var badgeClass = status == "Aktivna" ? "badge bg-success" : "badge bg-secondary";
+
+                                <tr>
+                                    <td>@item.Klijent?.Prezime, @item.Klijent?.Ime</td>
+                                    <td>@item.Program?.Naziv</td>
+                                    <td>@item.DatumIzdavanja.ToShortDateString()</td>
+                                    <td>@item.ValidnaDo.ToShortDateString()</td>
+                                    <td><span class="@badgeClass">@status</span></td>
+                                    <td class="text-center">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning mx-1">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        }
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

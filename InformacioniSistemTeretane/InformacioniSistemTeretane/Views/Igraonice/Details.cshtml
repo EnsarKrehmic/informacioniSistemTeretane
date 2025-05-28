@@ -1,19 +1,84 @@
 ﻿@model InformacioniSistemTeretane.Models.Igraonica
 
-<h1>Detalji igraonice</h1>
-<div class="row">
-    <div class="col-md-6">
-        <dl class="row">
-            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Naziv)</dt>
-            <dd class="col-sm-8">@Html.DisplayFor(m => m.Naziv)</dd>
-            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Kapacitet)</dt>
-            <dd class="col-sm-8">@Html.DisplayFor(m => m.Kapacitet)</dd>
-            <dt class="col-sm-4">Lokacija</dt>
-            <dd class="col-sm-8">@Model.Lokacija?.Naziv</dd>
-        </dl>
+@{
+    ViewData["Title"] = "Detalji igraonice";
+}
+
+<div class="card shadow border-0">
+    <div class="card-header bg-primary text-white py-3">
+        <h2 class="mb-0">
+            <i class="bi bi-info-circle me-2"></i>@ViewData["Title"]
+        </h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Naziv</dt>
+                    <dd class="col-sm-8">@Model.Naziv</dd>
+
+                    <dt class="col-sm-4">Kapacitet</dt>
+                    <dd class="col-sm-8">@Model.Kapacitet</dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Lokacija</dt>
+                    <dd class="col-sm-8">@Model.Lokacija?.Naziv</dd>
+
+                    <dt class="col-sm-4">Broj ponuda</dt>
+                    <dd class="col-sm-8">@(Model.Ponude?.Count ?? 0)</dd>
+                </dl>
+            </div>
+        </div>
+
+        @if (Model.Ponude?.Any() == true)
+        {
+            <div class="mt-4">
+                <h5 class="border-bottom pb-2">
+                    <i class="bi bi-tag me-2"></i>Ponude ove igraonice
+                </h5>
+                <ul class="list-group">
+                    @foreach (var ponuda in Model.Ponude)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>
+                                @ponuda.OpisUsluge
+                                <span class="text-muted small d-block">
+                                    @ponuda.Cijena.ToString("C") - @ponuda.Trajanje.ToString(@"hh\:mm")
+                                </span>
+                            </span>
+                            <a asp-controller="IgraonicaPonude" asp-action="Details" asp-route-id="@ponuda.Id"
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+    <div class="card-footer bg-light">
+        <div class="d-flex justify-content-between">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Nazad na listu
+            </a>
+            <div>
+                @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id"
+                       class="btn btn-warning me-2">
+                        <i class="bi bi-pencil me-2"></i>Uredi
+                    </a>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Delete" asp-route-id="@Model.Id"
+                       class="btn btn-danger">
+                        <i class="bi bi-trash me-2"></i>Obriši
+                    </a>
+                }
+            </div>
+        </div>
     </div>
 </div>
-<p>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
-</p>

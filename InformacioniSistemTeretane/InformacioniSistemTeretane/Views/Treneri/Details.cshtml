@@ -1,10 +1,14 @@
 ﻿@model InformacioniSistemTeretane.Models.Trener
 
-<h1>Detalji trenera</h1>
+@{
+    ViewData["Title"] = "Detalji trenera";
+}
+
+<h1>@ViewData["Title"]</h1>
 
 <dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.ZaposlenikId)</dt>
-    <dd class="col-sm-9">@Model.Zaposlenik?.Prezime, @Model.Zaposlenik?.Ime (@Model.ZaposlenikId)</dd>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.ZaposlenikId)</dt>
+    <dd class="col-sm-8">@Model.Zaposlenik?.Prezime, @Model.Zaposlenik?.Ime</dd>
 </dl>
 
 <div class="mt-4">
@@ -14,7 +18,7 @@
         <ul class="list-group">
             @foreach (var gt in Model.GrupniTreninzi)
             {
-                <li class="list-group-item">@gt?.Naziv ?? gt.Id.ToString()</li>
+                <li class="list-group-item">@gt.Naziv</li>
             }
         </ul>
     }
@@ -58,8 +62,8 @@
     }
 </div>
 
-<p>
+<p class="mt-3">
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger ms-2">Obriši</a>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
 </p>

@@ -1,15 +1,19 @@
 ﻿@model InformacioniSistemTeretane.Models.Trener
 
-<h1>Obriši trenera</h1>
+@{
+    ViewData["Title"] = "Obriši trenera";
+}
+
+<h1>@ViewData["Title"]</h1>
 <h3>Jeste li sigurni?</h3>
 
 <dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.ZaposlenikId)</dt>
-    <dd class="col-sm-9">@Model.Zaposlenik?.Prezime, @Model.Zaposlenik?.Ime (@Model.ZaposlenikId)</dd>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.ZaposlenikId)</dt>
+    <dd class="col-sm-8">@Model.Zaposlenik?.Prezime, @Model.Zaposlenik?.Ime</dd>
 </dl>
 
 <form asp-action="Delete" method="post">
     <input type="hidden" asp-for="Id" />
     <button type="submit" class="btn btn-danger">Obriši</button>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
 </form>

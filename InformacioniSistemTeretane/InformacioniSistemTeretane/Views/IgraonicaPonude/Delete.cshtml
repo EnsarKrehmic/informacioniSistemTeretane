@@ -1,28 +1,64 @@
 ﻿@model InformacioniSistemTeretane.Models.IgraonicaPonuda
 
-<h1>Obriši ponudu igraonice</h1>
-<h3>Jeste li sigurni?</h3>
+@{
+    ViewData["Title"] = "Obriši ponudu igraonice";
+}
 
-<div>
-    <h4>Ponuda</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.IgraonicaId)</dt>
-        <dd class="col-sm-8">@Model.Igraonica?.Naziv (@Model.IgraonicaId)</dd>
+<div class="card shadow border-0">
+    <div class="card-header bg-danger text-white py-3">
+        <h2 class="mb-0">
+            <i class="bi bi-exclamation-triangle me-2"></i>@ViewData["Title"]
+        </h2>
+    </div>
+    <div class="card-body">
+        @if (TempData["Greska"] != null)
+        {
+            <div class="alert alert-danger mb-4">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Greska"]
+            </div>
+        }
 
-        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.OpisUsluge)</dt>
-        <dd class="col-sm-8">@Html.DisplayFor(m => m.OpisUsluge)</dd>
+        <div class="alert alert-warning">
+            <h5 class="alert-heading">Upozorenje!</h5>
+            <p class="mb-0">
+                Jeste li sigurni da želite obrisati ovu ponudu? Ova radnja je nepovratna.
+            </p>
+        </div>
 
-        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Cijena)</dt>
-        <dd class="col-sm-8">@Html.DisplayFor(m => m.Cijena)</dd>
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Igraonica</dt>
+                    <dd class="col-sm-8">@Model.Igraonica?.Naziv</dd>
 
-        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Trajanje)</dt>
-        <dd class="col-sm-8">@Model.Trajanje.ToString(@"hh\:mm")</dd>
-    </dl>
+                    <dt class="col-sm-4">Usluga</dt>
+                    <dd class="col-sm-8">@Model.OpisUsluge</dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Cijena</dt>
+                    <dd class="col-sm-8">@Model.Cijena.ToString("C")</dd>
+
+                    <dt class="col-sm-4">Trajanje</dt>
+                    <dd class="col-sm-8">@Model.Trajanje.ToString(@"hh\:mm")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer bg-light">
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Nazad na listu
+                </a>
+
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-trash me-2"></i>Potvrdi brisanje
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
-
-<form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Obriši</button>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
-</form>

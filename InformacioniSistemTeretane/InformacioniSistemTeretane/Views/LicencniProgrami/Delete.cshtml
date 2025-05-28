@@ -1,21 +1,80 @@
 ﻿@model InformacioniSistemTeretane.Models.LicencniProgram
 
-<h1>Obriši program</h1>
-<h3>Jeste li sigurni?</h3>
+@{
+    ViewData["Title"] = "Obriši program";
+    bool imaLicenci = ViewData["ImaLicenci"] as bool? ?? false;
+}
 
-<dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Naziv)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Naziv)</dd>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad
+        </a>
+    </div>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.TrajanjeDana)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.TrajanjeDana)</dd>
+    <!-- Prijak poruka -->
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Cijena)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Cijena)</dd>
-</dl>
+    <div class="card shadow-sm border-danger">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">Potvrda brisanja</h5>
+        </div>
+        <div class="card-body">
+            <h3 class="text-danger">Jeste li sigurni da želite obrisati ovaj program?</h3>
 
-<form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Obriši</button>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
-</form>
+            @if (imaLicenci)
+            {
+                <div class="alert alert-danger">
+                    <h5 class="alert-heading">Upozorenje!</h5>
+                    <p class="mb-0">Ovaj program ima vezane licence. Brisanje nije moguće dok postoje aktivne licence.</p>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    <h5 class="alert-heading">Upozorenje!</h5>
+                    <p class="mb-0">Ova akcija je nepovratna i trajno će obrisati program.</p>
+                </div>
+            }
+
+            <dl class="row mt-4">
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Naziv)</dt>
+                <dd class="col-sm-8">@Model.Naziv</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.TrajanjeDana)</dt>
+                <dd class="col-sm-8">@Model.TrajanjeDana dana</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Cijena)</dt>
+                <dd class="col-sm-8">@Model.Cijena.ToString("C")</dd>
+
+                <dt class="col-sm-4">Broj licenci</dt>
+                <dd class="col-sm-8">@(Model.Licence?.Count ?? 0)</dd>
+            </dl>
+
+            <form asp-action="Delete" method="post" class="mt-4">
+                <input type="hidden" asp-for="Id" />
+                <div class="d-flex justify-content-end">
+                    @if (!imaLicenci)
+                    {
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash-alt"></i> Potvrdi brisanje
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-danger disabled" disabled>
+                            <i class="fas fa-ban"></i> Brisanje onemogućeno
+                        </button>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,14 +1,17 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.Trening>
-@using InformacioniSistemTeretane.Models
 
-<h1>Treninzi</h1>
+@{
+    ViewData["Title"] = "Treninzi";
+}
+
+<h1>@ViewData["Title"]</h1>
 
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor((Trening t) => t.Naziv)</th>
-            <th>@Html.DisplayNameFor((Trening t) => t.Opis)</th>
-            <th>@Html.DisplayNameFor((Trening t) => t.VrstaTreninga)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Naziv)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Opis)</th>
+            <th>@Html.DisplayNameFor(m => m.First().VrstaTreninga)</th>
             <th></th>
         </tr>
     </thead>
@@ -20,7 +23,7 @@
                 <td>@t.Opis</td>
                 <td>@t.VrstaTreninga</td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@t.Id">Detalji</a>
+                    <a asp-action="Details" asp-route-id="@t.Id" class="btn btn-sm btn-info">Detalji</a>
                 </td>
             </tr>
         }

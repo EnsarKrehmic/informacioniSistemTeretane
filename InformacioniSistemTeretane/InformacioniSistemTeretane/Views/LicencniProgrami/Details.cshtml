@@ -1,53 +1,82 @@
 ﻿@model InformacioniSistemTeretane.Models.LicencniProgram
 
-<h1>Detalji licencnog programa</h1>
+@{
+    ViewData["Title"] = "Detalji programa";
+    bool imaLicenci = Model.Licence?.Any() ?? false;
+}
 
-<dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Naziv)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Naziv)</dd>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">Detalji programa</h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad
+        </a>
+    </div>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Opis)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Opis)</dd>
+    <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">@Model.Naziv</h5>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Naziv)</dt>
+                <dd class="col-sm-8">@Model.Naziv</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.TrajanjeDana)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.TrajanjeDana)</dd>
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Opis)</dt>
+                <dd class="col-sm-8">@Model.Opis</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Cijena)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Cijena)</dd>
-</dl>
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.TrajanjeDana)</dt>
+                <dd class="col-sm-8">@Model.TrajanjeDana dana</dd>
 
-<div class="mt-4">
-    <h4>Licence</h4>
-    @if (Model.Licence.Any())
-    {
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Datum izdavanja</th>
-                    <th>Validna do</th>
-                    <th>Klijent</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var l in Model.Licence)
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Cijena)</dt>
+                <dd class="col-sm-8">@Model.Cijena.ToString("C")</dd>
+
+                <dt class="col-sm-4">Broj licenci</dt>
+                <dd class="col-sm-8">@(Model.Licence?.Count ?? 0)</dd>
+            </dl>
+        </div>
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-end">
+                @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
                 {
-                    <tr>
-                        <td>@l.DatumIzdavanja.ToShortDateString()</td>
-                        <td>@l.ValidnaDo.ToShortDateString()</td>
-                        <td>@l.Klijent?.Prezime, @l.Klijent?.Ime</td>
-                    </tr>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">
+                        <i class="fas fa-edit"></i> Uredi
+                    </a>
                 }
-            </tbody>
-        </table>
-    }
-    else
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Obriši
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (imaLicenci)
     {
-        <p>Nema izdatih licenci.</p>
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Licence za ovaj program</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    @foreach (var licenca in Model.Licence)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>@licenca.Klijent?.Prezime, @licenca.Klijent?.Ime</strong>
+                                <div class="text-muted">
+                                    @licenca.DatumIzdavanja.ToShortDateString() - @licenca.ValidnaDo.ToShortDateString()
+                                </div>
+                            </div>
+                            <span class="badge @(licenca.ValidnaDo < DateTime.Now ? "bg-secondary" : "bg-success")">
+                                @(licenca.ValidnaDo < DateTime.Now ? "Istekla" : "Aktivna")
+                            </span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
     }
 </div>
-
-<p>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
-</p>

@@ -12,15 +12,19 @@ namespace InformacioniSistemTeretane.Models
         public int Id { get; set; }
 
         [Required, MaxLength(100)]
+        [Display(Name = "Ime")]
         public string Ime { get; set; }
 
         [Required, MaxLength(100)]
+        [Display(Name = "Prezime")]
         public string Prezime { get; set; }
 
         [DataType(DataType.Date)]
+        [Display(Name = "Datum rođenja")]
         public DateTime DatumRodjenja { get; set; }
 
         [Required]
+        [Display(Name = "Korisničko ime")]
         public string UserId { get; set; }
 
         [ForeignKey(nameof(UserId))]

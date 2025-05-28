@@ -4,20 +4,20 @@
 
 <dl class="row">
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.KlijentId)</dt>
-    <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime (@Model.KlijentId)</dd>
+    <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
 
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.DisciplinaId)</dt>
-    <dd class="col-sm-9">@Model.Disciplina?.Naziv (@Model.DisciplinaId)</dd>
+    <dd class="col-sm-9">@Model.Disciplina?.Naziv</dd>
 
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Rezultat)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Rezultat)</dd>
+    <dd class="col-sm-9">@Model.Rezultat</dd>
 
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Pozicija)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Pozicija)</dd>
+    <dd class="col-sm-9">@Model.Pozicija</dd>
 </dl>
 
 <p>
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger ms-2">Obriši</a>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
 </p>

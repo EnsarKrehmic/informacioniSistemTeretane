@@ -6,39 +6,43 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<form asp-action="Edit" method="post">
+<form asp-action="Edit" method="post" class="mt-4">
     <input type="hidden" asp-for="Id" />
-    <div class="form-group">
+
+    <div class="form-group mb-3">
         <label asp-for="KlijentId"></label>
         <select asp-for="KlijentId" class="form-control" asp-items="ViewBag.KlijentId"></select>
         <span asp-validation-for="KlijentId" class="text-danger"></span>
     </div>
-    <div class="form-group">
+
+    <div class="form-group mb-3">
         <label asp-for="PaketId"></label>
         <select asp-for="PaketId" class="form-control" asp-items="ViewBag.PaketId"></select>
         <span asp-validation-for="PaketId" class="text-danger"></span>
     </div>
-    <div class="mb-3">
-        <label asp-for="DatumUplate" class="form-label"></label>
+
+    <div class="form-group mb-3">
+        <label asp-for="DatumUplate"></label>
         <input asp-for="DatumUplate" type="date" class="form-control" />
         <span asp-validation-for="DatumUplate" class="text-danger"></span>
     </div>
-    <div class="mb-3">
-        <label asp-for="NacinUplate" class="form-label"></label>
+
+    <div class="form-group mb-3">
+        <label asp-for="NacinUplate"></label>
         <input asp-for="NacinUplate" class="form-control" />
         <span asp-validation-for="NacinUplate" class="text-danger"></span>
     </div>
-    <div class="mb-3">
-        <label asp-for="Iznos" class="form-label"></label>
+
+    <div class="form-group mb-4">
+        <label asp-for="Iznos"></label>
         <input asp-for="Iznos" type="number" step="0.01" class="form-control" />
         <span asp-validation-for="Iznos" class="text-danger"></span>
     </div>
+
     <button type="submit" class="btn btn-primary">Spremi</button>
     <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

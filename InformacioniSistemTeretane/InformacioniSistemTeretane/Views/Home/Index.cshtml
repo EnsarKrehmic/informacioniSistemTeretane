@@ -1,72 +1,184 @@
-﻿@{
-    ViewData["Title"] = "Početna stranica";
+﻿@using Microsoft.AspNetCore.Identity
+@using InformacioniSistemTeretane.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@functions {
+    async Task<bool> InRole(string role) => 
+        SignInManager.IsSignedIn(User) && 
+        await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), role);
 }
 
-<div class="jumbotron text-center py-5 bg-light">
-    <h1 class="display-4 fw-bold">Dobrodošli u GymChain IST</h1>
-    <p class="lead">Vaš novi informacioni sistem za upravljanje teretanom, treningom i takmičenjima.</p>
-    <hr class="my-4" />
-    <p>Izaberite jednu od sljedećih opcija za početak:</p>
-    <div class="row justify-content-center">
-        <div class="col-md-4 mb-3">
-            <a asp-controller="Paketi" asp-action="Index" class="btn btn-primary btn-lg w-100">
-                Upravljanje paketima
-            </a>
+@{
+    ViewData["Title"] = "Početna stranica";
+    
+    var welcomeMessage = "Dobrodošli u GymChain IST";
+    var userRole = "Gost";
+
+    if (SignInManager.IsSignedIn(User)) {
+        var user = await UserManager.GetUserAsync(User);
+        welcomeMessage = $"Dobrodošli, {user.UserName}!";
+
+        if (await UserManager.IsInRoleAsync(user, "Admin")) {
+            userRole = "Administrator";
+        }
+        else if (await UserManager.IsInRoleAsync(user, "Zaposlenik")) {
+            userRole = "Zaposlenik";
+        }
+        else {
+            userRole = "Član teretane";
+        }
+    }
+}
+
+<div class="welcome-banner bg-gradient-primary text-white text-center py-5 mb-4">
+    <div class="container position-relative">
+        <h1 class="display-4 fw-bold text-white">@welcomeMessage</h1>
+        <div class="badge bg-white text-primary fs-6 mb-3 px-3 py-2 rounded-pill">
+            Status: @userRole
         </div>
-        <div class="col-md-4 mb-3">
-            <a asp-controller="Uplate" asp-action="Index" class="btn btn-secondary btn-lg w-100">
-                Članarine
-            </a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a asp-controller="GrupniTreninzi" asp-action="Index" class="btn btn-success btn-lg w-100">
-                Grupni treninzi
-            </a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a asp-controller="PersonalniTreninzi" asp-action="Index" class="btn btn-success btn-lg w-100">
-                Personalni treninzi
-            </a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a asp-controller="ProbniTreninzi" asp-action="Index" class="btn btn-success btn-lg w-100">
-                Probni treninzi
-            </a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a asp-controller="Igraonice" asp-action="Index" class="btn btn-info btn-lg w-100">
-                Igraonice
-            </a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a asp-controller="Takmicenja" asp-action="Index" class="btn btn-warning btn-lg w-100">
-                Takmičenja
-            </a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a asp-controller="Lokacije" asp-action="Index" class="btn btn-dark btn-lg w-100">
-                Lokacije
-            </a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a asp-controller="Sale" asp-action="Index" class="btn btn-dark btn-lg w-100">
-                Sale
-            </a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a asp-controller="Klijenti" asp-action="Index" class="btn btn-primary btn-lg w-100">
-                Klijenti
-            </a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a asp-controller="Zaposlenici" asp-action="Index" class="btn btn-primary btn-lg w-100">
-                Zaposlenici
-            </a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a asp-controller="Licence" asp-action="Index" class="btn btn-secondary btn-lg w-100">
-                Licence
-            </a>
-        </div>
+        <p class="lead mb-0">Sve što vam treba za upravljanje teretanom</p>
     </div>
-    </section>
+</div>
+
+<div class="container">
+    <div class="row g-4">
+        @if (await InRole("Zaposlenik") || await InRole("Admin")) {
+            <div class="col-6 col-md-4 col-lg-3">
+                <a asp-controller="Paketi" asp-action="Index" class="card h-100 text-decoration-none custom-card">
+                    <div class="card-body text-center p-3">
+                        <div class="icon-wrapper bg-primary mb-3">
+                            <i class="bi bi-wallet2 fs-2 text-white"></i>
+                        </div>
+                        <h5 class="card-title fw-semibold">Paketi</h5>
+                        <p class="card-text small">Upravljanje članskim paketima</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-6 col-md-4 col-lg-3">
+                <a asp-controller="Uplate" asp-action="Index" class="card h-100 text-decoration-none custom-card">
+                    <div class="card-body text-center p-3">
+                        <div class="icon-wrapper bg-primary mb-3">
+                            <i class="bi bi-currency-dollar fs-2 text-white"></i>
+                        </div>
+                        <h5 class="card-title fw-semibold">Članarine</h5>
+                        <p class="card-text small">Evidencija uplata članarina</p>
+                    </div>
+                </a>
+            </div>
+        }
+
+        @if (SignInManager.IsSignedIn(User)) {
+            <div class="col-6 col-md-4 col-lg-3">
+                <a asp-controller="GrupniTreninzi" asp-action="Index" class="card h-100 text-decoration-none custom-card">
+                    <div class="card-body text-center p-3">
+                        <div class="icon-wrapper bg-primary mb-3">
+                            <i class="bi bi-people-fill fs-2 text-white"></i>
+                        </div>
+                        <h5 class="card-title fw-semibold">Grupni treninzi</h5>
+                        <p class="card-text small">Pregled grupnih treninga</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-6 col-md-4 col-lg-3">
+                <a asp-controller="PersonalniTreninzi" asp-action="Index" class="card h-100 text-decoration-none custom-card">
+                    <div class="card-body text-center p-3">
+                        <div class="icon-wrapper bg-primary mb-3">
+                            <i class="bi bi-person-badge-fill fs-2 text-white"></i>
+                        </div>
+                        <h5 class="card-title fw-semibold">Personalni treninzi</h5>
+                        <p class="card-text small">Rezervacija personalnih treninga</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-6 col-md-4 col-lg-3">
+                <a asp-controller="ProbniTreninzi" asp-action="Index" class="card h-100 text-decoration-none custom-card">
+                    <div class="card-body text-center p-3">
+                        <div class="icon-wrapper bg-primary mb-3">
+                            <i class="bi bi-clock-fill fs-2 text-white"></i>
+                        </div>
+                        <h5 class="card-title fw-semibold">Probni treninzi</h5>
+                        <p class="card-text small">Rezervacija probnih treninga</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-6 col-md-4 col-lg-3">
+                <a asp-controller="Igraonice" asp-action="Index" class="card h-100 text-decoration-none custom-card">
+                    <div class="card-body text-center p-3">
+                        <div class="icon-wrapper bg-primary mb-3">
+                            <i class="bi bi-controller fs-2 text-white"></i>
+                        </div>
+                        <h5 class="card-title fw-semibold">Igraonice</h5>
+                        <p class="card-text small">Pregled igraonica i opreme</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-6 col-md-4 col-lg-3">
+                <a asp-controller="Takmicenja" asp-action="Index" class="card h-100 text-decoration-none custom-card">
+                    <div class="card-body text-center p-3">
+                        <div class="icon-wrapper bg-primary mb-3">
+                            <i class="bi bi-trophy-fill fs-2 text-white"></i>
+                        </div>
+                        <h5 class="card-title fw-semibold">Takmičenja</h5>
+                        <p class="card-text small">Kalendar i prijave na takmičenja</p>
+                    </div>
+                </a>
+            </div>
+        }
+
+        @if (await InRole("Admin")) {
+            <div class="col-6 col-md-4 col-lg-3">
+                <a asp-controller="Lokacije" asp-action="Index" class="card h-100 text-decoration-none custom-card">
+                    <div class="card-body text-center p-3">
+                        <div class="icon-wrapper bg-primary mb-3">
+                            <i class="bi bi-geo-alt-fill fs-2 text-white"></i>
+                        </div>
+                        <h5 class="card-title fw-semibold">Lokacije</h5>
+                        <p class="card-text small">Upravljanje lokacijama teretana</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-6 col-md-4 col-lg-3">
+                <a asp-controller="Sale" asp-action="Index" class="card h-100 text-decoration-none custom-card">
+                    <div class="card-body text-center p-3">
+                        <div class="icon-wrapper bg-primary mb-3">
+                            <i class="bi bi-building fs-2 text-white"></i>
+                        </div>
+                        <h5 class="card-title fw-semibold">Sale</h5>
+                        <p class="card-text small">Upravljanje salama za treninge</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-6 col-md-4 col-lg-3">
+                <a asp-controller="Zaposlenici" asp-action="Index" class="card h-100 text-decoration-none custom-card">
+                    <div class="card-body text-center p-3">
+                        <div class="icon-wrapper bg-primary mb-3">
+                            <i class="bi bi-people fs-2 text-white"></i>
+                        </div>
+                        <h5 class="card-title fw-semibold">Zaposlenici</h5>
+                        <p class="card-text small">Evidencija zaposlenika</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-6 col-md-4 col-lg-3">
+                <a asp-controller="Licence" asp-action="Index" class="card h-100 text-decoration-none custom-card">
+                    <div class="card-body text-center p-3">
+                        <div class="icon-wrapper bg-primary mb-3">
+                            <i class="bi bi-award-fill fs-2 text-white"></i>
+                        </div>
+                        <h5 class="card-title fw-semibold">Licence</h5>
+                        <p class="card-text small">Upravljanje licencama</p>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</div>

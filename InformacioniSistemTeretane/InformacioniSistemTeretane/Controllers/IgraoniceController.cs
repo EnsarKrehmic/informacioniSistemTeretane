@@ -6,38 +6,72 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using InformacioniSistemTeretane.Data;
 using InformacioniSistemTeretane.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace InformacioniSistemTeretane.Controllers
 {
+    [Authorize]
     public class IgraoniceController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<IgraoniceController> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public IgraoniceController(ApplicationDbContext context, ILogger<IgraoniceController> logger)
+        public IgraoniceController(
+            ApplicationDbContext context,
+            ILogger<IgraoniceController> logger,
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _logger = logger;
+            _userManager = userManager;
         }
 
         // GET: Igraonice
         public async Task<IActionResult> Index()
-            => View(await _context.Igraonice.Include(i => i.Lokacija).ToListAsync());
+        {
+            _logger.LogInformation("Korisnik {UserName} pregleda igraonice", User.Identity.Name);
+
+            var igraonice = await _context.Igraonice
+                .Include(i => i.Lokacija)
+                .ToListAsync();
+
+            return View(igraonice);
+        }
 
         // GET: Igraonice/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
-            var igra = await _context.Igraonice
+            if (id == null)
+            {
+                _logger.LogWarning("Pokušaj pristupa detaljima igraonice bez ID-a (korisnik: {UserName})", User.Identity.Name);
+                return NotFound();
+            }
+
+            var igraonica = await _context.Igraonice
                 .Include(i => i.Lokacija)
+                .Include(i => i.Ponude) // Uključujemo ponude za prikaz u detaljima
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (igra == null) return NotFound();
-            return View(igra);
+
+            if (igraonica == null)
+            {
+                _logger.LogWarning("Igraonica sa ID-om {IgraonicaId} nije pronađena (korisnik: {UserName})", id, User.Identity.Name);
+                return NotFound();
+            }
+
+            _logger.LogInformation("Korisnik {UserName} pregleda detalje igraonice: {IgraonicaNaziv}",
+                User.Identity.Name, igraonica.Naziv);
+
+            return View(igraonica);
         }
 
         // GET: Igraonice/Create
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public IActionResult Create()
         {
+            _logger.LogInformation("Korisnik {UserName} pokreće kreiranje nove igraonice", User.Identity.Name);
+
             ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv");
             return View();
         }
@@ -45,81 +79,86 @@ namespace InformacioniSistemTeretane.Controllers
         // POST: Igraonice/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Create([Bind("Naziv,Kapacitet,LokacijaId")] Igraonica igraonica)
         {
-            // Log bind values
-            _logger.LogInformation("----- Create Igraonica bind values -----");
-            _logger.LogInformation("Naziv: {Naziv}", igraonica.Naziv);
-            _logger.LogInformation("Kapacitet: {Kapacitet}", igraonica.Kapacitet);
-            _logger.LogInformation("LokacijaId: {LokacijaId}", igraonica.LokacijaId);
+            _logger.LogInformation("Korisnik {UserName} kreira novu igraonicu", User.Identity.Name);
+            _logger.LogDebug("Parametri: Naziv={Naziv}, Kapacitet={Kapacitet}, LokacijaId={LokacijaId}",
+                igraonica.Naziv, igraonica.Kapacitet, igraonica.LokacijaId);
 
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("ModelState is invalid. Errors:");
-                foreach (var entry in ModelState)
-                {
-                    if (entry.Value.Errors.Count > 0)
-                    {
-                        foreach (var error in entry.Value.Errors)
-                        {
-                            _logger.LogWarning(
-                                " - Field '{Field}' attempted value '{AttemptedValue}': {ErrorMessage}",
-                                entry.Key,
-                                entry.Value.AttemptedValue,
-                                error.ErrorMessage);
-                        }
-                    }
-                }
+                _logger.LogWarning("Neuspješna validacija za novu igraonicu (korisnik: {UserName})", User.Identity.Name);
 
                 ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", igraonica.LokacijaId);
                 return View(igraonica);
             }
 
-            _context.Add(igraonica);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                _context.Add(igraonica);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Igraonica '{Naziv}' uspješno kreirana (ID: {IgraonicaId}) od strane {UserName}",
+                    igraonica.Naziv, igraonica.Id, User.Identity.Name);
+
+                TempData["Uspjeh"] = $"Igraonica '{igraonica.Naziv}' je uspješno kreirana!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Greška pri čuvanju igraonice u bazu (korisnik: {UserName})", User.Identity.Name);
+                ModelState.AddModelError("", "Došlo je do greške pri čuvanju podataka. Pokušajte ponovo.");
+
+                ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", igraonica.LokacijaId);
+                return View(igraonica);
+            }
         }
 
         // GET: Igraonice/Edit/5
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
-            var igra = await _context.Igraonice.FindAsync(id);
-            if (igra == null) return NotFound();
-            ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", igra.LokacijaId);
-            return View(igra);
+            if (id == null)
+            {
+                _logger.LogWarning("Pokušaj uređivanja igraonice bez ID-a (korisnik: {UserName})", User.Identity.Name);
+                return NotFound();
+            }
+
+            var igraonica = await _context.Igraonice.FindAsync(id);
+            if (igraonica == null)
+            {
+                _logger.LogWarning("Igraonica sa ID-om {IgraonicaId} nije pronađena (korisnik: {UserName})", id, User.Identity.Name);
+                return NotFound();
+            }
+
+            _logger.LogInformation("Korisnik {UserName} uređuje igraonicu: {IgraonicaNaziv} (ID: {IgraonicaId})",
+                User.Identity.Name, igraonica.Naziv, igraonica.Id);
+
+            ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", igraonica.LokacijaId);
+            return View(igraonica);
         }
 
         // POST: Igraonice/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Naziv,Kapacitet,LokacijaId")] Igraonica igraonica)
         {
-            _logger.LogInformation("----- Edit Igraonica bind values -----");
-            _logger.LogInformation("Id: {Id}", igraonica.Id);
-            _logger.LogInformation("Naziv: {Naziv}", igraonica.Naziv);
-            _logger.LogInformation("Kapacitet: {Kapacitet}", igraonica.Kapacitet);
-            _logger.LogInformation("LokacijaId: {LokacijaId}", igraonica.LokacijaId);
+            _logger.LogInformation("Korisnik {UserName} ažurira igraonicu ID: {IgraonicaId}", User.Identity.Name, id);
+            _logger.LogDebug("Parametri: Naziv={Naziv}, Kapacitet={Kapacitet}, LokacijaId={LokacijaId}",
+                igraonica.Naziv, igraonica.Kapacitet, igraonica.LokacijaId);
 
-            if (id != igraonica.Id) return NotFound();
+            if (id != igraonica.Id)
+            {
+                _logger.LogWarning("ID u putanji ({PutanjaId}) i ID igraonice ({IgraonicaId}) se ne podudaraju (korisnik: {UserName})",
+                    id, igraonica.Id, User.Identity.Name);
+                return NotFound();
+            }
 
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("ModelState is invalid. Errors:");
-                foreach (var entry in ModelState)
-                {
-                    if (entry.Value.Errors.Count > 0)
-                    {
-                        foreach (var error in entry.Value.Errors)
-                        {
-                            _logger.LogWarning(
-                                " - Field '{Field}' attempted value '{AttemptedValue}': {ErrorMessage}",
-                                entry.Key,
-                                entry.Value.AttemptedValue,
-                                error.ErrorMessage);
-                        }
-                    }
-                }
+                _logger.LogWarning("Neuspješna validacija za ažuriranje igraonice (korisnik: {UserName})", User.Identity.Name);
 
                 ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", igraonica.LokacijaId);
                 return View(igraonica);
@@ -129,36 +168,103 @@ namespace InformacioniSistemTeretane.Controllers
             {
                 _context.Update(igraonica);
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Igraonice.Any(e => e.Id == id)) return NotFound();
-                throw;
-            }
 
-            return RedirectToAction(nameof(Index));
+                _logger.LogInformation("Igraonica '{Naziv}' (ID: {IgraonicaId}) uspješno ažurirana od strane {UserName}",
+                    igraonica.Naziv, igraonica.Id, User.Identity.Name);
+
+                TempData["Uspjeh"] = $"Igraonica '{igraonica.Naziv}' je uspješno ažurirana!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                if (!_context.Igraonice.Any(e => e.Id == igraonica.Id))
+                {
+                    _logger.LogWarning("Igraonica sa ID-om {IgraonicaId} nije pronađena (korisnik: {UserName})",
+                        igraonica.Id, User.Identity.Name);
+                    return NotFound();
+                }
+
+                _logger.LogError(ex, "Greška pri ažuriranju igraonice (ID: {IgraonicaId})", igraonica.Id);
+                ModelState.AddModelError("", "Došlo je do greške pri čuvanju izmjena. Pokušajte ponovo.");
+
+                ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", igraonica.LokacijaId);
+                return View(igraonica);
+            }
         }
 
         // GET: Igraonice/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
-            var igra = await _context.Igraonice
+            if (id == null)
+            {
+                _logger.LogWarning("Pokušaj brisanja igraonice bez ID-a (korisnik: {UserName})", User.Identity.Name);
+                return NotFound();
+            }
+
+            var igraonica = await _context.Igraonice
                 .Include(i => i.Lokacija)
+                .Include(i => i.Ponude) // Uključujemo povezane ponude za provjeru
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (igra == null) return NotFound();
-            return View(igra);
+
+            if (igraonica == null)
+            {
+                _logger.LogWarning("Igraonica sa ID-om {IgraonicaId} nije pronađena (korisnik: {UserName})", id, User.Identity.Name);
+                return NotFound();
+            }
+
+            _logger.LogInformation("Korisnik {UserName} pokreće brisanje igraonice: {IgraonicaNaziv} (ID: {IgraonicaId})",
+                User.Identity.Name, igraonica.Naziv, igraonica.Id);
+
+            return View(igraonica);
         }
 
         // POST: Igraonice/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var igra = await _context.Igraonice.FindAsync(id);
-            _context.Igraonice.Remove(igra);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var igraonica = await _context.Igraonice
+                .Include(i => i.Ponude) // Uključujemo povezane ponude za provjeru zavisnosti
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (igraonica == null)
+            {
+                _logger.LogWarning("Igraonica sa ID-om {IgraonicaId} nije pronađena za brisanje (korisnik: {UserName})",
+                    id, User.Identity.Name);
+                return NotFound();
+            }
+
+            // Provjera da li igraonica ima povezane ponude
+            if (igraonica.Ponude?.Any() == true)
+            {
+                _logger.LogWarning("Pokušaj brisanja igraonice '{IgraonicaNaziv}' koja ima povezane ponude (korisnik: {UserName})",
+                    igraonica.Naziv, User.Identity.Name);
+
+                TempData["Greska"] = $"Ne možete obrisati igraonicu '{igraonica.Naziv}' jer ima povezane ponude!";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                _context.Igraonice.Remove(igraonica);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Igraonica '{Naziv}' (ID: {IgraonicaId}) uspješno obrisana od strane {UserName}",
+                    igraonica.Naziv, igraonica.Id, User.Identity.Name);
+
+                TempData["Uspjeh"] = $"Igraonica '{igraonica.Naziv}' je uspješno obrisana!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Greška pri brisanju igraonice ID: {IgraonicaId} (korisnik: {UserName})",
+                    id, User.Identity.Name);
+
+                TempData["Greska"] = $"Došlo je do greške pri brisanju igraonice '{igraonica.Naziv}'!";
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }

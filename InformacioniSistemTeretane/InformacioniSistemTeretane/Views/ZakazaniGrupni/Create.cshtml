@@ -1,12 +1,11 @@
 ﻿@model InformacioniSistemTeretane.Models.ZakazaniGrupni
-
 @{
     ViewData["Title"] = "Nova rezervacija";
 }
 
 <h1>@ViewData["Title"]</h1>
 
-<form asp-action="Create" method="post">
+<form asp-action="Create" method="post" class="mt-4">
     <div class="form-group mb-3">
         <label asp-for="GrupniTreningId"></label>
         <select asp-for="GrupniTreningId" class="form-control" asp-items="ViewBag.GrupniTreningId"></select>
@@ -17,7 +16,7 @@
         <select asp-for="KlijentId" class="form-control" asp-items="ViewBag.KlijentId"></select>
         <span asp-validation-for="KlijentId" class="text-danger"></span>
     </div>
-    <div class="form-group mb-3">
+    <div class="form-group mb-4">
         <label asp-for="DatumPrijave"></label>
         <input asp-for="DatumPrijave" type="date" class="form-control" />
         <span asp-validation-for="DatumPrijave" class="text-danger"></span>
@@ -27,7 +26,5 @@
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

@@ -1,7 +1,10 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.Zaposlenik>
-@using InformacioniSistemTeretane.Models
 
-<h1>Zaposlenici</h1>
+@{
+    ViewData["Title"] = "Zaposlenici";
+}
+
+<h1>@ViewData["Title"]</h1>
 
 <p>
     <a asp-action="Create" class="btn btn-primary">Novi zaposlenik</a>
@@ -22,14 +25,14 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@Html.DisplayFor(mi => item.Ime)</td>
-                <td>@Html.DisplayFor(mi => item.Prezime)</td>
-                <td>@Html.DisplayFor(mi => item.Pozicija)</td>
-                <td>@Html.DisplayFor(mi => item.Telefon)</td>
+                <td>@Html.DisplayFor(_ => item.Ime)</td>
+                <td>@Html.DisplayFor(_ => item.Prezime)</td>
+                <td>@Html.DisplayFor(_ => item.Pozicija)</td>
+                <td>@Html.DisplayFor(_ => item.Telefon)</td>
                 <td>@item.User?.UserName</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
-                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a>   |
                     <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
                 </td>
             </tr>

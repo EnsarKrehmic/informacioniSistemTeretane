@@ -5,15 +5,17 @@
     <div class="col-md-6">
         <dl class="row">
             <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Naziv)</dt>
-            <dd class="col-sm-8">@Html.DisplayFor(m => m.Naziv)</dd>
+            <dd class="col-sm-8">@Model.Naziv</dd>
+
             <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Kapacitet)</dt>
-            <dd class="col-sm-8">@Html.DisplayFor(m => m.Kapacitet)</dd>
-            <dt class="col-sm-4">Lokacija</dt>
+            <dd class="col-sm-8">@Model.Kapacitet</dd>
+
+            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.LokacijaId)</dt>
             <dd class="col-sm-8">@Model.Lokacija?.Naziv</dd>
         </dl>
     </div>
 </div>
 <p>
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
 </p>

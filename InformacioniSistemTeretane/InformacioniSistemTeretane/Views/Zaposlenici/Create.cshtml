@@ -7,23 +7,23 @@
 <h1>@ViewData["Title"]</h1>
 
 <form asp-action="Create" method="post">
-    <div class="mb-3">
-        <label asp-for="Ime" class="form-label"></label>
+    <div class="form-group mb-3">
+        <label asp-for="Ime"></label>
         <input asp-for="Ime" class="form-control" />
         <span asp-validation-for="Ime" class="text-danger"></span>
     </div>
-    <div class="mb-3">
-        <label asp-for="Prezime" class="form-label"></label>
+    <div class="form-group mb-3">
+        <label asp-for="Prezime"></label>
         <input asp-for="Prezime" class="form-control" />
         <span asp-validation-for="Prezime" class="text-danger"></span>
     </div>
-    <div class="mb-3">
-        <label asp-for="Pozicija" class="form-label"></label>
+    <div class="form-group mb-3">
+        <label asp-for="Pozicija"></label>
         <input asp-for="Pozicija" class="form-control" />
         <span asp-validation-for="Pozicija" class="text-danger"></span>
     </div>
-    <div class="mb-3">
-        <label asp-for="Telefon" class="form-label"></label>
+    <div class="form-group mb-3">
+        <label asp-for="Telefon"></label>
         <input asp-for="Telefon" class="form-control" />
         <span asp-validation-for="Telefon" class="text-danger"></span>
     </div>

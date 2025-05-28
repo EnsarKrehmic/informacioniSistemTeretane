@@ -7,9 +7,9 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(m => m.First().Naziv)</th>
-            <th>@Html.DisplayNameFor(m => m.First().Kapacitet)</th>
-            <th>Lokacija</th>
+            <th>@Html.DisplayNameFor((Sala m) => m.Naziv)</th>
+            <th>@Html.DisplayNameFor((Sala m) => m.Kapacitet)</th>
+            <th>@Html.DisplayNameFor((Sala m) => m.LokacijaId)</th>
             <th></th>
         </tr>
     </thead>
@@ -17,8 +17,8 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@Html.DisplayFor(m => item.Naziv)</td>
-                <td>@Html.DisplayFor(m => item.Kapacitet)</td>
+                <td>@item.Naziv</td>
+                <td>@item.Kapacitet</td>
                 <td>@item.Lokacija?.Naziv</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |

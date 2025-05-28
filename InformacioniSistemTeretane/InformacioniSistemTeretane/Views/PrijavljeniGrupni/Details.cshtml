@@ -3,21 +3,21 @@
 <h1>Detalji prisustva</h1>
 
 <dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.GrupniTrening.Naziv)</dt>
-    <dd class="col-sm-9">@Model.GrupniTrening?.Naziv</dd>
+  <dt class="col-sm-3">@Html.DisplayNameFor(m => m.GrupniTreningId)</dt>
+  <dd class="col-sm-9">@Model.GrupniTrening?.Naziv</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Klijent.Prezime)</dt>
-    <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
+  <dt class="col-sm-3">@Html.DisplayNameFor(m => m.KlijentId)</dt>
+  <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Prisutan)</dt>
-    <dd class="col-sm-9">@Model.Prisutan</dd>
+  <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Prisutan)</dt>
+  <dd class="col-sm-9">@(Model.Prisutan ? "Da" : "Ne")</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.VrijemeDolaska)</dt>
-    <dd class="col-sm-9">@Model.VrijemeDolaska.ToString("HH:mm")</dd>
+  <dt class="col-sm-3">@Html.DisplayNameFor(m => m.VrijemeDolaska)</dt>
+  <dd class="col-sm-9">@Model.VrijemeDolaska.ToString("HH:mm")</dd>
 </dl>
 
-<p>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+<p class="mt-3">
+  <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
+  <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
+  <a asp-action="Index" class="btn btn-secondary">Nazad</a>
 </p>

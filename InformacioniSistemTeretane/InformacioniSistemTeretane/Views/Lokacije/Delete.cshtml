@@ -1,21 +1,87 @@
 ﻿@model InformacioniSistemTeretane.Models.Lokacija
 
-<h1>Obriši lokaciju</h1>
-<h3>Jeste li sigurni?</h3>
-<div>
-    <dl class="row">
-        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Naziv)</dt>
-        <dd class="col-sm-8">@Html.DisplayFor(m => m.Naziv)</dd>
-        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Adresa)</dt>
-        <dd class="col-sm-8">@Html.DisplayFor(m => m.Adresa)</dd>
-        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.KontaktTelefon)</dt>
-        <dd class="col-sm-8">@Html.DisplayFor(m => m.KontaktTelefon)</dd>
-        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Email)</dt>
-        <dd class="col-sm-8">@Html.DisplayFor(m => m.Email)</dd>
-    </dl>
+@{
+    ViewData["Title"] = "Obriši lokaciju";
+    bool imaZavisnosti = ViewData["ImaZavisnosti"] as bool? ?? false;
+    bool imaSale = ViewData["ImaSale"] as bool? ?? false;
+    bool imaIgraonice = ViewData["ImaIgraonice"] as bool? ?? false;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad
+        </a>
+    </div>
+
+    <!-- Prijak poruka -->
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm border-danger">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">Potvrda brisanja</h5>
+        </div>
+        <div class="card-body">
+            <h3 class="text-danger">Jeste li sigurni da želite obrisati ovu lokaciju?</h3>
+
+            @if (imaZavisnosti)
+            {
+                <div class="alert alert-danger">
+                    <h5 class="alert-heading">Upozorenje!</h5>
+                    <p class="mb-0">Ova lokacija ima vezane entitete. Brisanje nije moguće dok postoje vezani entiteti.</p>
+                    @if (imaSale)
+                    {
+                        <p class="mb-0 mt-2">- Broj sala: @Model.Sale?.Count</p>
+                    }
+                    @if (imaIgraonice)
+                    {
+                        <p class="mb-0">- Broj igraonica: @Model.Igraonice?.Count</p>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    <h5 class="alert-heading">Upozorenje!</h5>
+                    <p class="mb-0">Ova akcija je nepovratna i trajno će obrisati lokaciju.</p>
+                </div>
+            }
+
+            <dl class="row mt-4">
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Naziv)</dt>
+                <dd class="col-sm-8">@Model.Naziv</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Adresa)</dt>
+                <dd class="col-sm-8">@Model.Adresa</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.KontaktTelefon)</dt>
+                <dd class="col-sm-8">@Model.KontaktTelefon</dd>
+            </dl>
+
+            <form asp-action="Delete" method="post" class="mt-4">
+                <input type="hidden" asp-for="Id" />
+                <div class="d-flex justify-content-end">
+                    @if (!imaZavisnosti)
+                    {
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash-alt"></i> Potvrdi brisanje
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-danger disabled" disabled>
+                            <i class="fas fa-ban"></i> Brisanje onemogućeno
+                        </button>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
-<form asp-action="Delete">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Obriši</button>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
-</form>

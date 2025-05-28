@@ -1,66 +1,156 @@
 ﻿@model InformacioniSistemTeretane.Models.GrupniTrening
 
-<h1>Detalji grupnog treninga</h1>
+@{
+    ViewData["Title"] = "Detalji grupnog treninga";
+}
 
-<dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Naziv)</dt>
-    <dd class="col-sm-9">@Model.Naziv</dd>
+<div class="card shadow border-0">
+    <div class="card-header bg-primary text-white py-3">
+        <h2 class="mb-0">
+            <i class="bi bi-info-circle me-2"></i>@ViewData["Title"]
+        </h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Naziv treninga</dt>
+                    <dd class="col-sm-8">@Model.Naziv</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Opis)</dt>
-    <dd class="col-sm-9">@Model.Opis</dd>
+                    <dt class="col-sm-4">Opis</dt>
+                    <dd class="col-sm-8">
+                        @if (string.IsNullOrWhiteSpace(Model.Opis))
+                        {
+                            <span class="text-muted fst-italic">Nema opisa</span>
+                        }
+                        else
+                        {
+                            @Model.Opis
+                        }
+                    </dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Sala.Naziv)</dt>
-    <dd class="col-sm-9">@Model.Sala?.Naziv</dd>
+                    <dt class="col-sm-4">Sala</dt>
+                    <dd class="col-sm-8">@Model.Sala?.Naziv</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Trener.Zaposlenik.Prezime)</dt>
-    <dd class="col-sm-9">@Model.Trener?.Zaposlenik?.Prezime, @Model.Trener?.Zaposlenik?.Ime</dd>
+                    <dt class="col-sm-4">Trener</dt>
+                    <dd class="col-sm-8">
+                        @Model.Trener?.Zaposlenik?.Prezime, @Model.Trener?.Zaposlenik?.Ime
+                    </dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Datum</dt>
+                    <dd class="col-sm-8">@Model.Datum.ToString("dd.MM.yyyy")</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Datum)</dt>
-    <dd class="col-sm-9">@Model.Datum.ToShortDateString()</dd>
+                    <dt class="col-sm-4">Vrijeme</dt>
+                    <dd class="col-sm-8">@Model.Vrijeme.ToString(@"hh\:mm")</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Vrijeme)</dt>
-    <dd class="col-sm-9">@Model.Vrijeme.ToString(@"hh\:mm")</dd>
+                    <dt class="col-sm-4">Maks. učesnika</dt>
+                    <dd class="col-sm-8">@Model.MaxUcesnika</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.MaxUcesnika)</dt>
-    <dd class="col-sm-9">@Model.MaxUcesnika</dd>
-</dl>
+                    <dt class="col-sm-4">Slobodnih mjesta</dt>
+                    <dd class="col-sm-8">
+                        @(Model.MaxUcesnika - Model.Rezervacije?.Count ?? 0)
+                    </dd>
+                </dl>
+            </div>
+        </div>
 
-<div class="mt-4">
-    <h4>Rezervacije</h4>
-    @if (Model.Rezervacije != null && Model.Rezervacije.Any())
-    {
-        <ul class="list-group">
-            @foreach (var r in Model.Rezervacije)
-            {
-                <li class="list-group-item">@r.KlijentId (@r.DatumPrijave.ToShortDateString())</li>
-            }
-        </ul>
-    }
-    else
-    {
-        <p>Nema rezervacija.</p>
-    }
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">
+                            <i class="bi bi-list-check me-2"></i>Rezervacije (@Model.Rezervacije?.Count)
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        @if (Model.Rezervacije?.Any() == true)
+                        {
+                            <ul class="list-group list-group-flush">
+                                @foreach (var r in Model.Rezervacije)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>
+                                            @r.Klijent?.Prezime, @r.Klijent?.Ime
+                                            <span class="text-muted small d-block">
+                                                Prijavljeno: @r.DatumPrijave.ToString("dd.MM.yyyy HH:mm")
+                                            </span>
+                                        </span>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <div class="p-3 text-center text-muted">
+                                Nema rezervacija za ovaj trening
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">
+                            <i class="bi bi-check-circle me-2"></i>Prisustva (@Model.Prisustva?.Count)
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        @if (Model.Prisustva?.Any() == true)
+                        {
+                            <ul class="list-group list-group-flush">
+                                @foreach (var p in Model.Prisustva)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>
+                                            @p.Klijent?.Prezime, @p.Klijent?.Ime
+                                            <span class="text-muted small d-block">
+                                                Dolazak: @p.VrijemeDolaska.ToString("HH:mm")
+                                            </span>
+                                        </span>
+                                        <span class="badge bg-success rounded-pill">
+                                            Prisutan
+                                        </span>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <div class="p-3 text-center text-muted">
+                                Nema evidentiranih prisustava
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer bg-light">
+        <div class="d-flex justify-content-between">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Nazad na listu
+            </a>
+            <div>
+                @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id"
+                       class="btn btn-warning me-2">
+                        <i class="bi bi-pencil me-2"></i>Uredi
+                    </a>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Delete" asp-route-id="@Model.Id"
+                       class="btn btn-danger">
+                        <i class="bi bi-trash me-2"></i>Obriši
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
 </div>
-
-<div class="mt-4">
-    <h4>Prisustva</h4>
-    @if (Model.Prisustva != null && Model.Prisustva.Any())
-    {
-        <ul class="list-group">
-            @foreach (var p in Model.Prisustva)
-            {
-                <li class="list-group-item">@p.KlijentId (@p.VrijemeDolaska.ToShortDateString())</li>
-            }
-        </ul>
-    }
-    else
-    {
-        <p>Nema evidentiranih prisustava.</p>
-    }
-</div>
-
-<p>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
-</p>

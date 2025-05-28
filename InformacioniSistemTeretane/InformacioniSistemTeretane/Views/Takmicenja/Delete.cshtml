@@ -1,28 +1,28 @@
 ﻿@model InformacioniSistemTeretane.Models.Takmicenje
 
-<h1>Obriši takmičenje</h1>
+@{
+    ViewData["Title"] = "Obriši takmičenje";
+}
+
+<h1>@ViewData["Title"]</h1>
 <h3>Jeste li sigurni?</h3>
 
-<div>
-    <h4>Takmičenje</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Naziv)</dt>
-        <dd class="col-sm-8">@Html.DisplayFor(m => m.Naziv)</dd>
+<dl class="row">
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Naziv)</dt>
+    <dd class="col-sm-8">@Model.Naziv</dd>
 
-        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Datum)</dt>
-        <dd class="col-sm-8">@Model.Datum.ToShortDateString()</dd>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Datum)</dt>
+    <dd class="col-sm-8">@Model.Datum.ToShortDateString()</dd>
 
-        <dt class="col-sm-4">Lokacija</dt>
-        <dd class="col-sm-8">@Model.Lokacija?.Naziv</dd>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.LokacijaId)</dt>
+    <dd class="col-sm-8">@Model.Lokacija?.Naziv</dd>
 
-        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Kotizacija)</dt>
-        <dd class="col-sm-8">@Html.DisplayFor(m => m.Kotizacija)</dd>
-    </dl>
-</div>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Kotizacija)</dt>
+    <dd class="col-sm-8">@Model.Kotizacija.ToString("C")</dd>
+</dl>
 
 <form asp-action="Delete" method="post">
     <input type="hidden" asp-for="Id" />
     <button type="submit" class="btn btn-danger">Obriši</button>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
 </form>

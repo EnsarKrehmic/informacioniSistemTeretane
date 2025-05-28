@@ -6,43 +6,71 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using InformacioniSistemTeretane.Data;
 using InformacioniSistemTeretane.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace InformacioniSistemTeretane.Controllers
 {
+    [Authorize]
     public class IgraonicaPonudeController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<IgraonicaPonudeController> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public IgraonicaPonudeController(ApplicationDbContext context, ILogger<IgraonicaPonudeController> logger)
+        public IgraonicaPonudeController(
+            ApplicationDbContext context,
+            ILogger<IgraonicaPonudeController> logger,
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _logger = logger;
+            _userManager = userManager;
         }
 
         // GET: IgraonicaPonude
         public async Task<IActionResult> Index()
         {
-            var ponude = _context.IgraonicaPonude.Include(p => p.Igraonica);
-            return View(await ponude.ToListAsync());
+            _logger.LogInformation("Korisnik {UserName} pregleda ponude igraonica", User.Identity.Name);
+
+            var ponude = await _context.IgraonicaPonude
+                .Include(p => p.Igraonica)
+                .ToListAsync();
+
+            return View(ponude);
         }
 
         // GET: IgraonicaPonude/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning("Pokušaj pristupa detaljima ponude bez ID-a (korisnik: {UserName})", User.Identity.Name);
+                return NotFound();
+            }
 
             var ponuda = await _context.IgraonicaPonude
                 .Include(p => p.Igraonica)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (ponuda == null) return NotFound();
+
+            if (ponuda == null)
+            {
+                _logger.LogWarning("Ponuda igraonice sa ID-om {PonudaId} nije pronađena (korisnik: {UserName})", id, User.Identity.Name);
+                return NotFound();
+            }
+
+            _logger.LogInformation("Korisnik {UserName} pregleda detalje ponude: {PonudaNaziv}",
+                User.Identity.Name, ponuda.OpisUsluge);
 
             return View(ponuda);
         }
 
         // GET: IgraonicaPonude/Create
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public IActionResult Create()
         {
+            _logger.LogInformation("Korisnik {UserName} pokreće kreiranje nove ponude za igraonicu", User.Identity.Name);
+
             ViewData["IgraonicaId"] = new SelectList(_context.Igraonice, "Id", "Naziv");
             return View();
         }
@@ -50,49 +78,61 @@ namespace InformacioniSistemTeretane.Controllers
         // POST: IgraonicaPonude/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Create([Bind("IgraonicaId,OpisUsluge,Cijena,Trajanje")] IgraonicaPonuda ponuda)
         {
-            // Log bind values
-            _logger.LogInformation("----- Create IgraonicaPonuda bind values -----");
-            _logger.LogInformation("IgraonicaId: {IgraonicaId}", ponuda.IgraonicaId);
-            _logger.LogInformation("OpisUsluge: {Opis}", ponuda.OpisUsluge);
-            _logger.LogInformation("Cijena: {Cijena}", ponuda.Cijena);
-            _logger.LogInformation("Trajanje: {Trajanje}", ponuda.Trajanje);
+            _logger.LogInformation("Korisnik {UserName} kreira novu ponudu za igraonicu", User.Identity.Name);
+            _logger.LogDebug("Parametri: IgraonicaId={IgraonicaId}, OpisUsluge={OpisUsluge}, Cijena={Cijena}, Trajanje={Trajanje}",
+                ponuda.IgraonicaId, ponuda.OpisUsluge, ponuda.Cijena, ponuda.Trajanje);
 
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("ModelState is invalid. Errors:");
-                foreach (var entry in ModelState)
-                {
-                    if (entry.Value.Errors.Count > 0)
-                    {
-                        foreach (var err in entry.Value.Errors)
-                        {
-                            _logger.LogWarning(
-                                " - Field '{Field}' attempted value '{AttemptedValue}': {ErrorMessage}",
-                                entry.Key,
-                                entry.Value.AttemptedValue,
-                                err.ErrorMessage
-                            );
-                        }
-                    }
-                }
+                _logger.LogWarning("Neuspješna validacija za novu ponudu (korisnik: {UserName})", User.Identity.Name);
+
                 ViewData["IgraonicaId"] = new SelectList(_context.Igraonice, "Id", "Naziv", ponuda.IgraonicaId);
                 return View(ponuda);
             }
 
-            _context.Add(ponuda);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                _context.Add(ponuda);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Ponuda '{OpisUsluge}' uspješno kreirana (ID: {PonudaId}) od strane {UserName}",
+                    ponuda.OpisUsluge, ponuda.Id, User.Identity.Name);
+
+                TempData["Uspjeh"] = $"Ponuda '{ponuda.OpisUsluge}' je uspješno kreirana!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Greška pri čuvanju ponude u bazu (korisnik: {UserName})", User.Identity.Name);
+                ModelState.AddModelError("", "Došlo je do greške pri čuvanju podataka. Pokušajte ponovo.");
+
+                ViewData["IgraonicaId"] = new SelectList(_context.Igraonice, "Id", "Naziv", ponuda.IgraonicaId);
+                return View(ponuda);
+            }
         }
 
         // GET: IgraonicaPonude/Edit/5
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning("Pokušaj uređivanja ponude bez ID-a (korisnik: {UserName})", User.Identity.Name);
+                return NotFound();
+            }
 
             var ponuda = await _context.IgraonicaPonude.FindAsync(id);
-            if (ponuda == null) return NotFound();
+            if (ponuda == null)
+            {
+                _logger.LogWarning("Ponuda igraonice sa ID-om {PonudaId} nije pronađena (korisnik: {UserName})", id, User.Identity.Name);
+                return NotFound();
+            }
+
+            _logger.LogInformation("Korisnik {UserName} uređuje ponudu: {PonudaNaziv} (ID: {PonudaId})",
+                User.Identity.Name, ponuda.OpisUsluge, ponuda.Id);
 
             ViewData["IgraonicaId"] = new SelectList(_context.Igraonice, "Id", "Naziv", ponuda.IgraonicaId);
             return View(ponuda);
@@ -101,35 +141,24 @@ namespace InformacioniSistemTeretane.Controllers
         // POST: IgraonicaPonude/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,IgraonicaId,OpisUsluge,Cijena,Trajanje")] IgraonicaPonuda ponuda)
         {
-            _logger.LogInformation("----- Edit IgraonicaPonuda bind values -----");
-            _logger.LogInformation("Id: {Id}", ponuda.Id);
-            _logger.LogInformation("IgraonicaId: {IgraonicaId}", ponuda.IgraonicaId);
-            _logger.LogInformation("OpisUsluge: {Opis}", ponuda.OpisUsluge);
-            _logger.LogInformation("Cijena: {Cijena}", ponuda.Cijena);
-            _logger.LogInformation("Trajanje: {Trajanje}", ponuda.Trajanje);
+            _logger.LogInformation("Korisnik {UserName} ažurira ponudu ID: {PonudaId}", User.Identity.Name, id);
+            _logger.LogDebug("Parametri: IgraonicaId={IgraonicaId}, OpisUsluge={OpisUsluge}, Cijena={Cijena}, Trajanje={Trajanje}",
+                ponuda.IgraonicaId, ponuda.OpisUsluge, ponuda.Cijena, ponuda.Trajanje);
 
-            if (id != ponuda.Id) return NotFound();
+            if (id != ponuda.Id)
+            {
+                _logger.LogWarning("ID u putanji ({PutanjaId}) i ID ponude ({PonudaId}) se ne podudaraju (korisnik: {UserName})",
+                    id, ponuda.Id, User.Identity.Name);
+                return NotFound();
+            }
 
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("ModelState is invalid. Errors:");
-                foreach (var entry in ModelState)
-                {
-                    if (entry.Value.Errors.Count > 0)
-                    {
-                        foreach (var err in entry.Value.Errors)
-                        {
-                            _logger.LogWarning(
-                                " - Field '{Field}' attempted value '{AttemptedValue}': {ErrorMessage}",
-                                entry.Key,
-                                entry.Value.AttemptedValue,
-                                err.ErrorMessage
-                            );
-                        }
-                    }
-                }
+                _logger.LogWarning("Neuspješna validacija za ažuriranje ponude (korisnik: {UserName})", User.Identity.Name);
+
                 ViewData["IgraonicaId"] = new SelectList(_context.Igraonice, "Id", "Naziv", ponuda.IgraonicaId);
                 return View(ponuda);
             }
@@ -138,24 +167,52 @@ namespace InformacioniSistemTeretane.Controllers
             {
                 _context.Update(ponuda);
                 await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Ponuda '{OpisUsluge}' (ID: {PonudaId}) uspješno ažurirana od strane {UserName}",
+                    ponuda.OpisUsluge, ponuda.Id, User.Identity.Name);
+
+                TempData["Uspjeh"] = $"Ponuda '{ponuda.OpisUsluge}' je uspješno ažurirana!";
+                return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
-                if (!_context.IgraonicaPonude.Any(e => e.Id == id)) return NotFound();
-                throw;
+                if (!_context.IgraonicaPonude.Any(e => e.Id == ponuda.Id))
+                {
+                    _logger.LogWarning("Ponuda sa ID-om {PonudaId} nije pronađena (korisnik: {UserName})",
+                        ponuda.Id, User.Identity.Name);
+                    return NotFound();
+                }
+
+                _logger.LogError(ex, "Greška pri ažuriranju ponude (ID: {PonudaId})", ponuda.Id);
+                ModelState.AddModelError("", "Došlo je do greške pri čuvanju izmjena. Pokušajte ponovo.");
+
+                ViewData["IgraonicaId"] = new SelectList(_context.Igraonice, "Id", "Naziv", ponuda.IgraonicaId);
+                return View(ponuda);
             }
-            return RedirectToAction(nameof(Index));
         }
 
         // GET: IgraonicaPonude/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning("Pokušaj brisanja ponude bez ID-a (korisnik: {UserName})", User.Identity.Name);
+                return NotFound();
+            }
 
             var ponuda = await _context.IgraonicaPonude
                 .Include(p => p.Igraonica)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (ponuda == null) return NotFound();
+
+            if (ponuda == null)
+            {
+                _logger.LogWarning("Ponuda igraonice sa ID-om {PonudaId} nije pronađena (korisnik: {UserName})", id, User.Identity.Name);
+                return NotFound();
+            }
+
+            _logger.LogInformation("Korisnik {UserName} pokreće brisanje ponude: {PonudaNaziv} (ID: {PonudaId})",
+                User.Identity.Name, ponuda.OpisUsluge, ponuda.Id);
 
             return View(ponuda);
         }
@@ -163,12 +220,38 @@ namespace InformacioniSistemTeretane.Controllers
         // POST: IgraonicaPonude/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var ponuda = await _context.IgraonicaPonude.FindAsync(id);
-            _context.IgraonicaPonude.Remove(ponuda);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var ponuda = await _context.IgraonicaPonude
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (ponuda == null)
+            {
+                _logger.LogWarning("Ponuda sa ID-om {PonudaId} nije pronađena za brisanje (korisnik: {UserName})",
+                    id, User.Identity.Name);
+                return NotFound();
+            }
+
+            try
+            {
+                _context.IgraonicaPonude.Remove(ponuda);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Ponuda '{OpisUsluge}' (ID: {PonudaId}) uspješno obrisana od strane {UserName}",
+                    ponuda.OpisUsluge, ponuda.Id, User.Identity.Name);
+
+                TempData["Uspjeh"] = $"Ponuda '{ponuda.OpisUsluge}' je uspješno obrisana!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Greška pri brisanju ponude ID: {PonudaId} (korisnik: {UserName})",
+                    id, User.Identity.Name);
+
+                TempData["Greska"] = $"Došlo je do greške pri brisanju ponude '{ponuda.OpisUsluge}'!";
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }

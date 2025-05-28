@@ -1,12 +1,16 @@
 ﻿@model InformacioniSistemTeretane.Models.ZakazaniGrupni
 
-<h1>Detalji rezervacije</h1>
+@{
+    ViewData["Title"] = "Detalji rezervacije";
+}
+
+<h1>@ViewData["Title"]</h1>
 
 <dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.GrupniTrening.Naziv)</dt>
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.GrupniTreningId)</dt>
     <dd class="col-sm-9">@Model.GrupniTrening?.Naziv</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Klijent.Prezime)</dt>
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.KlijentId)</dt>
     <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
 
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.DatumPrijave)</dt>

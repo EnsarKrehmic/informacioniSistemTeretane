@@ -4,50 +4,92 @@
     ViewData["Title"] = "Novi grupni trening";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="card shadow border-0">
+    <div class="card-header bg-primary text-white py-3">
+        <h2 class="mb-0">
+            <i class="bi bi-plus-circle me-2"></i>@ViewData["Title"]
+        </h2>
+    </div>
+    <div class="card-body">
+        @if (TempData["Greska"] != null)
+        {
+            <div class="alert alert-danger mb-4">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Greska"]
+            </div>
+        }
 
-<form asp-action="Create" method="post">
-    <div class="mb-3">
-        <label asp-for="Naziv" class="form-label"></label>
-        <input asp-for="Naziv" class="form-control" />
-        <span asp-validation-for="Naziv" class="text-danger"></span>
+        <form asp-action="Create" method="post">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Naziv" class="form-label fw-bold"></label>
+                        <input asp-for="Naziv" class="form-control" placeholder="Unesite naziv treninga" />
+                        <span asp-validation-for="Naziv" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="SalaId" class="form-label fw-bold">Sala</label>
+                        <select asp-for="SalaId" class="form-select"
+                                asp-items="ViewBag.SalaId">
+                            <option value="">-- Odaberite salu --</option>
+                        </select>
+                        <span asp-validation-for="SalaId" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="TrenerId" class="form-label fw-bold">Trener</label>
+                        <select asp-for="TrenerId" class="form-select"
+                                asp-items="ViewBag.TrenerId">
+                            <option value="">-- Odaberite trenera --</option>
+                        </select>
+                        <span asp-validation-for="TrenerId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Datum" class="form-label fw-bold"></label>
+                        <input asp-for="Datum" type="date" class="form-control"
+                               min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="Datum" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Vrijeme" class="form-label fw-bold"></label>
+                        <input asp-for="Vrijeme" type="time" class="form-control" />
+                        <span asp-validation-for="Vrijeme" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="MaxUcesnika" class="form-label fw-bold">Maks. učesnika</label>
+                        <input asp-for="MaxUcesnika" type="number" class="form-control"
+                               min="1" max="100" placeholder="Unesite maksimalan broj učesnika" />
+                        <span asp-validation-for="MaxUcesnika" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label asp-for="Opis" class="form-label fw-bold"></label>
+                        <textarea asp-for="Opis" class="form-control" rows="3"
+                                  placeholder="Unesite opis treninga (opcionalno)"></textarea>
+                        <span asp-validation-for="Opis" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save me-2"></i>Kreiraj trening
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2">
+                    <i class="bi bi-x-circle me-2"></i>Odustani
+                </a>
+            </div>
+        </form>
     </div>
-    <div class="mb-3">
-        <label asp-for="Opis" class="form-label"></label>
-        <textarea asp-for="Opis" class="form-control"></textarea>
-        <span asp-validation-for="Opis" class="text-danger"></span>
-    </div>
-    <div class="form-group mb-3">
-        <label asp-for="SalaId"></label>
-        <select asp-for="SalaId" class="form-control" asp-items="ViewBag.SalaId"></select>
-        <span asp-validation-for="SalaId" class="text-danger"></span>
-    </div>
-    <div class="form-group mb-3">
-        <label asp-for="TrenerId"></label>
-        <select asp-for="TrenerId" class="form-control" asp-items="ViewBag.TrenerId"></select>
-        <span asp-validation-for="TrenerId" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Datum" class="form-label"></label>
-        <input asp-for="Datum" type="date" class="form-control" />
-        <span asp-validation-for="Datum" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Vrijeme" class="form-label"></label>
-        <input asp-for="Vrijeme" type="time" class="form-control" />
-        <span asp-validation-for="Vrijeme" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="MaxUcesnika" class="form-label"></label>
-        <input asp-for="MaxUcesnika" type="number" class="form-control" />
-        <span asp-validation-for="MaxUcesnika" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Spremi</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-</form>
+</div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

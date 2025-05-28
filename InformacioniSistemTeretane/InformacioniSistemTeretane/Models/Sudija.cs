@@ -10,6 +10,7 @@ namespace InformacioniSistemTeretane.Models
         public int Id { get; set; }
 
         [Required]
+        [Display(Name = "Zaposlenik")]
         public int ZaposlenikId { get; set; }
 
         [ForeignKey(nameof(ZaposlenikId))]
@@ -17,6 +18,7 @@ namespace InformacioniSistemTeretane.Models
         public Zaposlenik Zaposlenik { get; set; }
 
         [Required]
+        [Display(Name = "Disciplina")]
         public int DisciplinaId { get; set; }
 
         [ForeignKey(nameof(DisciplinaId))]

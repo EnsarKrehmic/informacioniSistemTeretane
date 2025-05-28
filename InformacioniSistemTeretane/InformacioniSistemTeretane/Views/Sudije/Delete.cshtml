@@ -5,14 +5,14 @@
 
 <dl class="row">
     <dt class="col-sm-4">@Html.DisplayNameFor(m => m.ZaposlenikId)</dt>
-    <dd class="col-sm-8">@Model.Zaposlenik?.Prezime, @Model.Zaposlenik?.Ime (@Model.ZaposlenikId)</dd>
+    <dd class="col-sm-8">@Model.Zaposlenik?.Prezime, @Model.Zaposlenik?.Ime</dd>
 
     <dt class="col-sm-4">@Html.DisplayNameFor(m => m.DisciplinaId)</dt>
-    <dd class="col-sm-8">@Model.Disciplina?.Naziv (@Model.DisciplinaId)</dd>
+    <dd class="col-sm-8">@Model.Disciplina?.Naziv</dd>
 </dl>
 
 <form asp-action="Delete" method="post">
     <input type="hidden" asp-for="Id" />
     <button type="submit" class="btn btn-danger">Obriši</button>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
 </form>

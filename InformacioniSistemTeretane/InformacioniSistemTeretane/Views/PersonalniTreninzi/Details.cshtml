@@ -1,32 +1,62 @@
 ﻿@model InformacioniSistemTeretane.Models.PersonalniTrening
 
-<h1>Detalji personalnog treninga</h1>
+@{
+    ViewData["Title"] = "Detalji personalnog treninga";
+    bool prosaoTrening = Model.Datum < DateTime.Today ||
+                         (Model.Datum == DateTime.Today &&
+                          Model.Vrijeme < DateTime.Now.TimeOfDay);
+    var badgeClass = prosaoTrening ? "badge bg-secondary" : "badge bg-success";
+    var status = prosaoTrening ? "Održan" : "Zakazan";
+}
 
-<dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Naziv)</dt>
-    <dd class="col-sm-9">@Model.Naziv</dd>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">Detalji personalnog treninga</h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad
+        </a>
+    </div>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Opis)</dt>
-    <dd class="col-sm-9">@Model.Opis</dd>
+    <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">@Model.Naziv <span class="@badgeClass">@status</span></h5>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-4">Trener</dt>
+                <dd class="col-sm-8">@Model.Trener?.Zaposlenik?.Prezime, @Model.Trener?.Zaposlenik?.Ime</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Klijent.Prezime)</dt>
-    <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
+                <dt class="col-sm-4">Klijent</dt>
+                <dd class="col-sm-8">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Trener.Zaposlenik.Prezime)</dt>
-    <dd class="col-sm-9">@Model.Trener?.Zaposlenik?.Prezime, @Model.Trener?.Zaposlenik?.Ime</dd>
+                <dt class="col-sm-4">Datum</dt>
+                <dd class="col-sm-8">@Model.Datum.ToShortDateString()</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Datum)</dt>
-    <dd class="col-sm-9">@Model.Datum.ToShortDateString()</dd>
+                <dt class="col-sm-4">Vrijeme</dt>
+                <dd class="col-sm-8">@Model.Vrijeme.ToString(@"hh\:mm")</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Vrijeme)</dt>
-    <dd class="col-sm-9">@Model.Vrijeme.ToString(@"hh\:mm")</dd>
+                <dt class="col-sm-4">Opis</dt>
+                <dd class="col-sm-8">@Model.Opis</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Napredak)</dt>
-    <dd class="col-sm-9">@Model.Napredak</dd>
-</dl>
-
-<p>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
-</p>
+                <dt class="col-sm-4">Napredak</dt>
+                <dd class="col-sm-8">@Model.Napredak</dd>
+            </dl>
+        </div>
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-end">
+                @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">
+                        <i class="fas fa-edit"></i> Uredi
+                    </a>
+                }
+                @if (User.IsInRole("Admin") && !prosaoTrening)
+                {
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Obriši
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,49 +1,43 @@
 /* _content/InformacioniSistemTeretane/Views/Shared/_Layout.cshtml.rz.scp.css */
-/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
+/* Općeniti stilovi */
+body[b-in4afebb5z] {
+    background-color: #f8f9fa;
+}
 
+/* Brand */
 a.navbar-brand[b-in4afebb5z] {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+    font-size: 1.5rem;
+    white-space: nowrap;
 }
 
-a[b-in4afebb5z] {
-  color: #0077cc;
+/* Dropdown items hover */
+.dropdown-menu .dropdown-item:hover[b-in4afebb5z] {
+    background-color: #1b6ec2;
+    color: white;
 }
 
-.btn-primary[b-in4afebb5z] {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+/* Active nav-link */
+.navbar-nav .nav-item.active > .nav-link[b-in4afebb5z] {
+    background-color: #1b6ec2;
+    color: white !important;
+    border-radius: .25rem;
 }
 
-.nav-pills .nav-link.active[b-in4afebb5z], .nav-pills .show > .nav-link[b-in4afebb5z] {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+/* Footer stick to bottom */
+.flex-fill[b-in4afebb5z] {
+    flex: 1 1 auto;
 }
 
-.border-top[b-in4afebb5z] {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom[b-in4afebb5z] {
-  border-bottom: 1px solid #e5e5e5;
+/* LoginPartial buttons */
+.navbar-nav .btn-link[b-in4afebb5z] {
+    color: #0077cc;
 }
 
-.box-shadow[b-in4afebb5z] {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
+    .navbar-nav .btn-link:hover[b-in4afebb5z] {
+        color: #005fa3;
+    }
 
-button.accept-policy[b-in4afebb5z] {
-  font-size: 1rem;
-  line-height: inherit;
-}
-
-.footer[b-in4afebb5z] {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px;
+/* Card shadows for content sections */
+.card[b-in4afebb5z] {
+    box-shadow: 0 .25rem .5rem rgba(0,0,0,.1);
 }

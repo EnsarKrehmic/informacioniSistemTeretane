@@ -1,19 +1,22 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.Uplata>
-@using InformacioniSistemTeretane.Models
 
-<h1>Uplate</h1>
-<p><a asp-action="Create" class="btn btn-primary">Nova uplata</a></p>
+@{
+    ViewData["Title"] = "Uplate";
+}
+
+<h1>@ViewData["Title"]</h1>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Nova uplata</a>
+</p>
 
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor((Uplata m) => m.KlijentId)</th>
-            <th>Klijent</th>
-            <th>@Html.DisplayNameFor((Uplata m) => m.PaketId)</th>
-            <th>Paket</th>
-            <th>@Html.DisplayNameFor((Uplata m) => m.DatumUplate)</th>
-            <th>@Html.DisplayNameFor((Uplata m) => m.NacinUplate)</th>
-            <th>@Html.DisplayNameFor((Uplata m) => m.Iznos)</th>
+            <th>@Html.DisplayNameFor(m => m.First().KlijentId)</th>
+            <th>@Html.DisplayNameFor(m => m.First().PaketId)</th>
+            <th>@Html.DisplayNameFor(m => m.First().DatumUplate)</th>
+            <th>@Html.DisplayNameFor(m => m.First().NacinUplate)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Iznos)</th>
             <th></th>
         </tr>
     </thead>
@@ -21,13 +24,11 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.KlijentId</td>
                 <td>@item.Klijent?.Prezime, @item.Klijent?.Ime</td>
-                <td>@item.PaketId</td>
                 <td>@item.Paket?.Naziv</td>
                 <td>@item.DatumUplate.ToShortDateString()</td>
-                <td>@Html.DisplayFor(mi => item.NacinUplate)</td>
-                <td>@Html.DisplayFor(mi => item.Iznos)</td>
+                <td>@item.NacinUplate</td>
+                <td>@item.Iznos.ToString("C")</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
                     <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |

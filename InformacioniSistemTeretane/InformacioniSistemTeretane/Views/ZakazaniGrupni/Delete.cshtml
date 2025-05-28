@@ -1,13 +1,16 @@
 ﻿@model InformacioniSistemTeretane.Models.ZakazaniGrupni
+@{
+    ViewData["Title"] = "Obriši rezervaciju";
+}
 
-<h1>Obriši rezervaciju</h1>
+<h1>@ViewData["Title"]</h1>
 <h3>Jeste li sigurni?</h3>
 
 <dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.GrupniTrening.Naziv)</dt>
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.GrupniTreningId)</dt>
     <dd class="col-sm-9">@Model.GrupniTrening?.Naziv</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Klijent.Prezime)</dt>
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.KlijentId)</dt>
     <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
 
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.DatumPrijave)</dt>
@@ -17,5 +20,5 @@
 <form asp-action="Delete" method="post">
     <input type="hidden" asp-for="Id" />
     <button type="submit" class="btn btn-danger">Obriši</button>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
 </form>

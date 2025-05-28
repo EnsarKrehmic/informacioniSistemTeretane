@@ -1,14 +1,20 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.ZakazaniGrupni>
-@using InformacioniSistemTeretane.Models
 
-<h1>Rezervacije grupnih treninga</h1>
-<p><a asp-action="Create" class="btn btn-primary">Nova rezervacija</a></p>
+@{
+    ViewData["Title"] = "Rezervacije grupnih treninga";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Nova rezervacija</a>
+</p>
 
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor((ZakazaniGrupni m) => m.GrupniTrening.Naziv)</th>
-            <th>@Html.DisplayNameFor((ZakazaniGrupni m) => m.Klijent.Prezime)</th>
+            <th>@Html.DisplayNameFor((ZakazaniGrupni m) => m.GrupniTreningId)</th>
+            <th>@Html.DisplayNameFor((ZakazaniGrupni m) => m.KlijentId)</th>
             <th>@Html.DisplayNameFor((ZakazaniGrupni m) => m.DatumPrijave)</th>
             <th></th>
         </tr>
@@ -22,7 +28,7 @@
                 <td>@item.DatumPrijave.ToShortDateString()</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
-                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a>   |
                     <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
                 </td>
             </tr>

@@ -4,37 +4,70 @@
     ViewData["Title"] = "Uredi klijenta";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad
+        </a>
+    </div>
 
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="Id" />
+    <!-- Prikaz poruka -->
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-    <div class="mb-3">
-        <label asp-for="Ime" class="form-label"></label>
-        <input asp-for="Ime" class="form-control" />
-        <span asp-validation-for="Ime" class="text-danger"></span>
+    <div class="card shadow-sm">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">Uređivanje podataka: @Model.Ime @Model.Prezime</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Ime" class="form-label required"></label>
+                        <input asp-for="Ime" class="form-control" placeholder="Unesite ime klijenta" />
+                        <span asp-validation-for="Ime" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Prezime" class="form-label required"></label>
+                        <input asp-for="Prezime" class="form-control" placeholder="Unesite prezime klijenta" />
+                        <span asp-validation-for="Prezime" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="DatumRodjenja" class="form-label required"></label>
+                        <input asp-for="DatumRodjenja" type="date" class="form-control" max="@DateTime.Now.AddYears(-14).ToString("yyyy-MM-dd")" />
+                        <small class="form-text text-muted">Klijent mora imati najmanje 14 godina</small>
+                        <span asp-validation-for="DatumRodjenja" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="UserId" class="form-label required"></label>
+                        <select asp-for="UserId" class="form-select" asp-items="ViewBag.UserId">
+                            <option value="">Odaberite korisnički račun</option>
+                        </select>
+                        <span asp-validation-for="UserId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-save"></i> Spremi promjene
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="mb-3">
-        <label asp-for="Prezime" class="form-label"></label>
-        <input asp-for="Prezime" class="form-control" />
-        <span asp-validation-for="Prezime" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="DatumRodjenja" class="form-label"></label>
-        <input asp-for="DatumRodjenja" type="date" class="form-control" />
-        <span asp-validation-for="DatumRodjenja" class="text-danger"></span>
-    </div>
-    <div class="form-group mb-3">
-        <label asp-for="UserId"></label>
-        <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
-        <span asp-validation-for="UserId" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Spremi</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-</form>
+</div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

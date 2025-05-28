@@ -4,39 +4,66 @@
     ViewData["Title"] = "Nova ponuda igraonice";
 }
 
-<h1>@ViewData["Title"]</h1>
-
-<form asp-action="Create" method="post">
-    <div class="form-group mb-3">
-        <label asp-for="IgraonicaId"></label>
-        <select asp-for="IgraonicaId" class="form-control" asp-items="ViewBag.IgraonicaId"></select>
-        <span asp-validation-for="IgraonicaId" class="text-danger"></span>
+<div class="card shadow border-0">
+    <div class="card-header bg-primary text-white py-3">
+        <h2 class="mb-0">
+            <i class="bi bi-plus-circle me-2"></i>@ViewData["Title"]
+        </h2>
     </div>
+    <div class="card-body">
+        @if (TempData["Greska"] != null)
+        {
+            <div class="alert alert-danger mb-4">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Greska"]
+            </div>
+        }
 
-    <div class="form-group mb-3">
-        <label asp-for="OpisUsluge" class="form-label"></label>
-        <input asp-for="OpisUsluge" class="form-control" />
-        <span asp-validation-for="OpisUsluge" class="text-danger"></span>
+        <form asp-action="Create" method="post">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="IgraonicaId" class="form-label fw-bold">Igraonica</label>
+                        <select asp-for="IgraonicaId" class="form-select"
+                                asp-items="ViewBag.IgraonicaId">
+                            <option value="">-- Odaberite igraonicu --</option>
+                        </select>
+                        <span asp-validation-for="IgraonicaId" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="OpisUsluge" class="form-label fw-bold">Opis usluge</label>
+                        <input asp-for="OpisUsluge" class="form-control" placeholder="Unesite opis usluge" />
+                        <span asp-validation-for="OpisUsluge" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Cijena" class="form-label fw-bold">Cijena (KM)</label>
+                        <input asp-for="Cijena" class="form-control" placeholder="Unesite cijenu" />
+                        <span asp-validation-for="Cijena" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Trajanje" class="form-label fw-bold">Trajanje (sati:minuti)</label>
+                        <input asp-for="Trajanje" type="time" class="form-control" />
+                        <span asp-validation-for="Trajanje" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save me-2"></i>Kreiraj ponudu
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2">
+                    <i class="bi bi-x-circle me-2"></i>Odustani
+                </a>
+            </div>
+        </form>
     </div>
-
-    <div class="form-group mb-3">
-        <label asp-for="Cijena" class="form-label"></label>
-        <input asp-for="Cijena" type="number" step="0.01" class="form-control" />
-        <span asp-validation-for="Cijena" class="text-danger"></span>
-    </div>
-
-    <div class="form-group mb-3">
-        <label asp-for="Trajanje" class="form-label"></label>
-        <input asp-for="Trajanje" type="time" class="form-control" />
-        <span asp-validation-for="Trajanje" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Spremi</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-</form>
+</div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

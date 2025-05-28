@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -6,9 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using InformacioniSistemTeretane.Data;
 using InformacioniSistemTeretane.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InformacioniSistemTeretane.Controllers
 {
+    [Authorize] // Zahtjeva autentifikaciju za sve akcije
     public class LicenceController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -23,29 +26,46 @@ namespace InformacioniSistemTeretane.Controllers
         // GET: Licence
         public async Task<IActionResult> Index()
         {
-            var l = _context.Licence
+            _logger.LogInformation("----- GET: Licence/Index ----- Korisnik: {Korisnik}", User.Identity.Name);
+
+            var licence = await _context.Licence
                 .Include(x => x.Klijent)
-                .Include(x => x.Program);
-            return View(await l.ToListAsync());
+                .Include(x => x.Program)
+                .ToListAsync();
+
+            return View(licence);
         }
 
         // GET: Licence/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning("Details: ID nije pronađen");
+                return NotFound();
+            }
 
             var licenca = await _context.Licence
                 .Include(x => x.Klijent)
                 .Include(x => x.Program)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (licenca == null) return NotFound();
 
+            if (licenca == null)
+            {
+                _logger.LogWarning("Details: Licenca s ID-om {Id} nije pronađena", id);
+                return NotFound();
+            }
+
+            _logger.LogInformation("Details: Prikaz detalja za licencu ID {Id}", id);
             return View(licenca);
         }
 
         // GET: Licence/Create
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public IActionResult Create()
         {
+            _logger.LogInformation("Create: Prikaz forme za novu licencu - Korisnik: {Korisnik}", User.Identity.Name);
+
             ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Prezime");
             ViewData["ProgramId"] = new SelectList(_context.LicencniProgrami, "Id", "Naziv");
             return View();
@@ -54,100 +74,207 @@ namespace InformacioniSistemTeretane.Controllers
         // POST: Licence/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("KlijentId,ProgramId,DatumIzdavanja,ValidnaDo")] Licenca m)
+        [Authorize(Roles = "Admin,Zaposlenik")]
+        public async Task<IActionResult> Create([Bind("KlijentId,ProgramId,DatumIzdavanja,ValidnaDo")] Licenca licenca)
         {
-            _logger.LogInformation("----- Create Licenca bind -----");
-            _logger.LogInformation("KlijentId: {KlijentId}, ProgramId: {ProgramId}, DatumIzdavanja: {Datum}, ValidnaDo: {Valid}",
-                m.KlijentId, m.ProgramId, m.DatumIzdavanja, m.ValidnaDo);
+            _logger.LogInformation("----- POST: Licence/Create ----- Korisnik: {Korisnik}", User.Identity.Name);
+            _logger.LogInformation("Parametri: KlijentId={KlijentId}, ProgramId={ProgramId}, DatumIzdavanja={DatumIzdavanja}, ValidnaDo={ValidnaDo}",
+                licenca.KlijentId, licenca.ProgramId, licenca.DatumIzdavanja, licenca.ValidnaDo);
 
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                _logger.LogWarning("ModelState invalid for Licenca:");
-                foreach (var e in ModelState)
-                    foreach (var err in e.Value.Errors)
-                        _logger.LogWarning(" - {Field}: '{Value}' => {Error}",
-                            e.Key, e.Value.AttemptedValue, err.ErrorMessage);
+                try
+                {
+                    // Provjera valjanosti datuma
+                    if (licenca.ValidnaDo < licenca.DatumIzdavanja)
+                    {
+                        ModelState.AddModelError("ValidnaDo", "Datum isteka licence ne može biti prije datuma izdavanja");
+                        throw new InvalidOperationException("Nevaljani datumi licence");
+                    }
 
-                ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Prezime", m.KlijentId);
-                ViewData["ProgramId"] = new SelectList(_context.LicencniProgrami, "Id", "Naziv", m.ProgramId);
-                return View(m);
+                    _context.Add(licenca);
+                    await _context.SaveChangesAsync();
+
+                    _logger.LogInformation("Kreirana nova licenca ID {Id}", licenca.Id);
+                    TempData["Uspjeh"] = "Licenca uspješno kreirana!";
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError(ex, "Greška pri kreiranju licence");
+                    ModelState.AddModelError("", "Greška pri spremanju podataka. Pokušajte ponovno.");
+                }
+                catch (InvalidOperationException ex)
+                {
+                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
+                }
             }
 
-            _context.Add(m);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            _logger.LogWarning("Neuspješna validacija: {BrojGrešaka} grešaka", ModelState.ErrorCount);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Prezime", licenca.KlijentId);
+            ViewData["ProgramId"] = new SelectList(_context.LicencniProgrami, "Id", "Naziv", licenca.ProgramId);
+            return View(licenca);
         }
 
         // GET: Licence/Edit/5
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
-            var m = await _context.Licence.FindAsync(id);
-            if (m == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning("Edit GET: ID nije pronađen");
+                return NotFound();
+            }
 
-            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Prezime", m.KlijentId);
-            ViewData["ProgramId"] = new SelectList(_context.LicencniProgrami, "Id", "Naziv", m.ProgramId);
-            return View(m);
+            var licenca = await _context.Licence.FindAsync(id);
+            if (licenca == null)
+            {
+                _logger.LogWarning("Edit GET: Licenca s ID-om {Id} nije pronađena", id);
+                return NotFound();
+            }
+
+            _logger.LogInformation("Edit GET: Uređivanje licence ID {Id}", id);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Prezime", licenca.KlijentId);
+            ViewData["ProgramId"] = new SelectList(_context.LicencniProgrami, "Id", "Naziv", licenca.ProgramId);
+            return View(licenca);
         }
 
         // POST: Licence/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,KlijentId,ProgramId,DatumIzdavanja,ValidnaDo")] Licenca m)
+        [Authorize(Roles = "Admin,Zaposlenik")]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,KlijentId,ProgramId,DatumIzdavanja,ValidnaDo")] Licenca licenca)
         {
-            _logger.LogInformation("----- Edit Licenca bind -----");
-            _logger.LogInformation("Id: {Id}, KlijentId: {KlijentId}, ProgramId: {ProgramId}, DatumIzdavanja: {Datum}, ValidnaDo: {Valid}",
-                m.Id, m.KlijentId, m.ProgramId, m.DatumIzdavanja, m.ValidnaDo);
+            _logger.LogInformation("----- POST: Licence/Edit/{id} ----- Korisnik: {Korisnik}", id, User.Identity.Name);
+            _logger.LogInformation("Parametri: Id={Id}, KlijentId={KlijentId}, ProgramId={ProgramId}, DatumIzdavanja={DatumIzdavanja}, ValidnaDo={ValidnaDo}",
+                licenca.Id, licenca.KlijentId, licenca.ProgramId, licenca.DatumIzdavanja, licenca.ValidnaDo);
 
-            if (id != m.Id) return NotFound();
-            if (!ModelState.IsValid)
+            if (id != licenca.Id)
             {
-                _logger.LogWarning("ModelState invalid for Licenca:");
-                foreach (var e in ModelState)
-                    foreach (var err in e.Value.Errors)
-                        _logger.LogWarning(" - {Field}: '{Value}' => {Error}",
-                            e.Key, e.Value.AttemptedValue, err.ErrorMessage);
-
-                ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Prezime", m.KlijentId);
-                ViewData["ProgramId"] = new SelectList(_context.LicencniProgrami, "Id", "Naziv", m.ProgramId);
-                return View(m);
+                _logger.LogWarning("Edit POST: ID u rutu ({RutaId}) i modelu ({ModelId}) se ne podudaraju", id, licenca.Id);
+                return NotFound();
             }
 
-            try
+            if (ModelState.IsValid)
             {
-                _context.Update(m);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    // Provjera valjanosti datuma
+                    if (licenca.ValidnaDo < licenca.DatumIzdavanja)
+                    {
+                        ModelState.AddModelError("ValidnaDo", "Datum isteka licence ne može biti prije datuma izdavanja");
+                        throw new InvalidOperationException("Nevaljani datumi licence");
+                    }
+
+                    _context.Update(licenca);
+                    await _context.SaveChangesAsync();
+
+                    _logger.LogInformation("Licenca ID {Id} uspješno ažurirana", id);
+                    TempData["Uspjeh"] = "Licenca uspješno ažurirana!";
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    if (!LicencaExists(licenca.Id))
+                    {
+                        _logger.LogWarning("Edit POST: Licenca s ID-om {Id} više ne postoji u bazi", id);
+                        return NotFound();
+                    }
+                    _logger.LogError(ex, "Greška pri ažuriranju licence ID {Id}", id);
+                    TempData["Greska"] = "Greška pri ažuriranju. Podatak je promijenjen ili obrisan od strane drugog korisnika.";
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError(ex, "Greška pri ažuriranju licence ID {Id}", id);
+                    ModelState.AddModelError("", "Greška pri spremanju promjena. Pokušajte ponovno.");
+                }
+                catch (InvalidOperationException ex)
+                {
+                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
+                }
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Licence.Any(e => e.Id == m.Id)) return NotFound();
-                throw;
-            }
-            return RedirectToAction(nameof(Index));
+
+            _logger.LogWarning("Neuspješna validacija: {BrojGrešaka} grešaka", ModelState.ErrorCount);
+            ViewData["KlijentId"] = new SelectList(_context.Klijenti, "Id", "Prezime", licenca.KlijentId);
+            ViewData["ProgramId"] = new SelectList(_context.LicencniProgrami, "Id", "Naziv", licenca.ProgramId);
+            return View(licenca);
         }
 
         // GET: Licence/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning("Delete GET: ID nije pronađen");
+                return NotFound();
+            }
 
             var licenca = await _context.Licence
                 .Include(x => x.Klijent)
                 .Include(x => x.Program)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (licenca == null) return NotFound();
+
+            if (licenca == null)
+            {
+                _logger.LogWarning("Delete GET: Licenca s ID-om {Id} nije pronađena", id);
+                return NotFound();
+            }
+
+            // Provjera statusa licence
+            var status = licenca.ValidnaDo < DateTime.Now ? "Istekla" : "Aktivna";
+            ViewData["Status"] = status;
+
+            _logger.LogInformation("Delete GET: Potvrda brisanja licence ID {Id}", id);
             return View(licenca);
         }
 
         // POST: Licence/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var m = await _context.Licence.FindAsync(id);
-            _context.Licence.Remove(m);
-            await _context.SaveChangesAsync();
+            _logger.LogInformation("----- POST: Licence/Delete/{id} ----- Korisnik: {Korisnik}", id, User.Identity.Name);
+
+            var licenca = await _context.Licence.FindAsync(id);
+            if (licenca == null)
+            {
+                _logger.LogWarning("DeleteConfirmed: Licenca s ID-om {Id} nije pronađena", id);
+                TempData["Greska"] = "Licenca nije pronađena!";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                // Provjera aktivnosti licence
+                if (licenca.ValidnaDo > DateTime.Now)
+                {
+                    TempData["Greska"] = "Ne možete obrisati aktivnu licencu!";
+                    return RedirectToAction(nameof(Delete), new { id });
+                }
+
+                _context.Licence.Remove(licenca);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Licenca ID {Id} uspješno obrisana", id);
+                TempData["Uspjeh"] = "Licenca uspješno obrisana!";
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Greška pri brisanju licence ID {Id}", id);
+                TempData["Greska"] = "Greška pri brisanju licence. Pokušajte ponovno ili kontaktirajte administratora.";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool LicencaExists(int id)
+        {
+            return _context.Licence.Any(e => e.Id == id);
         }
     }
 }

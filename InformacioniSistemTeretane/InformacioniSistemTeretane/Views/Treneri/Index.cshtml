@@ -1,8 +1,10 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.Trener>
-@using InformacioniSistemTeretane.Models
 
-<h1>Treneri</h1>
+@{
+    ViewData["Title"] = "Treneri";
+}
 
+<h1>@ViewData["Title"]</h1>
 <p>
     <a asp-action="Create" class="btn btn-primary">Novi trener</a>
 </p>
@@ -10,8 +12,7 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor((Trener m) => m.ZaposlenikId)</th>
-            <th>Zaposlenik</th>
+            <th>@Html.DisplayNameFor(m => m.First().ZaposlenikId)</th>
             <th></th>
         </tr>
     </thead>
@@ -19,7 +20,6 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.ZaposlenikId</td>
                 <td>@item.Zaposlenik?.Prezime, @item.Zaposlenik?.Ime</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |

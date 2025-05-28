@@ -1,6 +1,10 @@
 ﻿@model InformacioniSistemTeretane.Models.Zaposlenik
 
-<h1>Detalji zaposlenika</h1>
+@{
+    ViewData["Title"] = "Detalji zaposlenika";
+}
+
+<h1>@ViewData["Title"]</h1>
 
 <dl class="row">
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Ime)</dt>

@@ -1,29 +1,34 @@
-﻿@model InformacioniSistemTeretane.Models.ProbniTrening
+﻿@model IEnumerable<InformacioniSistemTeretane.Models.ProbniTrening>
 
-<h1>Detalji probnog treninga</h1>
+<h1>Probni treninzi</h1>
+<p><a asp-action="Create" class="btn btn-primary">Novi probni trening</a></p>
 
-<dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Naziv)</dt>
-    <dd class="col-sm-9">@Model.Naziv</dd>
-
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Opis)</dt>
-    <dd class="col-sm-9">@Model.Opis</dd>
-
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Klijent.Prezime)</dt>
-    <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
-
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Trener.Zaposlenik.Prezime)</dt>
-    <dd class="col-sm-9">@Model.Trener?.Zaposlenik?.Prezime, @Model.Trener?.Zaposlenik?.Ime</dd>
-
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Datum)</dt>
-    <dd class="col-sm-9">@Model.Datum.ToShortDateString()</dd>
-
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Ocjena)</dt>
-    <dd class="col-sm-9">@Model.Ocjena</dd>
-</dl>
-
-<p>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
-</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor((ProbniTrening m) => m.Naziv)</th>
+            <th>@Html.DisplayNameFor((ProbniTrening m) => m.KlijentId)</th>
+            <th>@Html.DisplayNameFor((ProbniTrening m) => m.TrenerId)</th>
+            <th>@Html.DisplayNameFor((ProbniTrening m) => m.Datum)</th>
+            <th>@Html.DisplayNameFor((ProbniTrening m) => m.Ocjena)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Naziv</td>
+                <td>@item.Klijent?.Prezime, @item.Klijent?.Ime</td>
+                <td>@item.Trener?.Zaposlenik?.Prezime, @item.Trener?.Zaposlenik?.Ime</td>
+                <td>@item.Datum.ToShortDateString()</td>
+                <td>@item.Ocjena</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

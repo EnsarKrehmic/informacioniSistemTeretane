@@ -7,9 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using InformacioniSistemTeretane.Data;
 using InformacioniSistemTeretane.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InformacioniSistemTeretane.Controllers
 {
+    [Authorize] // Zahtjeva autentifikaciju za sve akcije
     public class KlijentiController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,6 +26,8 @@ namespace InformacioniSistemTeretane.Controllers
         // GET: Klijenti
         public async Task<IActionResult> Index()
         {
+            _logger.LogInformation("----- GET: Klijenti/Index ----- Korisnik: {Korisnik}", User.Identity.Name);
+
             var klijenti = _context.Klijenti.Include(k => k.User);
             return View(await klijenti.ToListAsync());
         }
@@ -31,19 +35,32 @@ namespace InformacioniSistemTeretane.Controllers
         // GET: Klijenti/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning("Details: ID nije pronađen");
+                return NotFound();
+            }
 
             var klijent = await _context.Klijenti
                 .Include(k => k.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (klijent == null) return NotFound();
+            if (klijent == null)
+            {
+                _logger.LogWarning("Details: Klijent s ID-om {Id} nije pronađen", id);
+                return NotFound();
+            }
+
+            _logger.LogInformation("Details: Prikaz detalja za klijenta ID {Id}", id);
             return View(klijent);
         }
 
         // GET: Klijenti/Create
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public IActionResult Create()
         {
+            _logger.LogInformation("Create: Prikaz forme za novog klijenta - Korisnik: {Korisnik}", User.Identity.Name);
+
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
             return View();
         }
@@ -51,45 +68,55 @@ namespace InformacioniSistemTeretane.Controllers
         // POST: Klijenti/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Create([Bind("Ime,Prezime,DatumRodjenja,UserId")] Klijent klijent)
         {
-            _logger.LogInformation("----- Create Klijent bind values -----");
-            _logger.LogInformation("Ime: {Ime}", klijent.Ime);
-            _logger.LogInformation("Prezime: {Prezime}", klijent.Prezime);
-            _logger.LogInformation("DatumRodjenja: {DatumRodjenja}", klijent.DatumRodjenja);
-            _logger.LogInformation("UserId: {UserId}", klijent.UserId);
+            _logger.LogInformation("----- POST: Klijenti/Create ----- Korisnik: {Korisnik}", User.Identity.Name);
+            _logger.LogInformation("Parametri: Ime={Ime}, Prezime={Prezime}, DatumRodjenja={DatumRodjenja}, UserId={UserId}",
+                klijent.Ime, klijent.Prezime, klijent.DatumRodjenja, klijent.UserId);
 
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                _logger.LogWarning("ModelState is invalid. Errors:");
-                foreach (var entry in ModelState)
+                try
                 {
-                    if (entry.Value.Errors.Count > 0)
-                    {
-                        foreach (var err in entry.Value.Errors)
-                        {
-                            _logger.LogWarning(
-                                " - Field '{Field}' attempted value '{Value}': {Error}",
-                                entry.Key, entry.Value.AttemptedValue, err.ErrorMessage);
-                        }
-                    }
+                    _context.Add(klijent);
+                    await _context.SaveChangesAsync();
+
+                    _logger.LogInformation("Kreiran novi klijent ID {Id}", klijent.Id);
+                    TempData["Uspjeh"] = "Klijent uspješno kreiran!";
+
+                    return RedirectToAction(nameof(Index));
                 }
-                ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", klijent.UserId);
-                return View(klijent);
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError(ex, "Greška pri kreiranju klijenta");
+                    ModelState.AddModelError("", "Greška pri spremanju podataka. Pokušajte ponovno.");
+                }
             }
 
-            _context.Add(klijent);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            _logger.LogWarning("Neuspješna validacija: {BrojGrešaka} grešaka", ModelState.ErrorCount);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", klijent.UserId);
+            return View(klijent);
         }
 
         // GET: Klijenti/Edit/5
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
-            var klijent = await _context.Klijenti.FindAsync(id);
-            if (klijent == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning("Edit GET: ID nije pronađen");
+                return NotFound();
+            }
 
+            var klijent = await _context.Klijenti.FindAsync(id);
+            if (klijent == null)
+            {
+                _logger.LogWarning("Edit GET: Klijent s ID-om {Id} nije pronađen", id);
+                return NotFound();
+            }
+
+            _logger.LogInformation("Edit GET: Uređivanje klijenta ID {Id}", id);
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", klijent.UserId);
             return View(klijent);
         }
@@ -97,69 +124,114 @@ namespace InformacioniSistemTeretane.Controllers
         // POST: Klijenti/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Ime,Prezime,DatumRodjenja,UserId")] Klijent klijent)
         {
-            _logger.LogInformation("----- Edit Klijent bind values -----");
-            _logger.LogInformation("Id: {Id}", klijent.Id);
-            _logger.LogInformation("Ime: {Ime}", klijent.Ime);
-            _logger.LogInformation("Prezime: {Prezime}", klijent.Prezime);
-            _logger.LogInformation("DatumRodjenja: {DatumRodjenja}", klijent.DatumRodjenja);
-            _logger.LogInformation("UserId: {UserId}", klijent.UserId);
+            _logger.LogInformation("----- POST: Klijenti/Edit/{id} ----- Korisnik: {Korisnik}", id, User.Identity.Name);
+            _logger.LogInformation("Parametri: Id={Id}, Ime={Ime}, Prezime={Prezime}, DatumRodjenja={DatumRodjenja}, UserId={UserId}",
+                klijent.Id, klijent.Ime, klijent.Prezime, klijent.DatumRodjenja, klijent.UserId);
 
-            if (id != klijent.Id) return NotFound();
-
-            if (!ModelState.IsValid)
+            if (id != klijent.Id)
             {
-                _logger.LogWarning("ModelState is invalid. Errors:");
-                foreach (var entry in ModelState)
+                _logger.LogWarning("Edit POST: ID u rutu ({RutaId}) i modelu ({ModelId}) se ne podudaraju", id, klijent.Id);
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
                 {
-                    if (entry.Value.Errors.Count > 0)
-                    {
-                        foreach (var err in entry.Value.Errors)
-                        {
-                            _logger.LogWarning(
-                                " - Field '{Field}' attempted value '{Value}': {Error}",
-                                entry.Key, entry.Value.AttemptedValue, err.ErrorMessage);
-                        }
-                    }
+                    _context.Update(klijent);
+                    await _context.SaveChangesAsync();
+
+                    _logger.LogInformation("Klijent ID {Id} uspješno ažuriran", id);
+                    TempData["Uspjeh"] = "Klijent uspješno ažuriran!";
+
+                    return RedirectToAction(nameof(Index));
                 }
-                ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", klijent.UserId);
-                return View(klijent);
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    if (!KlijentExists(klijent.Id))
+                    {
+                        _logger.LogWarning("Edit POST: Klijent s ID-om {Id} više ne postoji u bazi", id);
+                        return NotFound();
+                    }
+                    _logger.LogError(ex, "Greška pri ažuriranju klijenta ID {Id}", id);
+                    TempData["Greska"] = "Greška pri ažuriranju. Podatak je promijenjen ili obrisan od strane drugog korisnika.";
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError(ex, "Greška pri ažuriranju klijenta ID {Id}", id);
+                    ModelState.AddModelError("", "Greška pri spremanju promjena. Pokušajte ponovno.");
+                }
             }
 
-            try
-            {
-                _context.Update(klijent);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Klijenti.Any(e => e.Id == id)) return NotFound();
-                throw;
-            }
-            return RedirectToAction(nameof(Index));
+            _logger.LogWarning("Neuspješna validacija: {BrojGrešaka} grešaka", ModelState.ErrorCount);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", klijent.UserId);
+            return View(klijent);
         }
 
         // GET: Klijenti/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning("Delete GET: ID nije pronađen");
+                return NotFound();
+            }
+
             var klijent = await _context.Klijenti
                 .Include(k => k.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (klijent == null) return NotFound();
+
+            if (klijent == null)
+            {
+                _logger.LogWarning("Delete GET: Klijent s ID-om {Id} nije pronađen", id);
+                return NotFound();
+            }
+
+            _logger.LogInformation("Delete GET: Potvrda brisanja klijenta ID {Id}", id);
             return View(klijent);
         }
 
         // POST: Klijenti/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            _logger.LogInformation("----- POST: Klijenti/Delete/{id} ----- Korisnik: {Korisnik}", id, User.Identity.Name);
+
             var klijent = await _context.Klijenti.FindAsync(id);
-            _context.Klijenti.Remove(klijent);
-            await _context.SaveChangesAsync();
+            if (klijent == null)
+            {
+                _logger.LogWarning("DeleteConfirmed: Klijent s ID-om {Id} nije pronađen", id);
+                TempData["Greska"] = "Klijent nije pronađen!";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                _context.Klijenti.Remove(klijent);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Klijent ID {Id} uspješno obrisan", id);
+                TempData["Uspjeh"] = "Klijent uspješno obrisan!";
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Greška pri brisanju klijenta ID {Id}", id);
+                TempData["Greska"] = "Greška pri brisanju klijenta. Pokušajte ponovno ili kontaktirajte administratora.";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool KlijentExists(int id)
+        {
+            return _context.Klijenti.Any(e => e.Id == id);
         }
     }
 }

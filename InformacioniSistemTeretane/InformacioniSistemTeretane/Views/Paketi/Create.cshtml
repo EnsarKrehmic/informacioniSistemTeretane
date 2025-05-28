@@ -4,35 +4,75 @@
     ViewData["Title"] = "Novi paket";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad
+        </a>
+    </div>
 
-<form asp-action="Create" method="post">
-    <div class="mb-3">
-        <label asp-for="Naziv" class="form-label"></label>
-        <input asp-for="Naziv" class="form-control" />
-        <span asp-validation-for="Naziv" class="text-danger"></span>
+    <!-- Prikaz poruka -->
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Unos podataka</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label asp-for="Naziv" class="form-label required"></label>
+                        <input asp-for="Naziv" class="form-control" placeholder="Unesite naziv paketa" />
+                        <span asp-validation-for="Naziv" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label asp-for="Opis" class="form-label"></label>
+                        <textarea asp-for="Opis" class="form-control" placeholder="Unesite opis paketa" rows="3"></textarea>
+                        <span asp-validation-for="Opis" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Cijena" class="form-label required"></label>
+                        <input asp-for="Cijena" type="number" step="0.01" min="1" class="form-control" placeholder="Unesite cijenu" />
+                        <span asp-validation-for="Cijena" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="TrajanjeDana" class="form-label required"></label>
+                        <input asp-for="TrajanjeDana" type="number" min="1" class="form-control" placeholder="Unesite trajanje u danima" />
+                        <span asp-validation-for="TrajanjeDana" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Spremi
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="mb-3">
-        <label asp-for="Opis" class="form-label"></label>
-        <textarea asp-for="Opis" class="form-control"></textarea>
-        <span asp-validation-for="Opis" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Cijena" class="form-label"></label>
-        <input asp-for="Cijena" type="number" step="0.01" class="form-control" />
-        <span asp-validation-for="Cijena" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="TrajanjeDana" class="form-label"></label>
-        <input asp-for="TrajanjeDana" type="number" class="form-control" />
-        <span asp-validation-for="TrajanjeDana" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Spremi</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-</form>
+</div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            $('.required').each(function() {
+                $(this).append(' <span class="text-danger">*</span>');
+            });
+        });
+    </script>
 }

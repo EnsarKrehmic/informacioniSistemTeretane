@@ -1,39 +1,96 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.GrupniTrening>
 @using InformacioniSistemTeretane.Models
 
-<h1>Grupni treninzi</h1>
-<p>
-    <a asp-action="Create" class="btn btn-primary">Novi grupni trening</a>
-</p>
+@{
+    ViewData["Title"] = "Grupni treninzi";
+}
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor((GrupniTrening m) => m.Naziv)</th>
-            <th>@Html.DisplayNameFor((GrupniTrening m) => m.Sala.Naziv)</th>
-            <th>@Html.DisplayNameFor((GrupniTrening m) => m.Trener.Zaposlenik.Prezime)</th>
-            <th>@Html.DisplayNameFor((GrupniTrening m) => m.Datum)</th>
-            <th>@Html.DisplayNameFor((GrupniTrening m) => m.Vrijeme)</th>
-            <th>@Html.DisplayNameFor((GrupniTrening m) => m.MaxUcesnika)</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<div class="card shadow border-0 mb-4">
+    <div class="card-header bg-primary text-white py-3">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h2 class="mb-0">
+                    <i class="bi bi-people-fill me-2"></i>@ViewData["Title"]
+                </h2>
+            </div>
+            <div class="col-md-6 text-end">
+                @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                {
+                    <a asp-action="Create" class="btn btn-light">
+                        <i class="bi bi-plus-circle me-2"></i>Novi trening
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        @if (TempData["Uspjeh"] != null)
         {
-            <tr>
-                <td>@item.Naziv</td>
-                <td>@item.Sala?.Naziv</td>
-                <td>@item.Trener?.Zaposlenik?.Prezime</td>
-                <td>@item.Datum.ToShortDateString()</td>
-                <td>@item.Vrijeme.ToString(@"hh\:mm")</td>
-                <td>@item.MaxUcesnika</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
-                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
-                </td>
-            </tr>
+            <div class="alert alert-success mb-0 rounded-0">
+                <i class="bi bi-check-circle-fill me-2"></i> @TempData["Uspjeh"]
+            </div>
         }
-    </tbody>
-</table>
+        @if (TempData["Greska"] != null)
+        {
+            <div class="alert alert-danger mb-0 rounded-0">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Greska"]
+            </div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Naziv</th>
+                        <th>Sala</th>
+                        <th>Trener</th>
+                        <th>Datum</th>
+                        <th>Vrijeme</th>
+                        <th>Maks. učesnika</th>
+                        <th class="text-end">Akcije</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Naziv</td>
+                            <td>@item.Sala?.Naziv</td>
+                            <td>@item.Trener?.Zaposlenik?.Prezime, @item.Trener?.Zaposlenik?.Ime</td>
+                            <td>@item.Datum.ToString("dd.MM.yyyy")</td>
+                            <td>@item.Vrijeme.ToString(@"hh\:mm")</td>
+                            <td>@item.MaxUcesnika</td>
+                            <td class="text-end">
+                                <a asp-action="Details" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-outline-primary" title="Detalji">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+
+                                @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-warning ms-1" title="Uredi">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                }
+
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <a asp-action="Delete" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-danger ms-1" title="Obriši">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer bg-light py-3">
+        <div class="text-muted small">
+            Ukupno treninga: @Model.Count()
+        </div>
+    </div>
+</div>

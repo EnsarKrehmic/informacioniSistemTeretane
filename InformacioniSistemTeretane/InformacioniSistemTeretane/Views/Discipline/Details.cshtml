@@ -1,23 +1,79 @@
 ﻿@model InformacioniSistemTeretane.Models.Disciplina
 
-<h1>Detalji discipline</h1>
+@{
+    ViewData["Title"] = "Detalji discipline";
+}
 
-<dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.TakmicenjeId)</dt>
-    <dd class="col-sm-9">@Model.Takmicenje?.Naziv (@Model.TakmicenjeId)</dd>
+<div class="card shadow border-0">
+    <div class="card-header bg-primary text-white py-3">
+        <h2 class="mb-0">
+            <i class="bi bi-info-circle me-2"></i>@ViewData["Title"]
+        </h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-8">
+                <dl class="row">
+                    <dt class="col-sm-4">Takmičenje</dt>
+                    <dd class="col-sm-8">@Model.Takmicenje?.Naziv</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Naziv)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Naziv)</dd>
+                    <dt class="col-sm-4">Naziv discipline</dt>
+                    <dd class="col-sm-8">@Model.Naziv</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Opis)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Opis)</dd>
+                    <dt class="col-sm-4">Opis</dt>
+                    <dd class="col-sm-8">
+                        @if (String.IsNullOrWhiteSpace(Model.Opis))
+                        {
+                            <span class="text-muted fst-italic">Nema opisa</span>
+                        }
+                        else
+                        {
+                            @Model.Opis
+                        }
+                    </dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.MaxUcesnika)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.MaxUcesnika)</dd>
-</dl>
-
-<p>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
-    <a asp-action="Index" class="btn btn-secondary">Nazad na listu</a>
-</p>
+                    <dt class="col-sm-4">Maks. učesnika</dt>
+                    <dd class="col-sm-8">@Model.MaxUcesnika</dd>
+                </dl>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h5 class="card-title">Statistika</h5>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Broj takmičara:</span>
+                            <span class="fw-bold">@Model.Takmicari?.Count</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Slobodnih mjesta:</span>
+                            <span class="fw-bold">@(Model.MaxUcesnika - Model.Takmicari?.Count)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer bg-light">
+        <div class="d-flex justify-content-between">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Nazad na listu
+            </a>
+            <div>
+                @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id"
+                       class="btn btn-warning me-2">
+                        <i class="bi bi-pencil me-2"></i>Uredi
+                    </a>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Delete" asp-route-id="@Model.Id"
+                       class="btn btn-danger">
+                        <i class="bi bi-trash me-2"></i>Obriši
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -2,38 +2,92 @@
 
 @{
     ViewData["Title"] = "Uredi licencu";
+    var status = Model.ValidnaDo < DateTime.Now ? "Istekla" : "Aktivna";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad
+        </a>
+    </div>
 
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="Id" />
-    <div class="form-group mb-3">
-        <label asp-for="KlijentId"></label>
-        <select asp-for="KlijentId" class="form-control" asp-items="ViewBag.KlijentId"></select>
-        <span asp-validation-for="KlijentId" class="text-danger"></span>
+    <!-- Prikaz poruka -->
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">Uređivanje licence za: @Model.Klijent?.Prezime, @Model.Klijent?.Ime</h5>
+            <span class="badge @(status == "Aktivna" ? "bg-success" : "bg-secondary")">@status</span>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="KlijentId" class="form-label required"></label>
+                        <select asp-for="KlijentId" class="form-select" asp-items="ViewBag.KlijentId">
+                            <option value="">Odaberite klijenta</option>
+                        </select>
+                        <span asp-validation-for="KlijentId" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="ProgramId" class="form-label required"></label>
+                        <select asp-for="ProgramId" class="form-select" asp-items="ViewBag.ProgramId">
+                            <option value="">Odaberite program</option>
+                        </select>
+                        <span asp-validation-for="ProgramId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="DatumIzdavanja" class="form-label required"></label>
+                        <input asp-for="DatumIzdavanja" type="date" class="form-control"
+                               max="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="DatumIzdavanja" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="ValidnaDo" class="form-label required"></label>
+                        <input asp-for="ValidnaDo" type="date" class="form-control"
+                               min="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="ValidnaDo" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-save"></i> Spremi promjene
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="form-group mb-3">
-        <label asp-for="ProgramId"></label>
-        <select asp-for="ProgramId" class="form-control" asp-items="ViewBag.ProgramId"></select>
-        <span asp-validation-for="ProgramId" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="DatumIzdavanja" class="form-label"></label>
-        <input asp-for="DatumIzdavanja" type="date" class="form-control" />
-        <span asp-validation-for="DatumIzdavanja" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="ValidnaDo" class="form-label"></label>
-        <input asp-for="ValidnaDo" type="date" class="form-control" />
-        <span asp-validation-for="ValidnaDo" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Spremi</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-</form>
+</div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            // Klijentska validacija datuma
+            $('#DatumIzdavanja, #ValidnaDo').change(function() {
+                const startDate = new Date($('#DatumIzdavanja').val());
+                const endDate = new Date($('#ValidnaDo').val());
+
+                if (startDate && endDate && endDate < startDate) {
+                    $('#ValidnaDo').siblings('.text-danger').text('Datum isteka mora biti nakon datuma izdavanja');
+                } else {
+                    $('#ValidnaDo').siblings('.text-danger').text('');
+                }
+            });
+        });
+    </script>
 }

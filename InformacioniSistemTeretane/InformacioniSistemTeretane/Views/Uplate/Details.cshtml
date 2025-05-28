@@ -1,26 +1,30 @@
 ﻿@model InformacioniSistemTeretane.Models.Uplata
 
-<h1>Detalji uplate</h1>
+@{
+    ViewData["Title"] = "Detalji uplate";
+}
+
+<h1>@ViewData["Title"]</h1>
 
 <dl class="row">
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.KlijentId)</dt>
-    <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime (@Model.KlijentId)</dd>
+    <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
 
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.PaketId)</dt>
-    <dd class="col-sm-9">@Model.Paket?.Naziv (@Model.PaketId)</dd>
+    <dd class="col-sm-9">@Model.Paket?.Naziv</dd>
 
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.DatumUplate)</dt>
     <dd class="col-sm-9">@Model.DatumUplate.ToShortDateString()</dd>
 
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.NacinUplate)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.NacinUplate)</dd>
+    <dd class="col-sm-9">@Model.NacinUplate</dd>
 
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Iznos)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Iznos)</dd>
+    <dd class="col-sm-9">@Model.Iznos.ToString("C")</dd>
 </dl>
 
-<p>
+<p class="mt-3">
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger ms-2">Obriši</a>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
 </p>

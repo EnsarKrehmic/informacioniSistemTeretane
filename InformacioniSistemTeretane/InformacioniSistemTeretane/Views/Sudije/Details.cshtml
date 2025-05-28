@@ -4,14 +4,14 @@
 
 <dl class="row">
     <dt class="col-sm-4">@Html.DisplayNameFor(m => m.ZaposlenikId)</dt>
-    <dd class="col-sm-8">@Model.Zaposlenik?.Prezime, @Model.Zaposlenik?.Ime (@Model.ZaposlenikId)</dd>
+    <dd class="col-sm-8">@Model.Zaposlenik?.Prezime, @Model.Zaposlenik?.Ime</dd>
 
     <dt class="col-sm-4">@Html.DisplayNameFor(m => m.DisciplinaId)</dt>
-    <dd class="col-sm-8">@Model.Disciplina?.Naziv (@Model.DisciplinaId)</dd>
+    <dd class="col-sm-8">@Model.Disciplina?.Naziv</dd>
 </dl>
 
 <p>
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger ms-2">Obriši</a>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
 </p>

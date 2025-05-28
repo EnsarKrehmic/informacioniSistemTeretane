@@ -4,50 +4,100 @@
     ViewData["Title"] = "Novi personalni trening";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad
+        </a>
+    </div>
 
-<form asp-action="Create" method="post">
-    <div class="form-group mb-3">
-        <label asp-for="Naziv"></label>
-        <input asp-for="Naziv" class="form-control" />
-        <span asp-validation-for="Naziv" class="text-danger"></span>
+    <!-- Prikaz poruka -->
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Unos podataka</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label asp-for="Naziv" class="form-label required"></label>
+                        <input asp-for="Naziv" class="form-control" placeholder="Unesite naziv treninga" />
+                        <span asp-validation-for="Naziv" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label asp-for="Opis" class="form-label"></label>
+                        <textarea asp-for="Opis" class="form-control" placeholder="Unesite opis treninga" rows="3"></textarea>
+                        <span asp-validation-for="Opis" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="TrenerId" class="form-label required"></label>
+                        <select asp-for="TrenerId" class="form-select" asp-items="ViewBag.TrenerId">
+                            <option value="">Odaberite trenera</option>
+                        </select>
+                        <span asp-validation-for="TrenerId" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="KlijentId" class="form-label required"></label>
+                        <select asp-for="KlijentId" class="form-select" asp-items="ViewBag.KlijentId">
+                            <option value="">Odaberite klijenta</option>
+                        </select>
+                        <span asp-validation-for="KlijentId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Datum" class="form-label required"></label>
+                        <input asp-for="Datum" type="date" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="Datum" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Vrijeme" class="form-label required"></label>
+                        <input asp-for="Vrijeme" type="time" class="form-control" />
+                        <span asp-validation-for="Vrijeme" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label asp-for="Napredak" class="form-label"></label>
+                        <textarea asp-for="Napredak" class="form-control" placeholder="Unesite napredak klijenta" rows="2"></textarea>
+                        <span asp-validation-for="Napredak" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Spremi
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="form-group mb-3">
-        <label asp-for="Opis"></label>
-        <textarea asp-for="Opis" class="form-control"></textarea>
-        <span asp-validation-for="Opis" class="text-danger"></span>
-    </div>
-    <div class="form-group mb-3">
-        <label asp-for="KlijentId"></label>
-        <select asp-for="KlijentId" class="form-control" asp-items="ViewBag.KlijentId"></select>
-        <span asp-validation-for="KlijentId" class="text-danger"></span>
-    </div>
-    <div class="form-group mb-3">
-        <label asp-for="TrenerId"></label>
-        <select asp-for="TrenerId" class="form-control" asp-items="ViewBag.TrenerId"></select>
-        <span asp-validation-for="TrenerId" class="text-danger"></span>
-    </div>
-    <div class="form-group mb-3">
-        <label asp-for="Datum"></label>
-        <input asp-for="Datum" type="date" class="form-control" />
-        <span asp-validation-for="Datum" class="text-danger"></span>
-    </div>
-    <div class="form-group mb-3">
-        <label asp-for="Vrijeme"></label>
-        <input asp-for="Vrijeme" type="time" class="form-control" />
-        <span asp-validation-for="Vrijeme" class="text-danger"></span>
-    </div>
-    <div class="form-group mb-3">
-        <label asp-for="Napredak"></label>
-        <textarea asp-for="Napredak" class="form-control"></textarea>
-        <span asp-validation-for="Napredak" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Spremi</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-</form>
+</div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            $('.required').each(function() {
+                $(this).append(' <span class="text-danger">*</span>');
+            });
+        });
+    </script>
 }

@@ -1,6 +1,10 @@
 ﻿@model InformacioniSistemTeretane.Models.Zaposlenik
 
-<h1>Obriši zaposlenika</h1>
+@{
+    ViewData["Title"] = "Obriši zaposlenika";
+}
+
+<h1>@ViewData["Title"]</h1>
 <h3>Jeste li sigurni?</h3>
 
 <dl class="row">
@@ -12,9 +16,6 @@
 
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Pozicija)</dt>
     <dd class="col-sm-9">@Html.DisplayFor(m => m.Pozicija)</dd>
-
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Telefon)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Telefon)</dd>
 
     <dt class="col-sm-3">@Html.DisplayNameFor(m => m.UserId)</dt>
     <dd class="col-sm-9">@Model.User?.UserName (@Model.UserId)</dd>

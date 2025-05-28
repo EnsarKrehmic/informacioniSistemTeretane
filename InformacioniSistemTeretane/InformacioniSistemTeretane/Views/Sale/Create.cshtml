@@ -1,27 +1,34 @@
 ﻿@model InformacioniSistemTeretane.Models.Sala
 
-<h1>Dodaj salu</h1>
-<form asp-action="Create">
-    <div class="form-group">
+@{
+    ViewData["Title"] = "Nova sala";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group mb-3">
         <label asp-for="Naziv"></label>
         <input asp-for="Naziv" class="form-control" />
         <span asp-validation-for="Naziv" class="text-danger"></span>
     </div>
-    <div class="form-group">
+
+    <div class="form-group mb-3">
         <label asp-for="Kapacitet"></label>
-        <input asp-for="Kapacitet" class="form-control" type="number" />
+        <input asp-for="Kapacitet" type="number" class="form-control" />
         <span asp-validation-for="Kapacitet" class="text-danger"></span>
     </div>
-    <div class="form-group">
+
+    <div class="form-group mb-3">
         <label asp-for="LokacijaId"></label>
         <select asp-for="LokacijaId" class="form-control" asp-items="ViewBag.LokacijaId"></select>
         <span asp-validation-for="LokacijaId" class="text-danger"></span>
     </div>
+
     <button type="submit" class="btn btn-primary">Spremi</button>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
 </form>
+
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

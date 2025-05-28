@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.ProbniTrening>
-@using InformacioniSistemTeretane.Models
 
 <h1>Probni treninzi</h1>
 <p><a asp-action="Create" class="btn btn-primary">Novi probni trening</a></p>
@@ -8,8 +7,8 @@
     <thead>
         <tr>
             <th>@Html.DisplayNameFor((ProbniTrening m) => m.Naziv)</th>
-            <th>@Html.DisplayNameFor((ProbniTrening m) => m.Klijent.Prezime)</th>
-            <th>@Html.DisplayNameFor((ProbniTrening m) => m.Trener.Zaposlenik.Prezime)</th>
+            <th>@Html.DisplayNameFor((ProbniTrening m) => m.KlijentId)</th>
+            <th>@Html.DisplayNameFor((ProbniTrening m) => m.TrenerId)</th>
             <th>@Html.DisplayNameFor((ProbniTrening m) => m.Datum)</th>
             <th>@Html.DisplayNameFor((ProbniTrening m) => m.Ocjena)</th>
             <th></th>

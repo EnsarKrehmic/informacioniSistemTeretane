@@ -4,38 +4,68 @@
     ViewData["Title"] = "Nova disciplina";
 }
 
-<h1>@ViewData["Title"]</h1>
-
-<form asp-action="Create" method="post">
-    <div class="form-group mb-3">
-        <label asp-for="TakmicenjeId"></label>
-        <select asp-for="TakmicenjeId" class="form-control" asp-items="ViewBag.TakmicenjeId"></select>
-        <span asp-validation-for="TakmicenjeId" class="text-danger"></span>
+<div class="card shadow border-0">
+    <div class="card-header bg-primary text-white py-3">
+        <h2 class="mb-0">
+            <i class="bi bi-plus-circle me-2"></i>@ViewData["Title"]
+        </h2>
     </div>
-    <div class="mb-3">
-        <label asp-for="Naziv" class="form-label"></label>
-        <input asp-for="Naziv" class="form-control" />
-        <span asp-validation-for="Naziv" class="text-danger"></span>
-    </div>
+    <div class="card-body">
+        @if (TempData["Greska"] != null)
+        {
+            <div class="alert alert-danger mb-4">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Greska"]
+            </div>
+        }
 
-    <div class="mb-3">
-        <label asp-for="Opis" class="form-label"></label>
-        <textarea asp-for="Opis" class="form-control"></textarea>
-        <span asp-validation-for="Opis" class="text-danger"></span>
-    </div>
+        <form asp-action="Create" method="post">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="TakmicenjeId" class="form-label fw-bold"></label>
+                        <select asp-for="TakmicenjeId" class="form-select"
+                                asp-items="ViewBag.TakmicenjeId">
+                            <option value="">-- Odaberite takmičenje --</option>
+                        </select>
+                        <span asp-validation-for="TakmicenjeId" class="text-danger"></span>
+                    </div>
 
-    <div class="mb-3">
-        <label asp-for="MaxUcesnika" class="form-label"></label>
-        <input asp-for="MaxUcesnika" type="number" class="form-control" />
-        <span asp-validation-for="MaxUcesnika" class="text-danger"></span>
-    </div>
+                    <div class="mb-3">
+                        <label asp-for="Naziv" class="form-label fw-bold"></label>
+                        <input asp-for="Naziv" class="form-control" placeholder="Unesite naziv discipline" />
+                        <span asp-validation-for="Naziv" class="text-danger"></span>
+                    </div>
+                </div>
 
-    <button type="submit" class="btn btn-primary">Spremi</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-</form>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="MaxUcesnika" class="form-label fw-bold"></label>
+                        <input asp-for="MaxUcesnika" type="number" class="form-control"
+                               placeholder="Unesite maksimalan broj učesnika" min="1" max="100" />
+                        <span asp-validation-for="MaxUcesnika" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Opis" class="form-label fw-bold"></label>
+                        <textarea asp-for="Opis" class="form-control" rows="3"
+                                  placeholder="Unesite opis discipline (opcionalno)"></textarea>
+                        <span asp-validation-for="Opis" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save me-2"></i>Spremi
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2">
+                    <i class="bi bi-x-circle me-2"></i>Odustani
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

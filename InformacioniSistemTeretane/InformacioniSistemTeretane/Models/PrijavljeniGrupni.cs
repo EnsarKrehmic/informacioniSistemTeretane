@@ -11,19 +11,25 @@ namespace InformacioniSistemTeretane.Models
         public int Id { get; set; }
 
         [Required]
+        [Display(Name = "Grupni trening")]
         public int GrupniTreningId { get; set; }
+
         [ForeignKey(nameof(GrupniTreningId))]
         [ValidateNever]
         public GrupniTrening GrupniTrening { get; set; }
 
         [Required]
+        [Display(Name = "Klijent")]
         public int KlijentId { get; set; }
+
         [ForeignKey(nameof(KlijentId))]
         [ValidateNever]
         public Klijent Klijent { get; set; }
 
+        [Display(Name = "Prisutnost")]
         public bool Prisutan { get; set; }
 
+        [Display(Name = "Vrijeme dolaska")]
         [DataType(DataType.Time)]
         public DateTime VrijemeDolaska { get; set; }
     }

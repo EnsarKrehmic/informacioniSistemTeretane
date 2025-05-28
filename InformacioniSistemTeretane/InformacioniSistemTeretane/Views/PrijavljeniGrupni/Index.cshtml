@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.PrijavljeniGrupni>
-@using InformacioniSistemTeretane.Models
 
 <h1>Prisustva na grupnim treninzima</h1>
 <p><a asp-action="Create" class="btn btn-primary">Evidentiraj dolazak</a></p>
@@ -7,8 +6,8 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor((PrijavljeniGrupni m) => m.GrupniTrening.Naziv)</th>
-            <th>@Html.DisplayNameFor((PrijavljeniGrupni m) => m.Klijent.Prezime)</th>
+            <th>@Html.DisplayNameFor((PrijavljeniGrupni m) => m.GrupniTreningId)</th>
+            <th>@Html.DisplayNameFor((PrijavljeniGrupni m) => m.KlijentId)</th>
             <th>@Html.DisplayNameFor((PrijavljeniGrupni m) => m.Prisutan)</th>
             <th>@Html.DisplayNameFor((PrijavljeniGrupni m) => m.VrijemeDolaska)</th>
             <th></th>
@@ -20,7 +19,7 @@
             <tr>
                 <td>@item.GrupniTrening?.Naziv</td>
                 <td>@item.Klijent?.Prezime, @item.Klijent?.Ime</td>
-                <td>@item.Prisutan</td>
+                <td>@(item.Prisutan ? "Da" : "Ne")</td>
                 <td>@item.VrijemeDolaska.ToString("HH:mm")</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |

@@ -1,53 +1,80 @@
 ﻿@model InformacioniSistemTeretane.Models.Paket
 
-<h1>Detalji paketa</h1>
+@{
+    ViewData["Title"] = "Detalji paketa";
+    bool imaUplata = Model.Uplate?.Any() ?? false;
+}
 
-<dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Naziv)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Naziv)</dd>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">Detalji paketa</h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad
+        </a>
+    </div>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Opis)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Opis)</dd>
+    <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">@Model.Naziv</h5>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Naziv)</dt>
+                <dd class="col-sm-8">@Model.Naziv</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Cijena)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Cijena)</dd>
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Opis)</dt>
+                <dd class="col-sm-8">@Model.Opis</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.TrajanjeDana)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.TrajanjeDana)</dd>
-</dl>
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Cijena)</dt>
+                <dd class="col-sm-8">@Model.Cijena.ToString("C")</dd>
 
-<div class="mt-4">
-    <h4>Uplate</h4>
-    @if (Model.Uplate != null && Model.Uplate.Any())
-    {
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Datum uplate</th>
-                    <th>Iznos</th>
-                    <th>Klijent</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var u in Model.Uplate)
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.TrajanjeDana)</dt>
+                <dd class="col-sm-8">@Model.TrajanjeDana dana</dd>
+
+                <dt class="col-sm-4">Broj uplata</dt>
+                <dd class="col-sm-8">@(Model.Uplate?.Count ?? 0)</dd>
+            </dl>
+        </div>
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-end">
+                @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
                 {
-                    <tr>
-                        <td>@u.DatumUplate.ToShortDateString()</td>
-                        <td>@u.Iznos</td>
-                        <td>@u.Klijent?.Prezime, @u.Klijent?.Ime</td>
-                    </tr>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">
+                        <i class="fas fa-edit"></i> Uredi
+                    </a>
                 }
-            </tbody>
-        </table>
-    }
-    else
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Obriši
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (imaUplata)
     {
-        <p>Nema uplate za ovaj paket.</p>
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Uplate za ovaj paket</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    @foreach (var uplata in Model.Uplate)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>@uplata.Klijent?.Prezime, @uplata.Klijent?.Ime</strong>
+                                <div class="text-muted">
+                                    @uplata.DatumUplate.ToShortDateString() - @uplata.Iznos.ToString("C")
+                                </div>
+                            </div>
+                            <span class="badge bg-success">Aktivna</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
     }
 </div>
-
-<p>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
-</p>
