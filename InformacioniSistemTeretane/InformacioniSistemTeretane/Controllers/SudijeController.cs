@@ -6,9 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using InformacioniSistemTeretane.Data;
 using InformacioniSistemTeretane.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InformacioniSistemTeretane.Controllers
 {
+    [Authorize] // Zahtjeva autentifikaciju za sve akcije
     public class SudijeController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -23,137 +25,258 @@ namespace InformacioniSistemTeretane.Controllers
         // GET: Sudije
         public async Task<IActionResult> Index()
         {
-            var sudije = _context.Sudije
+            _logger.LogInformation("Pregled sudija - korisnik: {Korisnik}", User.Identity.Name);
+            var sudije = await _context.Sudije
                 .Include(s => s.Zaposlenik)
-                .Include(s => s.Disciplina);
-            return View(await sudije.ToListAsync());
+                .Include(s => s.Disciplina)
+                .ToListAsync();
+
+            return View(sudije);
         }
 
         // GET: Sudije/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning("Details: ID nije dostupan");
+                return NotFound();
+            }
 
             var sudija = await _context.Sudije
                 .Include(s => s.Zaposlenik)
                 .Include(s => s.Disciplina)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (sudija == null) return NotFound();
+
+            if (sudija == null)
+            {
+                _logger.LogWarning("Details: Sudija nije pronađena. ID: {Id}", id);
+                return NotFound();
+            }
+
+            _logger.LogInformation("Pregled detalja sudije ID: {Id}", id);
             return View(sudija);
         }
 
         // GET: Sudije/Create
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public IActionResult Create()
         {
             ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Prezime");
             ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv");
+            _logger.LogInformation("Prikaz forme za novu sudiju - korisnik: {Korisnik}", User.Identity.Name);
             return View();
         }
 
         // POST: Sudije/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Create([Bind("ZaposlenikId,DisciplinaId")] Sudija sudija)
         {
-            _logger.LogInformation("----- Create Sudija bind values -----");
-            _logger.LogInformation("ZaposlenikId: {ZaposlenikId}", sudija.ZaposlenikId);
-            _logger.LogInformation("DisciplinaId: {DisciplinaId}", sudija.DisciplinaId);
+            _logger.LogInformation(
+                "Kreiranje nove sudije - korisnik: {Korisnik}. Podaci: {@Sudija}",
+                User.Identity.Name, sudija);
 
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                _logger.LogWarning("ModelState invalid for Sudija:");
+                try
+                {
+                    _context.Add(sudija);
+                    await _context.SaveChangesAsync();
+
+                    TempData["Uspjeh"] = "Sudija uspješno dodana";
+                    _logger.LogInformation("Sudija uspješno dodana ID: {Id}", sudija.Id);
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError(ex, "Greška pri kreiranju sudije");
+                    ModelState.AddModelError("", "Greška pri spremanju podataka. Pokušajte ponovno.");
+                    TempData["Greska"] = "Greška pri dodavanju sudije";
+                }
+            }
+            else
+            {
+                _logger.LogWarning("Neuspješna validacija forme za novu sudiju. Broj grešaka: {BrojGresaka}",
+                    ModelState.ErrorCount);
+
                 foreach (var entry in ModelState)
                 {
-                    if (entry.Value.Errors.Any())
-                        foreach (var err in entry.Value.Errors)
+                    if (entry.Value.Errors.Count > 0)
+                    {
+                        foreach (var error in entry.Value.Errors)
+                        {
                             _logger.LogWarning(
-                                " - Field '{Field}' attempted value '{Value}': {Error}",
-                                entry.Key, entry.Value.AttemptedValue, err.ErrorMessage);
+                                " - Polje '{Field}': {ErrorMessage}",
+                                entry.Key,
+                                error.ErrorMessage);
+                        }
+                    }
                 }
-                ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Prezime", sudija.ZaposlenikId);
-                ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv", sudija.DisciplinaId);
-                return View(sudija);
             }
-
-            _context.Add(sudija);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        // GET: Sudije/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null) return NotFound();
-            var sudija = await _context.Sudije.FindAsync(id);
-            if (sudija == null) return NotFound();
 
             ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Prezime", sudija.ZaposlenikId);
             ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv", sudija.DisciplinaId);
             return View(sudija);
         }
 
+        // GET: Sudije/Edit/5
+        [Authorize(Roles = "Admin,Zaposlenik")]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                _logger.LogWarning("Edit: ID nije dostupan");
+                return NotFound();
+            }
+
+            var sudija = await _context.Sudije.FindAsync(id);
+            if (sudija == null)
+            {
+                _logger.LogWarning("Edit: Sudija nije pronađena. ID: {Id}", id);
+                return NotFound();
+            }
+
+            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Prezime", sudija.ZaposlenikId);
+            ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv", sudija.DisciplinaId);
+            _logger.LogInformation("Prikaz forme za uređivanje sudije ID: {Id}", id);
+            return View(sudija);
+        }
+
         // POST: Sudije/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ZaposlenikId,DisciplinaId")] Sudija sudija)
         {
-            _logger.LogInformation("----- Edit Sudija bind values -----");
-            _logger.LogInformation("Id: {Id}, ZaposlenikId: {ZaposlenikId}, DisciplinaId: {DisciplinaId}",
-                sudija.Id, sudija.ZaposlenikId, sudija.DisciplinaId);
-
-            if (id != sudija.Id) return NotFound();
-
-            if (!ModelState.IsValid)
+            if (id != sudija.Id)
             {
-                _logger.LogWarning("ModelState invalid for Sudija:");
-                foreach (var entry in ModelState)
+                _logger.LogWarning("Edit: ID u putanji ({IdPut}) i modelu ({IdModel}) se ne podudaraju",
+                    id, sudija.Id);
+                return NotFound();
+            }
+
+            _logger.LogInformation(
+                "Ažuriranje sudije ID: {Id} - korisnik: {Korisnik}. Podaci: {@Sudija}",
+                id, User.Identity.Name, sudija);
+
+            if (ModelState.IsValid)
+            {
+                try
                 {
-                    if (entry.Value.Errors.Any())
-                        foreach (var err in entry.Value.Errors)
-                            _logger.LogWarning(
-                                " - Field '{Field}' attempted value '{Value}': {Error}",
-                                entry.Key, entry.Value.AttemptedValue, err.ErrorMessage);
+                    _context.Update(sudija);
+                    await _context.SaveChangesAsync();
+
+                    TempData["Uspjeh"] = "Sudija uspješno ažurirana";
+                    _logger.LogInformation("Sudija uspješno ažurirana ID: {Id}", id);
+
+                    return RedirectToAction(nameof(Index));
                 }
-                ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Prezime", sudija.ZaposlenikId);
-                ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv", sudija.DisciplinaId);
-                return View(sudija);
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    if (!SudijaExists(sudija.Id))
+                    {
+                        _logger.LogWarning("Edit: Sudija nije pronađena nakon DbUpdateConcurrencyException. ID: {Id}", id);
+                        return NotFound();
+                    }
+                    else
+                    {
+                        _logger.LogError(ex, "Greška pri ažuriranju sudije ID: {Id}", id);
+                        ModelState.AddModelError("", "Greška pri spremanju promjena. Pokušajte ponovno.");
+                        TempData["Greska"] = "Greška pri ažuriranju sudije";
+                    }
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError(ex, "Greška pri ažuriranju sudije ID: {Id}", id);
+                    ModelState.AddModelError("", "Greška pri spremanju podataka. Pokušajte ponovno.");
+                    TempData["Greska"] = "Greška pri ažuriranju sudije";
+                }
+            }
+            else
+            {
+                _logger.LogWarning("Neuspješna validacija forme za uređivanje. Broj grešaka: {BrojGresaka}",
+                    ModelState.ErrorCount);
             }
 
-            try
-            {
-                _context.Update(sudija);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Sudije.Any(e => e.Id == sudija.Id)) return NotFound();
-                throw;
-            }
-            return RedirectToAction(nameof(Index));
+            ViewData["ZaposlenikId"] = new SelectList(_context.Zaposlenici, "Id", "Prezime", sudija.ZaposlenikId);
+            ViewData["DisciplinaId"] = new SelectList(_context.Discipline, "Id", "Naziv", sudija.DisciplinaId);
+            return View(sudija);
         }
 
         // GET: Sudije/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning("Delete: ID nije dostupan");
+                return NotFound();
+            }
 
             var sudija = await _context.Sudije
                 .Include(s => s.Zaposlenik)
                 .Include(s => s.Disciplina)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (sudija == null) return NotFound();
+
+            if (sudija == null)
+            {
+                _logger.LogWarning("Delete: Sudija nije pronađena. ID: {Id}", id);
+                return NotFound();
+            }
+
+            _logger.LogInformation("Prikaz forme za brisanje sudije ID: {Id}", id);
             return View(sudija);
         }
 
         // POST: Sudije/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            _logger.LogInformation("Brisanje sudije ID: {Id} - korisnik: {Korisnik}",
+                id, User.Identity.Name);
+
             var sudija = await _context.Sudije.FindAsync(id);
-            _context.Sudije.Remove(sudija);
-            await _context.SaveChangesAsync();
+            if (sudija == null)
+            {
+                _logger.LogWarning("DeleteConfirmed: Sudija nije pronađena. ID: {Id}", id);
+                TempData["Greska"] = "Sudija nije pronađena";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Provjera zavisnosti - da li sudija sudi na nekom takmičenju
+            var hasDependencies = await _context.Takmicenja.AnyAsync(t => t.SudijaId == id);
+            if (hasDependencies)
+            {
+                TempData["Greska"] = "Sudija se ne može obrisati jer sudi na takmičenju";
+                _logger.LogWarning("Brisanje sudije ID: {Id} nije moguće jer postoje zavisna takmičenja", id);
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                _context.Sudije.Remove(sudija);
+                await _context.SaveChangesAsync();
+
+                TempData["Uspjeh"] = "Sudija uspješno obrisana";
+                _logger.LogInformation("Sudija uspješno obrisana ID: {Id}", id);
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Greška pri brisanju sudije ID: {Id}", id);
+                TempData["Greska"] = "Greška pri brisanju sudije";
+            }
+
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool SudijaExists(int id)
+        {
+            return _context.Sudije.Any(e => e.Id == id);
         }
     }
 }

@@ -4,35 +4,51 @@
     ViewData["Title"] = "Uplate";
 }
 
+@if (TempData["Uspjeh"] != null)
+{
+    <div class="alert alert-success">@TempData["Uspjeh"]</div>
+}
+@if (TempData["Greska"] != null)
+{
+    <div class="alert alert-danger">@TempData["Greska"]</div>
+}
+
 <h1>@ViewData["Title"]</h1>
-<p>
-    <a asp-action="Create" class="btn btn-primary">Nova uplata</a>
-</p>
+
+@if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Dodaj novu uplatu</a>
+    </p>
+}
 
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(m => m.First().KlijentId)</th>
-            <th>@Html.DisplayNameFor(m => m.First().PaketId)</th>
-            <th>@Html.DisplayNameFor(m => m.First().DatumUplate)</th>
-            <th>@Html.DisplayNameFor(m => m.First().NacinUplate)</th>
-            <th>@Html.DisplayNameFor(m => m.First().Iznos)</th>
-            <th></th>
+            <th>Klijent</th>
+            <th>Paket</th>
+            <th>Datum uplate</th>
+            <th>Način uplate</th>
+            <th>Iznos (KM)</th>
+            <th>Akcije</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.Klijent?.Prezime, @item.Klijent?.Ime</td>
-                <td>@item.Paket?.Naziv</td>
-                <td>@item.DatumUplate.ToShortDateString()</td>
+                <td>@(item.Klijent?.Ime) @(item.Klijent?.Prezime ?? "Nepoznato")</td>
+                <td>@(item.Paket?.Naziv ?? "Nepoznato")</td>
+                <td>@item.DatumUplate.ToString("dd.MM.yyyy")</td>
                 <td>@item.NacinUplate</td>
-                <td>@item.Iznos.ToString("C")</td>
+                <td>@item.Iznos.ToString("0.00")</td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
-                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Detalji</a>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Uredi</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Obriši</a>
+                    }
                 </td>
             </tr>
         }

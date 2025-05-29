@@ -6,12 +6,21 @@
 
 <h1>@ViewData["Title"]</h1>
 
+@if (TempData["Uspjeh"] != null)
+{
+    <div class="alert alert-success">@TempData["Uspjeh"]</div>
+}
+@if (TempData["Greska"] != null)
+{
+    <div class="alert alert-danger">@TempData["Greska"]</div>
+}
+
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(m => m.First().Naziv)</th>
-            <th>@Html.DisplayNameFor(m => m.First().Opis)</th>
-            <th>@Html.DisplayNameFor(m => m.First().VrstaTreninga)</th>
+            <th>@Html.DisplayNameFor(m => m.Naziv)</th>
+            <th>@Html.DisplayNameFor(m => m.VrstaTreninga)</th>
+            <th>Dodatne informacije</th>
             <th></th>
         </tr>
     </thead>
@@ -20,8 +29,21 @@
         {
             <tr>
                 <td>@t.Naziv</td>
-                <td>@t.Opis</td>
                 <td>@t.VrstaTreninga</td>
+                <td>
+                    @if (t is GrupniTrening grupni)
+                    {
+                        <span>Sala: @grupni.Sala?.Naziv, Trener: @grupni.Trener?.Zaposlenik.Ime @grupni.Trener?.Zaposlenik.Prezime</span>
+                    }
+                    else if (t is PersonalniTrening personalni)
+                    {
+                        <span>Klijent: @personalni.Klijent?.Ime @personalni.Klijent?.Prezime, Trener: @personalni.Klijent?.Ime @personalni.Klijent?.Prezime</span>
+                    }
+                    else if (t is ProbniTrening probni)
+                    {
+                        <span>Klijent: @probni.Klijent?.Ime @probni.Klijent?.Prezime, Trener: @probni.Trener?.Zaposlenik.Ime @probni.Trener?.Zaposlenik.Prezime</span>
+                    }
+                </td>
                 <td>
                     <a asp-action="Details" asp-route-id="@t.Id" class="btn btn-sm btn-info">Detalji</a>
                 </td>

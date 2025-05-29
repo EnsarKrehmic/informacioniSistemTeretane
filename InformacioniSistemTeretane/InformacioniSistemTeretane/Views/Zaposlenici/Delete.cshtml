@@ -4,25 +4,36 @@
     ViewData["Title"] = "Obriši zaposlenika";
 }
 
+@if (TempData["Greska"] != null)
+{
+    <div class="alert alert-danger">@TempData["Greska"]</div>
+}
+
 <h1>@ViewData["Title"]</h1>
-<h3>Jeste li sigurni?</h3>
 
-<dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Ime)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Ime)</dd>
+<h3 class="text-danger">Jeste li sigurni da želite obrisati ovog zaposlenika?</h3>
+<div class="mt-4">
+    <dl class="row border p-3">
+        <dt class="col-sm-4">Ime i prezime</dt>
+        <dd class="col-sm-8">@Model.Ime @Model.Prezime</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Prezime)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Prezime)</dd>
+        <dt class="col-sm-4">Pozicija</dt>
+        <dd class="col-sm-8">@Model.Pozicija</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Pozicija)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Pozicija)</dd>
+        <dt class="col-sm-4">Telefon</dt>
+        <dd class="col-sm-8">@Model.Telefon</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.UserId)</dt>
-    <dd class="col-sm-9">@Model.User?.UserName (@Model.UserId)</dd>
-</dl>
+        <dt class="col-sm-4">Korisnički nalog</dt>
+        <dd class="col-sm-8">@(Model.User?.UserName ?? "Nepoznato")</dd>
+    </dl>
 
-<form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Obriši</button>
-    <a asp-action="Index" class="btn btn-secondary">Nazad</a>
-</form>
+    <form asp-action="Delete" class="mt-4">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">
+            <i class="fas fa-trash-alt"></i> Obriši
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Odustani
+        </a>
+    </form>
+</div>

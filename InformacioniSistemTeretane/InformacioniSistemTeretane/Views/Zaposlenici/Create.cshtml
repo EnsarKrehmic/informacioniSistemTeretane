@@ -1,43 +1,57 @@
 ﻿@model InformacioniSistemTeretane.Models.Zaposlenik
 
 @{
-    ViewData["Title"] = "Novi zaposlenik";
+    ViewData["Title"] = "Dodaj novog zaposlenika";
+}
+
+@if (TempData["Greska"] != null)
+{
+    <div class="alert alert-danger">@TempData["Greska"]</div>
 }
 
 <h1>@ViewData["Title"]</h1>
 
-<form asp-action="Create" method="post">
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
     <div class="form-group mb-3">
-        <label asp-for="Ime"></label>
+        <label asp-for="Ime" class="control-label"></label>
         <input asp-for="Ime" class="form-control" />
         <span asp-validation-for="Ime" class="text-danger"></span>
     </div>
+
     <div class="form-group mb-3">
-        <label asp-for="Prezime"></label>
+        <label asp-for="Prezime" class="control-label"></label>
         <input asp-for="Prezime" class="form-control" />
         <span asp-validation-for="Prezime" class="text-danger"></span>
     </div>
+
     <div class="form-group mb-3">
-        <label asp-for="Pozicija"></label>
+        <label asp-for="Pozicija" class="control-label"></label>
         <input asp-for="Pozicija" class="form-control" />
         <span asp-validation-for="Pozicija" class="text-danger"></span>
     </div>
+
     <div class="form-group mb-3">
-        <label asp-for="Telefon"></label>
+        <label asp-for="Telefon" class="control-label"></label>
         <input asp-for="Telefon" class="form-control" />
         <span asp-validation-for="Telefon" class="text-danger"></span>
     </div>
+
     <div class="form-group mb-3">
-        <label asp-for="UserId"></label>
-        <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+        <label asp-for="UserId" class="control-label">Korisnički nalog</label>
+        <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId">
+            <option value="">-- Odaberite korisnički nalog --</option>
+        </select>
         <span asp-validation-for="UserId" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">Spremi</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-</form>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+    <div class="form-group mt-4">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Dodaj zaposlenika
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad
+        </a>
+    </div>
+</form>

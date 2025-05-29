@@ -27,6 +27,14 @@ namespace InformacioniSistemTeretane.Models
         [ValidateNever]
         public Lokacija Lokacija { get; set; }
 
+        [Required]
+        [Display(Name = "Sudija")]
+        public int SudijaId { get; set; }
+
+        [ForeignKey(nameof(SudijaId))]
+        [ValidateNever]
+        public Sudija Sudija { get; set; }
+
         [MaxLength(500)]
         [Display(Name = "Opis")]
         public string Opis { get; set; }

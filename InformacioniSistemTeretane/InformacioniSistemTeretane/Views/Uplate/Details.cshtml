@@ -4,27 +4,38 @@
     ViewData["Title"] = "Detalji uplate";
 }
 
+@if (TempData["Uspjeh"] != null)
+{
+    <div class="alert alert-success">@TempData["Uspjeh"]</div>
+}
+@if (TempData["Greska"] != null)
+{
+    <div class="alert alert-danger">@TempData["Greska"]</div>
+}
+
 <h1>@ViewData["Title"]</h1>
 
 <dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.KlijentId)</dt>
-    <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
+    <dt class="col-sm-3">Klijent</dt>
+    <dd class="col-sm-9">@(Model.Klijent?.Ime) @(Model.Klijent?.Prezime ?? "Nepoznato")</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.PaketId)</dt>
-    <dd class="col-sm-9">@Model.Paket?.Naziv</dd>
+    <dt class="col-sm-3">Paket</dt>
+    <dd class="col-sm-9">@(Model.Paket?.Naziv ?? "Nepoznato")</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.DatumUplate)</dt>
-    <dd class="col-sm-9">@Model.DatumUplate.ToShortDateString()</dd>
+    <dt class="col-sm-3">Datum uplate</dt>
+    <dd class="col-sm-9">@Model.DatumUplate.ToString("dd.MM.yyyy")</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.NacinUplate)</dt>
+    <dt class="col-sm-3">Način uplate</dt>
     <dd class="col-sm-9">@Model.NacinUplate</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Iznos)</dt>
-    <dd class="col-sm-9">@Model.Iznos.ToString("C")</dd>
+    <dt class="col-sm-3">Iznos (KM)</dt>
+    <dd class="col-sm-9">@Model.Iznos.ToString("0.00")</dd>
 </dl>
 
-<p class="mt-3">
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger ms-2">Obriši</a>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-</p>
+<div class="mt-3">
+    @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Uredi</a>
+    }
+    <a asp-action="Index" class="btn btn-secondary">Nazad na listu</a>
+</div>

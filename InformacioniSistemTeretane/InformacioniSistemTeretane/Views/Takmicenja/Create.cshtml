@@ -1,46 +1,102 @@
-﻿@model InformacioniSistemTeretane.Models.Takmicenje
+﻿@model Takmicenje
 
 @{
     ViewData["Title"] = "Dodaj novo takmičenje";
 }
 
-<h1>@ViewData["Title"]</h1>
-
-<form asp-action="Create" method="post">
-    <div class="form-group mb-3">
-        <label asp-for="Naziv"></label>
-        <input asp-for="Naziv" class="form-control" />
-        <span asp-validation-for="Naziv" class="text-danger"></span>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad na listu
+        </a>
     </div>
 
-    <div class="form-group mb-3">
-        <label asp-for="Datum"></label>
-        <input asp-for="Datum" type="date" class="form-control" />
-        <span asp-validation-for="Datum" class="text-danger"></span>
-    </div>
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["Uspjeh"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-    <div class="form-group mb-3">
-        <label asp-for="LokacijaId"></label>
-        <select asp-for="LokacijaId" class="form-control" asp-items="ViewBag.LokacijaId"></select>
-        <span asp-validation-for="LokacijaId" class="text-danger"></span>
-    </div>
+    <div class="card shadow-sm border-primary">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h5 mb-0">Kreiraj novo takmičenje</h2>
+        </div>
 
-    <div class="form-group mb-3">
-        <label asp-for="Opis"></label>
-        <textarea asp-for="Opis" class="form-control"></textarea>
-        <span asp-validation-for="Opis" class="text-danger"></span>
-    </div>
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-    <div class="form-group mb-3">
-        <label asp-for="Kotizacija"></label>
-        <input asp-for="Kotizacija" class="form-control" />
-        <span asp-validation-for="Kotizacija" class="text-danger"></span>
-    </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Naziv" class="form-label required"></label>
+                        <input asp-for="Naziv" class="form-control"
+                               placeholder="Unesite naziv takmičenja" />
+                        <span asp-validation-for="Naziv" class="text-danger"></span>
+                    </div>
 
-    <button type="submit" class="btn btn-primary">Spremi</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-</form>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Datum" class="form-label required"></label>
+                        <input asp-for="Datum" class="form-control"
+                               placeholder="dd.mm.gggg hh:mm" />
+                        <span asp-validation-for="Datum" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="LokacijaId" class="form-label required"></label>
+                        <select asp-for="LokacijaId" class="form-select"
+                                asp-items="ViewBag.LokacijaId">
+                            <option value="">Odaberite lokaciju</option>
+                        </select>
+                        <span asp-validation-for="LokacijaId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Kotizacija" class="form-label required"></label>
+                        <input asp-for="Kotizacija" class="form-control"
+                               placeholder="Unesite iznos kotizacije" />
+                        <span asp-validation-for="Kotizacija" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label asp-for="Opis" class="form-label"></label>
+                        <textarea asp-for="Opis" class="form-control" rows="4"
+                                  placeholder="Detaljan opis takmičenja..."></textarea>
+                        <span asp-validation-for="Opis" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Kreiraj takmičenje
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i> Odustani
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
+
+<style>
+    .form-label.required:after {
+        content: " *";
+        color: #dc3545;
+    }
+</style>

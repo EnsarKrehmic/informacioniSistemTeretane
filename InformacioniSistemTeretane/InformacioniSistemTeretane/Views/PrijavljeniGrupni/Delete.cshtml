@@ -1,24 +1,77 @@
 ﻿@model InformacioniSistemTeretane.Models.PrijavljeniGrupni
 
-<h1>Obriši prisustvo</h1>
-<h3>Jeste li sigurni?</h3>
+@{
+    ViewData["Title"] = "Obriši prijavu";
+    bool treningZavrsen = ViewData["TreningZavrsen"] as bool? ?? false;
+}
 
-<dl class="row">
-  <dt class="col-sm-3">@Html.DisplayNameFor(m => m.GrupniTreningId)</dt>
-  <dd class="col-sm-9">@Model.GrupniTrening?.Naziv</dd>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad
+        </a>
+    </div>
 
-  <dt class="col-sm-3">@Html.DisplayNameFor(m => m.KlijentId)</dt>
-  <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
+    <!-- Prijak poruka -->
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-  <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Prisutan)</dt>
-  <dd class="col-sm-9">@(Model.Prisutan ? "Da" : "Ne")</dd>
+    <div class="card shadow-sm border-danger">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">Potvrda brisanja</h5>
+        </div>
+        <div class="card-body">
+            <h3 class="text-danger">Jeste li sigurni da želite obrisati ovu prijavu?</h3>
 
-  <dt class="col-sm-3">@Html.DisplayNameFor(m => m.VrijemeDolaska)</dt>
-  <dd class="col-sm-9">@Model.VrijemeDolaska.ToString("HH:mm")</dd>
-</dl>
+            @if (treningZavrsen)
+            {
+                <div class="alert alert-danger">
+                    <h5 class="alert-heading">Upozorenje!</h5>
+                    <p class="mb-0">Ovaj trening je već održan i ne možete obrisati prijavu.</p>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    <h5 class="alert-heading">Upozorenje!</h5>
+                    <p class="mb-0">Ova akcija je nepovratna i trajno će obrisati prijavu.</p>
+                </div>
+            }
 
-<form asp-action="Delete" method="post" class="mt-3">
-  <input type="hidden" asp-for="Id" />
-  <button type="submit" class="btn btn-danger">Obriši</button>
-  <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-</form>
+            <dl class="row mt-4">
+                <dt class="col-sm-4">Grupni trening</dt>
+                <dd class="col-sm-8">@Model.GrupniTrening?.Naziv</dd>
+
+                <dt class="col-sm-4">Klijent</dt>
+                <dd class="col-sm-8">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
+
+                <dt class="col-sm-4">Prisutan</dt>
+                <dd class="col-sm-8">@(Model.Prisutan ? "Da" : "Ne")</dd>
+            </dl>
+
+            <form asp-action="Delete" method="post" class="mt-4">
+                <input type="hidden" asp-for="Id" />
+                <div class="d-flex justify-content-end">
+                    @if (!treningZavrsen)
+                    {
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash-alt"></i> Potvrdi brisanje
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-danger disabled" disabled>
+                            <i class="fas fa-ban"></i> Brisanje onemogućeno
+                        </button>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

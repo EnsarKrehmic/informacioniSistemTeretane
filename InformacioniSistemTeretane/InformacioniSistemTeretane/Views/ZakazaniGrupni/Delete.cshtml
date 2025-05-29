@@ -1,24 +1,39 @@
 ﻿@model InformacioniSistemTeretane.Models.ZakazaniGrupni
+
 @{
     ViewData["Title"] = "Obriši rezervaciju";
 }
 
+@if (TempData["Greska"] != null)
+{
+    <div class="alert alert-danger">@TempData["Greska"]</div>
+}
+
 <h1>@ViewData["Title"]</h1>
-<h3>Jeste li sigurni?</h3>
 
-<dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.GrupniTreningId)</dt>
-    <dd class="col-sm-9">@Model.GrupniTrening?.Naziv</dd>
+<h3 class="text-danger">Jeste li sigurni da želite obrisati ovu rezervaciju?</h3>
+<div class="mt-4">
+    <dl class="row border p-3">
+        <dt class="col-sm-4">Klijent</dt>
+        <dd class="col-sm-8">@(Model.Klijent?.Ime) @(Model.Klijent?.Prezime ?? "Nepoznato")</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.KlijentId)</dt>
-    <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
+        <dt class="col-sm-4">Trening</dt>
+        <dd class="col-sm-8">@(Model.GrupniTrening?.Naziv ?? "Nepoznato")</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.DatumPrijave)</dt>
-    <dd class="col-sm-9">@Model.DatumPrijave.ToShortDateString()</dd>
-</dl>
+        <dt class="col-sm-4">Datum treninga</dt>
+        <dd class="col-sm-8">@(Model.GrupniTrening?.Datum.ToString("dd.MM.yyyy") ?? "Nepoznato")</dd>
 
-<form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Obriši</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-</form>
+        <dt class="col-sm-4">Datum prijave</dt>
+        <dd class="col-sm-8">@Model.DatumPrijave.ToString("dd.MM.yyyy")</dd>
+    </dl>
+
+    <form asp-action="Delete" class="mt-4">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">
+            <i class="fas fa-trash-alt"></i> Obriši
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Odustani
+        </a>
+    </form>
+</div>

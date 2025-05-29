@@ -1,5 +1,4 @@
-﻿// Controllers/TakmicenjaController.cs
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -8,9 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using InformacioniSistemTeretane.Data;
 using InformacioniSistemTeretane.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InformacioniSistemTeretane.Controllers
 {
+    [Authorize] // Zahtjeva autentifikaciju za sve akcije
     public class TakmicenjaController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -25,160 +26,232 @@ namespace InformacioniSistemTeretane.Controllers
         // GET: Takmicenja
         public async Task<IActionResult> Index()
         {
-            var takmicenja = _context.Takmicenja.Include(t => t.Lokacija);
-            return View(await takmicenja.ToListAsync());
+            _logger.LogInformation("Pregled takmičenja - korisnik: {Korisnik}", User.Identity.Name);
+            var takmicenja = await _context.Takmicenja
+                .Include(t => t.Lokacija)
+                .ToListAsync();
+
+            return View(takmicenja);
         }
 
         // GET: Takmicenja/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning("Details: ID nije dostupan");
+                return NotFound();
+            }
 
             var takmicenje = await _context.Takmicenja
                 .Include(t => t.Lokacija)
                 .Include(t => t.Discipline)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (takmicenje == null) return NotFound();
 
+            if (takmicenje == null)
+            {
+                _logger.LogWarning("Details: Takmičenje nije pronađeno. ID: {Id}", id);
+                return NotFound();
+            }
+
+            _logger.LogInformation("Pregled detalja takmičenja ID: {Id}", id);
             return View(takmicenje);
         }
 
         // GET: Takmicenja/Create
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public IActionResult Create()
         {
             ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv");
+            _logger.LogInformation("Prikaz forme za novo takmičenje - korisnik: {Korisnik}", User.Identity.Name);
             return View();
         }
 
         // POST: Takmicenja/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Create([Bind("Naziv,Datum,LokacijaId,Opis,Kotizacija")] Takmicenje takmicenje)
         {
-            // 1) Log bindanih vrijednosti
-            _logger.LogInformation("----- Create Takmicenje bind values -----");
-            _logger.LogInformation("Naziv: {Naziv}", takmicenje.Naziv);
-            _logger.LogInformation("Datum: {Datum}", takmicenje.Datum);
-            _logger.LogInformation("LokacijaId: {LokacijaId}", takmicenje.LokacijaId);
-            _logger.LogInformation("Opis: {Opis}", takmicenje.Opis);
-            _logger.LogInformation("Kotizacija: {Kotizacija}", takmicenje.Kotizacija);
+            _logger.LogInformation(
+                "Kreiranje novog takmičenja - korisnik: {Korisnik}. Podaci: {@Takmicenje}",
+                User.Identity.Name, takmicenje);
 
-            // 2) Ako validacija ne prođe, ispiši greške
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                _logger.LogWarning("ModelState is invalid. Errors:");
-                foreach (var entry in ModelState)
+                try
                 {
-                    if (entry.Value.Errors.Count > 0)
-                    {
-                        foreach (var error in entry.Value.Errors)
-                        {
-                            _logger.LogWarning(
-                                " - Field '{Field}' attempted value '{AttemptedValue}': {ErrorMessage}",
-                                entry.Key,
-                                entry.Value.AttemptedValue,
-                                error.ErrorMessage
-                            );
-                        }
-                    }
-                }
+                    _context.Add(takmicenje);
+                    await _context.SaveChangesAsync();
 
-                ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", takmicenje.LokacijaId);
-                return View(takmicenje);
+                    TempData["Uspjeh"] = "Takmičenje uspješno kreirano";
+                    _logger.LogInformation("Takmičenje uspješno kreirano ID: {Id}", takmicenje.Id);
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError(ex, "Greška pri kreiranju takmičenja");
+                    ModelState.AddModelError("", "Greška pri spremanju podataka. Pokušajte ponovno.");
+                    TempData["Greska"] = "Greška pri kreiranju takmičenja";
+                }
+            }
+            else
+            {
+                _logger.LogWarning("Neuspješna validacija forme za novo takmičenje. Broj grešaka: {BrojGresaka}",
+                    ModelState.ErrorCount);
             }
 
-            // 3) Spremi u bazu
-            _context.Add(takmicenje);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", takmicenje.LokacijaId);
+            return View(takmicenje);
         }
 
         // GET: Takmicenja/Edit/5
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning("Edit: ID nije dostupan");
+                return NotFound();
+            }
 
             var takmicenje = await _context.Takmicenja.FindAsync(id);
-            if (takmicenje == null) return NotFound();
+            if (takmicenje == null)
+            {
+                _logger.LogWarning("Edit: Takmičenje nije pronađeno. ID: {Id}", id);
+                return NotFound();
+            }
+
             ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", takmicenje.LokacijaId);
+            _logger.LogInformation("Prikaz forme za uređivanje takmičenja ID: {Id}", id);
             return View(takmicenje);
         }
 
         // POST: Takmicenja/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Naziv,Datum,LokacijaId,Opis,Kotizacija")] Takmicenje takmicenje)
         {
-            // Log bindanih vrijednosti
-            _logger.LogInformation("----- Edit Takmicenje bind values -----");
-            _logger.LogInformation("Id: {Id}", takmicenje.Id);
-            _logger.LogInformation("Naziv: {Naziv}", takmicenje.Naziv);
-            _logger.LogInformation("Datum: {Datum}", takmicenje.Datum);
-            _logger.LogInformation("LokacijaId: {LokacijaId}", takmicenje.LokacijaId);
-            _logger.LogInformation("Opis: {Opis}", takmicenje.Opis);
-            _logger.LogInformation("Kotizacija: {Kotizacija}", takmicenje.Kotizacija);
-
-            if (id != takmicenje.Id) return NotFound();
-
-            if (!ModelState.IsValid)
+            if (id != takmicenje.Id)
             {
-                _logger.LogWarning("ModelState is invalid. Errors:");
-                foreach (var entry in ModelState)
+                _logger.LogWarning("Edit: ID u putanji ({IdPut}) i modelu ({IdModel}) se ne podudaraju",
+                    id, takmicenje.Id);
+                return NotFound();
+            }
+
+            _logger.LogInformation(
+                "Ažuriranje takmičenja ID: {Id} - korisnik: {Korisnik}. Podaci: {@Takmicenje}",
+                id, User.Identity.Name, takmicenje);
+
+            if (ModelState.IsValid)
+            {
+                try
                 {
-                    if (entry.Value.Errors.Count > 0)
+                    _context.Update(takmicenje);
+                    await _context.SaveChangesAsync();
+
+                    TempData["Uspjeh"] = "Takmičenje uspješno ažurirano";
+                    _logger.LogInformation("Takmičenje uspješno ažurirano ID: {Id}", id);
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    if (!TakmicenjeExists(takmicenje.Id))
                     {
-                        foreach (var error in entry.Value.Errors)
-                        {
-                            _logger.LogWarning(
-                                " - Field '{Field}' attempted value '{AttemptedValue}': {ErrorMessage}",
-                                entry.Key,
-                                entry.Value.AttemptedValue,
-                                error.ErrorMessage
-                            );
-                        }
+                        _logger.LogWarning("Edit: Takmičenje nije pronađeno nakon DbUpdateConcurrencyException. ID: {Id}", id);
+                        return NotFound();
+                    }
+                    else
+                    {
+                        _logger.LogError(ex, "Greška pri ažuriranju takmičenja ID: {Id}", id);
+                        ModelState.AddModelError("", "Greška pri spremanju promjena. Pokušajte ponovno.");
+                        TempData["Greska"] = "Greška pri ažuriranju takmičenja";
                     }
                 }
-
-                ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", takmicenje.LokacijaId);
-                return View(takmicenje);
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError(ex, "Greška pri ažuriranju takmičenja ID: {Id}", id);
+                    ModelState.AddModelError("", "Greška pri spremanju podataka. Pokušajte ponovno.");
+                    TempData["Greska"] = "Greška pri ažuriranju takmičenja";
+                }
             }
-
-            try
+            else
             {
-                _context.Update(takmicenje);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Takmicenja.Any(e => e.Id == takmicenje.Id))
-                    return NotFound();
-                throw;
+                _logger.LogWarning("Neuspješna validacija forme za uređivanje. Broj grešaka: {BrojGresaka}",
+                    ModelState.ErrorCount);
             }
 
-            return RedirectToAction(nameof(Index));
+            ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", takmicenje.LokacijaId);
+            return View(takmicenje);
         }
 
         // GET: Takmicenja/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning("Delete: ID nije dostupan");
+                return NotFound();
+            }
 
             var takmicenje = await _context.Takmicenja
                 .Include(t => t.Lokacija)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (takmicenje == null) return NotFound();
 
+            if (takmicenje == null)
+            {
+                _logger.LogWarning("Delete: Takmičenje nije pronađeno. ID: {Id}", id);
+                return NotFound();
+            }
+
+            _logger.LogInformation("Prikaz forme za brisanje takmičenja ID: {Id}", id);
             return View(takmicenje);
         }
 
         // POST: Takmicenja/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            _logger.LogInformation("Brisanje takmičenja ID: {Id} - korisnik: {Korisnik}",
+                id, User.Identity.Name);
+
             var takmicenje = await _context.Takmicenja.FindAsync(id);
-            _context.Takmicenja.Remove(takmicenje);
-            await _context.SaveChangesAsync();
+            if (takmicenje == null)
+            {
+                _logger.LogWarning("DeleteConfirmed: Takmičenje nije pronađeno. ID: {Id}", id);
+                TempData["Greska"] = "Takmičenje nije pronađeno";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Provjera zavisnosti - da li takmičenje ima discipline
+            var hasDiscipline = await _context.Discipline.AnyAsync(d => d.TakmicenjeId == id);
+            if (hasDiscipline)
+            {
+                TempData["Greska"] = "Takmičenje se ne može obrisati jer ima povezane discipline";
+                _logger.LogWarning("Brisanje takmičenja ID: {Id} nije moguće jer postoje povezane discipline", id);
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                _context.Takmicenja.Remove(takmicenje);
+                await _context.SaveChangesAsync();
+
+                TempData["Uspjeh"] = "Takmičenje uspješno obrisano";
+                _logger.LogInformation("Takmičenje uspješno obrisano ID: {Id}", id);
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Greška pri brisanju takmičenja ID: {Id}", id);
+                TempData["Greska"] = "Greška pri brisanju takmičenja";
+            }
+
             return RedirectToAction(nameof(Index));
         }
 

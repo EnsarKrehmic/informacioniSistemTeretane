@@ -6,9 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using InformacioniSistemTeretane.Data;
 using InformacioniSistemTeretane.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InformacioniSistemTeretane.Controllers
 {
+    [Authorize] // Zahtjeva autentifikaciju za sve akcije
     public class SaleController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,41 +24,81 @@ namespace InformacioniSistemTeretane.Controllers
 
         // GET: Sale
         public async Task<IActionResult> Index()
-            => View(await _context.Sale.Include(s => s.Lokacija).ToListAsync());
+        {
+            _logger.LogInformation("Pregled sala - korisnik: {Korisnik}", User.Identity.Name);
+            var sale = await _context.Sale
+                .Include(s => s.Lokacija)
+                .ToListAsync();
+
+            return View(sale);
+        }
 
         // GET: Sale/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning("Details: ID nije dostupan");
+                return NotFound();
+            }
+
             var sala = await _context.Sale
                 .Include(s => s.Lokacija)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (sala == null) return NotFound();
+
+            if (sala == null)
+            {
+                _logger.LogWarning("Details: Sala nije pronađena. ID: {Id}", id);
+                return NotFound();
+            }
+
+            _logger.LogInformation("Pregled detalja sale ID: {Id}", id);
             return View(sala);
         }
 
         // GET: Sale/Create
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public IActionResult Create()
         {
             ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv");
+            _logger.LogInformation("Prikaz forme za novu salu - korisnik: {Korisnik}", User.Identity.Name);
             return View();
         }
 
         // POST: Sale/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Create([Bind("Naziv,Kapacitet,LokacijaId")] Sala sala)
         {
-            // 1) Ispiši bindane vrijednosti
-            _logger.LogInformation("----- Create Sala bind values -----");
-            _logger.LogInformation("Naziv: {Naziv}", sala.Naziv);
-            _logger.LogInformation("Kapacitet: {Kapacitet}", sala.Kapacitet);
-            _logger.LogInformation("LokacijaId: {LokacijaId}", sala.LokacijaId);
+            _logger.LogInformation(
+                "Kreiranje nove sale - korisnik: {Korisnik}. Podaci: {@Sala}",
+                User.Identity.Name, sala);
 
-            // 2) Ako validacija ne prođe, ispiši ModelState greške
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                _logger.LogWarning("ModelState is invalid. Errors:");
+                try
+                {
+                    _context.Add(sala);
+                    await _context.SaveChangesAsync();
+
+                    TempData["Uspjeh"] = "Sala uspješno kreirana";
+                    _logger.LogInformation("Sala uspješno kreirana ID: {Id}", sala.Id);
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError(ex, "Greška pri kreiranju sale");
+                    ModelState.AddModelError("", "Greška pri spremanju podataka. Pokušajte ponovno.");
+                    TempData["Greska"] = "Greška pri kreiranju sale";
+                }
+            }
+            else
+            {
+                _logger.LogWarning("Neuspješna validacija forme za novu salu. Broj grešaka: {BrojGresaka}",
+                    ModelState.ErrorCount);
+
                 foreach (var entry in ModelState)
                 {
                     if (entry.Value.Errors.Count > 0)
@@ -64,102 +106,170 @@ namespace InformacioniSistemTeretane.Controllers
                         foreach (var error in entry.Value.Errors)
                         {
                             _logger.LogWarning(
-                                " - Field '{Field}' attempted value '{AttemptedValue}': {ErrorMessage}",
+                                " - Polje '{Field}': {ErrorMessage}",
                                 entry.Key,
-                                entry.Value.AttemptedValue,
                                 error.ErrorMessage);
                         }
                     }
                 }
-
-                ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", sala.LokacijaId);
-                return View(sala);
             }
 
-            // 3) Spremi u bazu
-            _context.Add(sala);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", sala.LokacijaId);
+            return View(sala);
         }
 
         // GET: Sale/Edit/5
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning("Edit: ID nije dostupan");
+                return NotFound();
+            }
+
             var sala = await _context.Sale.FindAsync(id);
-            if (sala == null) return NotFound();
+            if (sala == null)
+            {
+                _logger.LogWarning("Edit: Sala nije pronađena. ID: {Id}", id);
+                return NotFound();
+            }
+
             ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", sala.LokacijaId);
+            _logger.LogInformation("Prikaz forme za uređivanje sale ID: {Id}", id);
             return View(sala);
         }
 
         // POST: Sale/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Naziv,Kapacitet,LokacijaId")] Sala sala)
         {
-            // Log bind values
-            _logger.LogInformation("----- Edit Sala bind values -----");
-            _logger.LogInformation("Id: {Id}", sala.Id);
-            _logger.LogInformation("Naziv: {Naziv}", sala.Naziv);
-            _logger.LogInformation("Kapacitet: {Kapacitet}", sala.Kapacitet);
-            _logger.LogInformation("LokacijaId: {LokacijaId}", sala.LokacijaId);
-
-            if (id != sala.Id) return NotFound();
-
-            if (!ModelState.IsValid)
+            if (id != sala.Id)
             {
-                _logger.LogWarning("ModelState is invalid. Errors:");
-                foreach (var entry in ModelState)
+                _logger.LogWarning("Edit: ID u putanji ({IdPut}) i modelu ({IdModel}) se ne podudaraju",
+                    id, sala.Id);
+                return NotFound();
+            }
+
+            _logger.LogInformation(
+                "Ažuriranje sale ID: {Id} - korisnik: {Korisnik}. Podaci: {@Sala}",
+                id, User.Identity.Name, sala);
+
+            if (ModelState.IsValid)
+            {
+                try
                 {
-                    if (entry.Value.Errors.Count > 0)
+                    _context.Update(sala);
+                    await _context.SaveChangesAsync();
+
+                    TempData["Uspjeh"] = "Sala uspješno ažurirana";
+                    _logger.LogInformation("Sala uspješno ažurirana ID: {Id}", id);
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    if (!SalaExists(sala.Id))
                     {
-                        foreach (var error in entry.Value.Errors)
-                        {
-                            _logger.LogWarning(
-                                " - Field '{Field}' attempted value '{AttemptedValue}': {ErrorMessage}",
-                                entry.Key,
-                                entry.Value.AttemptedValue,
-                                error.ErrorMessage);
-                        }
+                        _logger.LogWarning("Edit: Sala nije pronađena nakon DbUpdateConcurrencyException. ID: {Id}", id);
+                        return NotFound();
+                    }
+                    else
+                    {
+                        _logger.LogError(ex, "Greška pri ažuriranju sale ID: {Id}", id);
+                        ModelState.AddModelError("", "Greška pri spremanju promjena. Pokušajte ponovno.");
+                        TempData["Greska"] = "Greška pri ažuriranju sale";
                     }
                 }
-                ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", sala.LokacijaId);
-                return View(sala);
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError(ex, "Greška pri ažuriranju sale ID: {Id}", id);
+                    ModelState.AddModelError("", "Greška pri spremanju podataka. Pokušajte ponovno.");
+                    TempData["Greska"] = "Greška pri ažuriranju sale";
+                }
+            }
+            else
+            {
+                _logger.LogWarning("Neuspješna validacija forme za uređivanje. Broj grešaka: {BrojGresaka}",
+                    ModelState.ErrorCount);
             }
 
-            try
-            {
-                _context.Update(sala);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Sale.Any(e => e.Id == id)) return NotFound();
-                throw;
-            }
-            return RedirectToAction(nameof(Index));
+            ViewData["LokacijaId"] = new SelectList(_context.Lokacije, "Id", "Naziv", sala.LokacijaId);
+            return View(sala);
         }
 
         // GET: Sale/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning("Delete: ID nije dostupan");
+                return NotFound();
+            }
+
             var sala = await _context.Sale
                 .Include(s => s.Lokacija)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (sala == null) return NotFound();
+
+            if (sala == null)
+            {
+                _logger.LogWarning("Delete: Sala nije pronađena. ID: {Id}", id);
+                return NotFound();
+            }
+
+            _logger.LogInformation("Prikaz forme za brisanje sale ID: {Id}", id);
             return View(sala);
         }
 
         // POST: Sale/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            _logger.LogInformation("Brisanje sale ID: {Id} - korisnik: {Korisnik}",
+                id, User.Identity.Name);
+
             var sala = await _context.Sale.FindAsync(id);
-            _context.Sale.Remove(sala);
-            await _context.SaveChangesAsync();
+            if (sala == null)
+            {
+                _logger.LogWarning("DeleteConfirmed: Sala nije pronađena. ID: {Id}", id);
+                TempData["Greska"] = "Sala nije pronađena";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Provjera zavisnosti - da li se sala koristi u nekom treningu
+            var hasDependencies = await _context.GrupniTreninzi.AnyAsync(t => t.SalaId == id);
+            if (hasDependencies)
+            {
+                TempData["Greska"] = "Sala se ne može obrisati jer se koristi u treningu";
+                _logger.LogWarning("Brisanje sale ID: {Id} nije moguće jer postoje zavisni treningi", id);
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                _context.Sale.Remove(sala);
+                await _context.SaveChangesAsync();
+
+                TempData["Uspjeh"] = "Sala uspješno obrisana";
+                _logger.LogInformation("Sala uspješno obrisana ID: {Id}", id);
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Greška pri brisanju sale ID: {Id}", id);
+                TempData["Greska"] = "Greška pri brisanju sale";
+            }
+
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool SalaExists(int id)
+        {
+            return _context.Sale.Any(e => e.Id == id);
         }
     }
 }

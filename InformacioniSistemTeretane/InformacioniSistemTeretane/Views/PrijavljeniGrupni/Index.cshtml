@@ -1,32 +1,89 @@
 ﻿@model IEnumerable<InformacioniSistemTeretane.Models.PrijavljeniGrupni>
 
-<h1>Prisustva na grupnim treninzima</h1>
-<p><a asp-action="Create" class="btn btn-primary">Evidentiraj dolazak</a></p>
+@{
+    ViewData["Title"] = "Prijavljeni grupni treninzi";
+}
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor((PrijavljeniGrupni m) => m.GrupniTreningId)</th>
-            <th>@Html.DisplayNameFor((PrijavljeniGrupni m) => m.KlijentId)</th>
-            <th>@Html.DisplayNameFor((PrijavljeniGrupni m) => m.Prisutan)</th>
-            <th>@Html.DisplayNameFor((PrijavljeniGrupni m) => m.VrijemeDolaska)</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">Prijavljeni grupni treninzi</h1>
+        @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
         {
-            <tr>
-                <td>@item.GrupniTrening?.Naziv</td>
-                <td>@item.Klijent?.Prezime, @item.Klijent?.Ime</td>
-                <td>@(item.Prisutan ? "Da" : "Ne")</td>
-                <td>@item.VrijemeDolaska.ToString("HH:mm")</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
-                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
-                </td>
-            </tr>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> Nova prijava
+            </a>
         }
-    </tbody>
-</table>
+    </div>
+
+    <!-- Prikaz poruka -->
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Uspjeh"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Lista prijava</h5>
+        </div>
+        <div class="card-body">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info">Nema prijava za grupne treninge</div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Grupni trening</th>
+                                <th>Klijent</th>
+                                <th>Prisutan</th>
+                                <th>Vrijeme dolaska</th>
+                                <th class="text-center">Akcije</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.GrupniTrening?.Naziv</td>
+                                    <td>@item.Klijent?.Prezime, @item.Klijent?.Ime</td>
+                                    <td>@(item.Prisutan ? "Da" : "Ne")</td>
+                                    <td>@item.VrijemeDolaska.ToString("HH:mm")</td>
+                                    <td class="text-center">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning mx-1">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        }
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

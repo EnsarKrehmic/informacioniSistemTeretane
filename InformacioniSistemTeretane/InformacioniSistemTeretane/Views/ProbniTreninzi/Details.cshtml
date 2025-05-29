@@ -1,34 +1,94 @@
-﻿@model IEnumerable<InformacioniSistemTeretane.Models.ProbniTrening>
+﻿@model ProbniTrening
 
-<h1>Probni treninzi</h1>
-<p><a asp-action="Create" class="btn btn-primary">Novi probni trening</a></p>
+@{
+    ViewData["Title"] = "Detalji probnog treninga";
+}
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor((ProbniTrening m) => m.Naziv)</th>
-            <th>@Html.DisplayNameFor((ProbniTrening m) => m.KlijentId)</th>
-            <th>@Html.DisplayNameFor((ProbniTrening m) => m.TrenerId)</th>
-            <th>@Html.DisplayNameFor((ProbniTrening m) => m.Datum)</th>
-            <th>@Html.DisplayNameFor((ProbniTrening m) => m.Ocjena)</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Naziv</td>
-                <td>@item.Klijent?.Prezime, @item.Klijent?.Ime</td>
-                <td>@item.Trener?.Zaposlenik?.Prezime, @item.Trener?.Zaposlenik?.Ime</td>
-                <td>@item.Datum.ToShortDateString()</td>
-                <td>@item.Ocjena</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
-                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
-                </td>
-            </tr>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad na listu
+        </a>
+    </div>
+
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["Uspjeh"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm border-primary">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h5 mb-0">@Model.Naziv</h2>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Opis:</dt>
+                <dd class="col-sm-9">@Model.Opis</dd>
+
+                <dt class="col-sm-3">Klijent:</dt>
+                <dd class="col-sm-9">@Model.Klijent?.Prezime</dd>
+
+                <dt class="col-sm-3">Trener:</dt>
+                <dd class="col-sm-9">@Model.Trener?.Zaposlenik?.Ime @Model.Trener?.Zaposlenik?.Prezime</dd>
+
+                <dt class="col-sm-3">Datum treninga:</dt>
+                <dd class="col-sm-9">@Model.Datum.ToString("dd.MM.yyyy HH:mm")</dd>
+
+                <dt class="col-sm-3">Ocjena:</dt>
+                <dd class="col-sm-9">
+                    <div class="rating">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="fas fa-star @(i <= Model.Ocjena ? "text-warning" : "text-muted")"></i>
+                        }
+                        <span class="ms-2">(@Model.Ocjena/5)</span>
+                    </div>
+                </dd>
+            </dl>
+        </div>
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-between">
+                <div>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id"
+                           class="btn btn-warning">
+                            <i class="fas fa-edit me-1"></i> Uredi
+                        </a>
+                    }
+                </div>
+                <div>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Delete" asp-route-id="@Model.Id"
+                           class="btn btn-danger">
+                            <i class="fas fa-trash-alt me-1"></i> Obriši
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .rating {
+        color: #ccc;
+        font-size: 1.2rem;
+    }
+
+        .rating .text-warning {
+            color: #f8ce0b !important;
         }
-    </tbody>
-</table>
+</style>

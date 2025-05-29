@@ -1,34 +1,112 @@
-﻿@model IEnumerable<InformacioniSistemTeretane.Models.ProbniTrening>
+﻿@model IEnumerable<ProbniTrening>
 
-<h1>Probni treninzi</h1>
-<p><a asp-action="Create" class="btn btn-primary">Novi probni trening</a></p>
+@{
+    ViewData["Title"] = "Probni Treninzi";
+}
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor((ProbniTrening m) => m.Naziv)</th>
-            <th>@Html.DisplayNameFor((ProbniTrening m) => m.KlijentId)</th>
-            <th>@Html.DisplayNameFor((ProbniTrening m) => m.TrenerId)</th>
-            <th>@Html.DisplayNameFor((ProbniTrening m) => m.Datum)</th>
-            <th>@Html.DisplayNameFor((ProbniTrening m) => m.Ocjena)</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+
+        @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
         {
-            <tr>
-                <td>@item.Naziv</td>
-                <td>@item.Klijent?.Prezime, @item.Klijent?.Ime</td>
-                <td>@item.Trener?.Zaposlenik?.Prezime, @item.Trener?.Zaposlenik?.Ime</td>
-                <td>@item.Datum.ToShortDateString()</td>
-                <td>@item.Ocjena</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
-                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
-                </td>
-            </tr>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> Dodaj novi
+            </a>
         }
-    </tbody>
-</table>
+    </div>
+
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["Uspjeh"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (Model.Any())
+    {
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Naziv</th>
+                                <th>Klijent</th>
+                                <th>Trener</th>
+                                <th>Datum</th>
+                                <th>Ocjena</th>
+                                <th class="text-end">Akcije</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@Html.DisplayFor(modelItem => item.Naziv)</td>
+                                    <td>@item.Klijent?.Prezime</td>
+                                    <td>@item.Trener?.Zaposlenik?.Ime @item.Trener?.Zaposlenik?.Prezime</td>
+                                    <td>@item.Datum.ToString("dd.MM.yyyy")</td>
+                                    <td>
+                                        <div class="rating">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                <i class="fas fa-star @(i <= item.Ocjena ? "text-warning" : "text-muted")"></i>
+                                            }
+                                        </div>
+                                    </td>
+                                    <td class="text-end">
+                                        <a asp-action="Details" asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-outline-info" title="Detalji">
+                                            <i class="fas fa-info-circle"></i>
+                                        </a>
+
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@item.Id"
+                                               class="btn btn-sm btn-outline-warning" title="Uredi">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        }
+
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <a asp-action="Delete" asp-route-id="@item.Id"
+                                               class="btn btn-sm btn-outline-danger" title="Obriši">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info mt-4">
+            <i class="fas fa-info-circle me-2"></i> Trenutno nema evidentiranih probnih treninga.
+        </div>
+    }
+</div>
+
+<style>
+    .rating {
+        color: #ccc;
+        font-size: 1.2rem;
+    }
+    .rating .text-warning {
+        color: #f8ce0b !important;
+    }
+</style>

@@ -1,69 +1,88 @@
-﻿@model InformacioniSistemTeretane.Models.Trener
+﻿@model Trener
 
 @{
     ViewData["Title"] = "Detalji trenera";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad na listu
+        </a>
+    </div>
 
-<dl class="row">
-    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.ZaposlenikId)</dt>
-    <dd class="col-sm-8">@Model.Zaposlenik?.Prezime, @Model.Zaposlenik?.Ime</dd>
-</dl>
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["Uspjeh"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-<div class="mt-4">
-    <h4>Grupni treninzi</h4>
-    @if (Model.GrupniTreninzi.Any())
-    {
-        <ul class="list-group">
-            @foreach (var gt in Model.GrupniTreninzi)
-            {
-                <li class="list-group-item">@gt.Naziv</li>
-            }
-        </ul>
-    }
-    else
-    {
-        <p>Nema grupnih treninga.</p>
-    }
+    <div class="card shadow-sm border-primary">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h5 mb-0">@Model.Zaposlenik?.Ime @Model.Zaposlenik?.Prezime</h2>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Zaposlenik:</dt>
+                <dd class="col-sm-9">@Model.Zaposlenik?.Ime @Model.Zaposlenik?.Prezime</dd>
+
+                <dt class="col-sm-3">Broj grupnih treninga:</dt>
+                <dd class="col-sm-9">@(Model.GrupniTreninzi?.Count ?? 0)</dd>
+
+                <dt class="col-sm-3">Broj personalnih treninga:</dt>
+                <dd class="col-sm-9">@(Model.PersonalniTreninzi?.Count ?? 0)</dd>
+
+                <dt class="col-sm-3">Broj probnih treninga:</dt>
+                <dd class="col-sm-9">@(Model.ProbniTreninzi?.Count ?? 0)</dd>
+
+                <dt class="col-sm-3">Ukupno treninga:</dt>
+                <dd class="col-sm-9">
+                    @{
+                        var totalTrainings =
+                        (Model.GrupniTreninzi?.Count ?? 0) +
+                        (Model.PersonalniTreninzi?.Count ?? 0) +
+                        (Model.ProbniTreninzi?.Count ?? 0);
+                    }
+                    @totalTrainings
+                </dd>
+
+                <dt class="col-sm-3">Status:</dt>
+                <dd class="col-sm-9">
+                    <span class="badge bg-success">Aktivan</span>
+                </dd>
+            </dl>
+        </div>
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-between">
+                <div>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id"
+                           class="btn btn-warning">
+                            <i class="fas fa-edit me-1"></i> Uredi
+                        </a>
+                    }
+                </div>
+                <div>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Delete" asp-route-id="@Model.Id"
+                           class="btn btn-danger">
+                            <i class="fas fa-trash-alt me-1"></i> Obriši
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
-<div class="mt-4">
-    <h4>Personalni treninzi</h4>
-    @if (Model.PersonalniTreninzi.Any())
-    {
-        <ul class="list-group">
-            @foreach (var pt in Model.PersonalniTreninzi)
-            {
-                <li class="list-group-item">@pt.Datum.ToShortDateString()</li>
-            }
-        </ul>
-    }
-    else
-    {
-        <p>Nema personalnih treninga.</p>
-    }
-</div>
-
-<div class="mt-4">
-    <h4>Probni treninzi</h4>
-    @if (Model.ProbniTreninzi.Any())
-    {
-        <ul class="list-group">
-            @foreach (var pr in Model.ProbniTreninzi)
-            {
-                <li class="list-group-item">@pr.Datum.ToShortDateString()</li>
-            }
-        </ul>
-    }
-    else
-    {
-        <p>Nema probnih treninga.</p>
-    }
-</div>
-
-<p class="mt-3">
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger ms-2">Obriši</a>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-</p>

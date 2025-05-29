@@ -1,0 +1,19 @@
+﻿@model GrupniTrening
+
+<h4 class="mt-4">Detalji grupnog treninga</h4>
+<dl class="row">
+    <dt class="col-sm-3">Sala</dt>
+    <dd class="col-sm-9">@Model.Sala?.Naziv</dd>
+
+    <dt class="col-sm-3">Trener</dt>
+    <dd class="col-sm-9">@Model.Trener?.Zaposlenik.Ime @Model.Trener?.Zaposlenik.Prezime</dd>
+
+    <dt class="col-sm-3">Datum treninga</dt>
+    <dd class="col-sm-9">@Model.Datum.ToString("dd.MM.yyyy")</dd>
+
+    <dt class="col-sm-3">Vrijeme treninga</dt>
+    <dd class="col-sm-9">@Model.Vrijeme.ToString(@"hh\:mm")</dd>
+
+    <dt class="col-sm-3">Maksimalni broj učesnika</dt>
+    <dd class="col-sm-9">@Model.MaxUcesnika</dd>
+</dl>

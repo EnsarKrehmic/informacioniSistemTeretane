@@ -1,31 +1,48 @@
 ﻿@model InformacioniSistemTeretane.Models.ZakazaniGrupni
+
 @{
     ViewData["Title"] = "Uredi rezervaciju";
 }
 
+@if (TempData["Greska"] != null)
+{
+    <div class="alert alert-danger">@TempData["Greska"]</div>
+}
+
 <h1>@ViewData["Title"]</h1>
 
-<form asp-action="Edit" method="post" class="mt-4">
+<form asp-action="Edit">
     <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
     <div class="form-group mb-3">
-        <label asp-for="GrupniTreningId"></label>
-        <select asp-for="GrupniTreningId" class="form-control" asp-items="ViewBag.GrupniTreningId"></select>
-        <span asp-validation-for="GrupniTreningId" class="text-danger"></span>
-    </div>
-    <div class="form-group mb-3">
-        <label asp-for="KlijentId"></label>
-        <select asp-for="KlijentId" class="form-control" asp-items="ViewBag.KlijentId"></select>
+        <label class="control-label">Klijent</label>
+        <select asp-for="KlijentId" class="form-control" asp-items="ViewBag.KlijentId">
+            <option value="">-- Odaberite klijenta --</option>
+        </select>
         <span asp-validation-for="KlijentId" class="text-danger"></span>
     </div>
-    <div class="form-group mb-4">
-        <label asp-for="DatumPrijave"></label>
+
+    <div class="form-group mb-3">
+        <label class="control-label">Grupni trening</label>
+        <select asp-for="GrupniTreningId" class="form-control" asp-items="ViewBag.GrupniTreningId">
+            <option value="">-- Odaberite trening --</option>
+        </select>
+        <span asp-validation-for="GrupniTreningId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="DatumPrijave" class="control-label"></label>
         <input asp-for="DatumPrijave" type="date" class="form-control" />
         <span asp-validation-for="DatumPrijave" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">Spremi</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-</form>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+    <div class="form-group mt-4">
+        <button type="submit" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Sačuvaj izmjene
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad
+        </a>
+    </div>
+</form>

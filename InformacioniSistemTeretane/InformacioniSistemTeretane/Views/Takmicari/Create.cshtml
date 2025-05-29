@@ -1,40 +1,97 @@
-﻿@model InformacioniSistemTeretane.Models.Takmicar
+﻿@model Takmicar
 
 @{
-    ViewData["Title"] = "Novi takmičar";
+    ViewData["Title"] = "Dodaj novog takmičara";
 }
 
-<h1>@ViewData["Title"]</h1>
-
-<form asp-action="Create" method="post">
-    <div class="form-group mb-3">
-        <label asp-for="KlijentId"></label>
-        <select asp-for="KlijentId" class="form-control" asp-items="ViewBag.KlijentId"></select>
-        <span asp-validation-for="KlijentId" class="text-danger"></span>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad na listu
+        </a>
     </div>
 
-    <div class="form-group mb-3">
-        <label asp-for="DisciplinaId"></label>
-        <select asp-for="DisciplinaId" class="form-control" asp-items="ViewBag.DisciplinaId"></select>
-        <span asp-validation-for="DisciplinaId" class="text-danger"></span>
-    </div>
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["Uspjeh"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-    <div class="form-group mb-3">
-        <label asp-for="Rezultat"></label>
-        <input asp-for="Rezultat" class="form-control" />
-        <span asp-validation-for="Rezultat" class="text-danger"></span>
-    </div>
+    <div class="card shadow-sm border-primary">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h5 mb-0">Kreiraj novog takmičara</h2>
+        </div>
 
-    <div class="form-group mb-3">
-        <label asp-for="Pozicija"></label>
-        <input asp-for="Pozicija" type="number" class="form-control" />
-        <span asp-validation-for="Pozicija" class="text-danger"></span>
-    </div>
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-    <button type="submit" class="btn btn-primary">Spremi</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-</form>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="KlijentId" class="form-label required"></label>
+                        <select asp-for="KlijentId" class="form-select"
+                                asp-items="ViewBag.KlijentId">
+                            <option value="">Odaberite klijenta</option>
+                        </select>
+                        <span asp-validation-for="KlijentId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="DisciplinaId" class="form-label required"></label>
+                        <select asp-for="DisciplinaId" class="form-select"
+                                asp-items="ViewBag.DisciplinaId">
+                            <option value="">Odaberite disciplinu</option>
+                        </select>
+                        <span asp-validation-for="DisciplinaId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Rezultat" class="form-label"></label>
+                        <input asp-for="Rezultat" class="form-control"
+                               placeholder="Unesite rezultat" />
+                        <span asp-validation-for="Rezultat" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Pozicija" class="form-label"></label>
+                        <input asp-for="Pozicija" class="form-control"
+                               placeholder="Unesite poziciju" />
+                        <span asp-validation-for="Pozicija" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Kreiraj takmičara
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i> Odustani
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
+
+<style>
+    .form-label.required:after {
+        content: " *";
+        color: #dc3545;
+    }
+</style>

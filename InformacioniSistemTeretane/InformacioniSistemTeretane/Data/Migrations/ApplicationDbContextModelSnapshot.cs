@@ -465,9 +465,14 @@ namespace InformacioniSistemTeretane.Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<int>("SudijaId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("LokacijaId");
+
+                    b.HasIndex("SudijaId");
 
                     b.ToTable("Takmicenje", (string)null);
                 });
@@ -996,7 +1001,15 @@ namespace InformacioniSistemTeretane.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("InformacioniSistemTeretane.Models.Sudija", "Sudija")
+                        .WithMany()
+                        .HasForeignKey("SudijaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Lokacija");
+
+                    b.Navigation("Sudija");
                 });
 
             modelBuilder.Entity("InformacioniSistemTeretane.Models.Trener", b =>

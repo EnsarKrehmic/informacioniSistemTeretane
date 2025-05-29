@@ -4,27 +4,35 @@
     ViewData["Title"] = "Detalji zaposlenika";
 }
 
+@if (TempData["Uspjeh"] != null)
+{
+    <div class="alert alert-success">@TempData["Uspjeh"]</div>
+}
+@if (TempData["Greska"] != null)
+{
+    <div class="alert alert-danger">@TempData["Greska"]</div>
+}
+
 <h1>@ViewData["Title"]</h1>
 
 <dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Ime)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Ime)</dd>
+    <dt class="col-sm-3">Ime</dt>
+    <dd class="col-sm-9">@Model.Ime</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Prezime)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Prezime)</dd>
+    <dt class="col-sm-3">Prezime</dt>
+    <dd class="col-sm-9">@Model.Prezime</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Pozicija)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Pozicija)</dd>
+    <dt class="col-sm-3">Pozicija</dt>
+    <dd class="col-sm-9">@Model.Pozicija</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Telefon)</dt>
-    <dd class="col-sm-9">@Html.DisplayFor(m => m.Telefon)</dd>
+    <dt class="col-sm-3">Telefon</dt>
+    <dd class="col-sm-9">@Model.Telefon</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.UserId)</dt>
-    <dd class="col-sm-9">@Model.User?.UserName (@Model.UserId)</dd>
+    <dt class="col-sm-3">Korisnički nalog</dt>
+    <dd class="col-sm-9">@(Model.User?.UserName ?? "Nepoznato")</dd>
 </dl>
 
-<p>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Obriši</a>
+<div class="mt-3">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Uredi</a>
     <a asp-action="Index" class="btn btn-secondary">Nazad na listu</a>
-</p>
+</div>

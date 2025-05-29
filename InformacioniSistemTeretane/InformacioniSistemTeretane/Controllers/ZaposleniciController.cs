@@ -1,20 +1,25 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 using InformacioniSistemTeretane.Data;
 using InformacioniSistemTeretane.Models;
 
 namespace InformacioniSistemTeretane.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ZaposleniciController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<ZaposleniciController> _logger;
 
-        public ZaposleniciController(ApplicationDbContext context, ILogger<ZaposleniciController> logger)
+        public ZaposleniciController(
+            ApplicationDbContext context,
+            ILogger<ZaposleniciController> logger)
         {
             _context = context;
             _logger = logger;
@@ -23,27 +28,101 @@ namespace InformacioniSistemTeretane.Controllers
         // GET: Zaposlenici
         public async Task<IActionResult> Index()
         {
-            var zaposleni = _context.Zaposlenici.Include(z => z.User);
-            return View(await zaposleni.ToListAsync());
+            try
+            {
+                _logger.LogInformation(
+                    "Admin {Admin} pregleda listu zaposlenika",
+                    User.Identity.Name
+                );
+
+                var zaposleni = await _context.Zaposlenici
+                    .Include(z => z.User)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                return View(zaposleni);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Greška prilikom učitavanja zaposlenika");
+                TempData["Greska"] = "Došlo je do greške prilikom učitavanja podataka o zaposlenicima.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // GET: Zaposlenici/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning(
+                    "Pokušaj pregleda detalja zaposlenika bez ID-a od strane {Admin}",
+                    User.Identity.Name
+                );
+                return NotFound();
+            }
 
-            var zap = await _context.Zaposlenici
-                .Include(z => z.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (zap == null) return NotFound();
-            return View(zap);
+            try
+            {
+                _logger.LogInformation(
+                    "Admin {Admin} pregleda detalje zaposlenika ID: {ZaposlenikId}",
+                    User.Identity.Name,
+                    id
+                );
+
+                var zap = await _context.Zaposlenici
+                    .Include(z => z.User)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(m => m.Id == id);
+
+                if (zap == null)
+                {
+                    _logger.LogWarning(
+                        "Zaposlenik ID {ZaposlenikId} nije pronađen. Admin: {Admin}",
+                        id,
+                        User.Identity.Name
+                    );
+                    TempData["Greska"] = "Zaposlenik nije pronađen.";
+                    return NotFound();
+                }
+
+                return View(zap);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Greška prilikom učitavanja detalja zaposlenika ID: {ZaposlenikId}. Admin: {Admin}",
+                    id,
+                    User.Identity.Name
+                );
+                TempData["Greska"] = "Došlo je do greške prilikom učitavanja detalja zaposlenika.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // GET: Zaposlenici/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
-            return View();
+            try
+            {
+                // Prikaz samo korisnika koji još nisu zaposleni
+                var slobodniKorisnici = _context.Users
+                    .Where(u => !_context.Zaposlenici.Any(z => z.UserId == u.Id))
+                    .Select(u => new {
+                        u.Id,
+                        KorisnickoIme = u.UserName
+                    });
+
+                ViewData["UserId"] = new SelectList(slobodniKorisnici, "Id", "KorisnickoIme");
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Greška prilikom pripreme forme za dodavanje zaposlenika");
+                TempData["Greska"] = "Došlo je do greške prilikom pripreme forme.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // POST: Zaposlenici/Create
@@ -51,42 +130,159 @@ namespace InformacioniSistemTeretane.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Ime,Prezime,Pozicija,Telefon,UserId")] Zaposlenik zap)
         {
-            _logger.LogInformation("----- Create Zaposlenik bind values -----");
-            _logger.LogInformation("Ime: {Ime}", zap.Ime);
-            _logger.LogInformation("Prezime: {Prezime}", zap.Prezime);
-            _logger.LogInformation("Pozicija: {Pozicija}", zap.Pozicija);
-            _logger.LogInformation("Telefon: {Telefon}", zap.Telefon);
-            _logger.LogInformation("UserId: {UserId}", zap.UserId);
+            _logger.LogInformation(
+                "Admin {Admin} pokušava dodati novog zaposlenika",
+                User.Identity.Name
+            );
+
+            _logger.LogInformation("Parametri: Ime={Ime}, Prezime={Prezime}, Pozicija={Pozicija}, Telefon={Telefon}, UserId={UserId}",
+                zap.Ime, zap.Prezime, zap.Pozicija, zap.Telefon, zap.UserId);
 
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("ModelState is invalid. Errors:");
-                foreach (var e in ModelState)
+                _logger.LogWarning("Nevalidan model za dodavanje zaposlenika");
+                foreach (var key in ModelState.Keys)
                 {
-                    if (e.Value.Errors.Count > 0)
-                        foreach (var err in e.Value.Errors)
-                            _logger.LogWarning(
-                                " - Field '{Field}' attempted value '{Value}': {Error}",
-                                e.Key, e.Value.AttemptedValue, err.ErrorMessage);
+                    foreach (var error in ModelState[key].Errors)
+                    {
+                        _logger.LogWarning(" - {Key}: {ErrorMessage}", key, error.ErrorMessage);
+                    }
                 }
-                ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", zap.UserId);
+
+                try
+                {
+                    var slobodniKorisnici = _context.Users
+                        .Where(u => !_context.Zaposlenici.Any(z => z.UserId == u.Id))
+                        .Select(u => new {
+                            u.Id,
+                            KorisnickoIme = u.UserName
+                        });
+
+                    ViewData["UserId"] = new SelectList(slobodniKorisnici, "Id", "KorisnickoIme", zap.UserId);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Greška prilikom ponovnog učitavanja padajućih lista");
+                    TempData["Greska"] = "Došlo je do greške prilikom pripreme forme.";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 return View(zap);
             }
 
-            _context.Add(zap);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                // Provjera da li je korisnik već zaposlen
+                if (await _context.Zaposlenici.AnyAsync(z => z.UserId == zap.UserId))
+                {
+                    ModelState.AddModelError("UserId", "Ovaj korisnik je već zaposlen.");
+
+                    var slobodniKorisnici = _context.Users
+                        .Where(u => !_context.Zaposlenici.Any(z => z.UserId == u.Id))
+                        .Select(u => new {
+                            u.Id,
+                            KorisnickoIme = u.UserName
+                        });
+
+                    ViewData["UserId"] = new SelectList(slobodniKorisnici, "Id", "KorisnickoIme", zap.UserId);
+
+                    TempData["Greska"] = "Ovaj korisnik je već zaposlen.";
+                    return View(zap);
+                }
+
+                _context.Add(zap);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation(
+                    "Uspješno dodan zaposlenik ID: {ZaposlenikId}",
+                    zap.Id
+                );
+
+                TempData["Uspjeh"] = "Zaposlenik je uspješno dodan.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Greška prilikom čuvanja zaposlenika u bazu. Admin: {Admin}",
+                    User.Identity.Name
+                );
+
+                TempData["Greska"] = "Došlo je do greške prilikom čuvanja podataka.";
+
+                var slobodniKorisnici = _context.Users
+                    .Where(u => !_context.Zaposlenici.Any(z => z.UserId == u.Id))
+                    .Select(u => new {
+                        u.Id,
+                        KorisnickoIme = u.UserName
+                    });
+
+                ViewData["UserId"] = new SelectList(slobodniKorisnici, "Id", "KorisnickoIme", zap.UserId);
+
+                return View(zap);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Neočekivana greška prilikom dodavanja zaposlenika. Admin: {Admin}",
+                    User.Identity.Name
+                );
+
+                TempData["Greska"] = "Došlo je do neočekivane greške prilikom dodavanja zaposlenika.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // GET: Zaposlenici/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
-            var zap = await _context.Zaposlenici.FindAsync(id);
-            if (zap == null) return NotFound();
+            if (id == null)
+            {
+                _logger.LogWarning(
+                    "Pokušaj uređivanja zaposlenika bez ID-a od strane {Admin}",
+                    User.Identity.Name
+                );
+                return NotFound();
+            }
 
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", zap.UserId);
-            return View(zap);
+            try
+            {
+                var zap = await _context.Zaposlenici.FindAsync(id);
+                if (zap == null)
+                {
+                    _logger.LogWarning(
+                        "Zaposlenik ID {ZaposlenikId} nije pronađen za uređivanje. Admin: {Admin}",
+                        id,
+                        User.Identity.Name
+                    );
+                    TempData["Greska"] = "Zaposlenik nije pronađen.";
+                    return NotFound();
+                }
+
+                // Prikaz svih korisnika, ali označavanje trenutnog
+                var korisnici = _context.Users
+                    .Select(u => new {
+                        u.Id,
+                        KorisnickoIme = u.UserName
+                    });
+
+                ViewData["UserId"] = new SelectList(korisnici, "Id", "KorisnickoIme", zap.UserId);
+                return View(zap);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Greška prilikom učitavanja zaposlenika za uređivanje ID: {ZaposlenikId}. Admin: {Admin}",
+                    id,
+                    User.Identity.Name
+                );
+
+                TempData["Greska"] = "Došlo je do greške prilikom učitavanja podataka za uređivanje.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // POST: Zaposlenici/Edit/5
@@ -94,53 +290,181 @@ namespace InformacioniSistemTeretane.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Ime,Prezime,Pozicija,Telefon,UserId")] Zaposlenik zap)
         {
-            _logger.LogInformation("----- Edit Zaposlenik bind values -----");
-            _logger.LogInformation("Id: {Id}", zap.Id);
-            _logger.LogInformation("Ime: {Ime}", zap.Ime);
-            _logger.LogInformation("Prezime: {Prezime}", zap.Prezime);
-            _logger.LogInformation("Pozicija: {Pozicija}", zap.Pozicija);
-            _logger.LogInformation("Telefon: {Telefon}", zap.Telefon);
-            _logger.LogInformation("UserId: {UserId}", zap.UserId);
+            if (id != zap.Id)
+            {
+                _logger.LogWarning(
+                    "ID u putanji ({PutanjaId}) i ID modela ({ModelId}) se ne podudaraju. Admin: {Admin}",
+                    id,
+                    zap.Id,
+                    User.Identity.Name
+                );
 
-            if (id != zap.Id) return NotFound();
+                return NotFound();
+            }
+
+            _logger.LogInformation(
+                "Admin {Admin} pokušava urediti zaposlenika ID: {ZaposlenikId}",
+                User.Identity.Name,
+                id
+            );
+
+            _logger.LogInformation("Parametri: Ime={Ime}, Prezime={Prezime}, Pozicija={Pozicija}, Telefon={Telefon}, UserId={UserId}",
+                zap.Ime, zap.Prezime, zap.Pozicija, zap.Telefon, zap.UserId);
 
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("ModelState is invalid. Errors:");
-                foreach (var e in ModelState)
+                _logger.LogWarning("Nevalidan model za uređivanje zaposlenika");
+                foreach (var key in ModelState.Keys)
                 {
-                    if (e.Value.Errors.Count > 0)
-                        foreach (var err in e.Value.Errors)
-                            _logger.LogWarning(
-                                " - Field '{Field}' attempted value '{Value}': {Error}",
-                                e.Key, e.Value.AttemptedValue, err.ErrorMessage);
+                    foreach (var error in ModelState[key].Errors)
+                    {
+                        _logger.LogWarning(" - {Key}: {ErrorMessage}", key, error.ErrorMessage);
+                    }
                 }
-                ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", zap.UserId);
+
+                try
+                {
+                    var korisnici = _context.Users
+                        .Select(u => new {
+                            u.Id,
+                            KorisnickoIme = u.UserName
+                        });
+
+                    ViewData["UserId"] = new SelectList(korisnici, "Id", "KorisnickoIme", zap.UserId);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Greška prilikom ponovnog učitavanja padajućih lista");
+                    TempData["Greska"] = "Došlo je do greške prilikom pripreme forme.";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 return View(zap);
             }
 
             try
             {
+                // Provjera da li je korisnik već zaposlen (osim trenutnog zaposlenika)
+                if (await _context.Zaposlenici.AnyAsync(z => z.UserId == zap.UserId && z.Id != zap.Id))
+                {
+                    ModelState.AddModelError("UserId", "Ovaj korisnik je već zaposlen.");
+
+                    var korisnici = _context.Users
+                        .Select(u => new {
+                            u.Id,
+                            KorisnickoIme = u.UserName
+                        });
+
+                    ViewData["UserId"] = new SelectList(korisnici, "Id", "KorisnickoIme", zap.UserId);
+
+                    TempData["Greska"] = "Ovaj korisnik je već zaposlen.";
+                    return View(zap);
+                }
+
                 _context.Update(zap);
                 await _context.SaveChangesAsync();
+
+                _logger.LogInformation(
+                    "Uspješno ažuriran zaposlenik ID: {ZaposlenikId}",
+                    zap.Id
+                );
+
+                TempData["Uspjeh"] = "Podaci o zaposleniku su uspješno ažurirani.";
+                return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
-                if (!_context.Zaposlenici.Any(e => e.Id == zap.Id)) return NotFound();
-                throw;
+                if (!ZaposlenikExists(zap.Id))
+                {
+                    _logger.LogWarning(
+                        "Zaposlenik ID {ZaposlenikId} više ne postoji u bazi. Admin: {Admin}",
+                        zap.Id,
+                        User.Identity.Name
+                    );
+
+                    TempData["Greska"] = "Zaposlenik više ne postoji u bazi.";
+                    return NotFound();
+                }
+                else
+                {
+                    _logger.LogError(
+                        ex,
+                        "Greška prilikom čuvanja izmjena zaposlenika ID: {ZaposlenikId}. Admin: {Admin}",
+                        zap.Id,
+                        User.Identity.Name
+                    );
+
+                    TempData["Greska"] = "Došlo je do greške prilikom čuvanja izmjena. Podaci su možda mijenjani od strane drugog administratora.";
+
+                    var korisnici = _context.Users
+                        .Select(u => new {
+                            u.Id,
+                            KorisnickoIme = u.UserName
+                        });
+
+                    ViewData["UserId"] = new SelectList(korisnici, "Id", "KorisnickoIme", zap.UserId);
+
+                    return View(zap);
+                }
             }
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Neočekivana greška prilikom ažuriranja zaposlenika ID: {ZaposlenikId}. Admin: {Admin}",
+                    zap.Id,
+                    User.Identity.Name
+                );
+
+                TempData["Greska"] = "Došlo je do neočekivane greške prilikom ažuriranja podataka o zaposleniku.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // GET: Zaposlenici/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
-            var zap = await _context.Zaposlenici
-                .Include(z => z.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (zap == null) return NotFound();
-            return View(zap);
+            if (id == null)
+            {
+                _logger.LogWarning(
+                    "Pokušaj brisanja zaposlenika bez ID-a od strane {Admin}",
+                    User.Identity.Name
+                );
+                return NotFound();
+            }
+
+            try
+            {
+                var zap = await _context.Zaposlenici
+                    .Include(z => z.User)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(m => m.Id == id);
+
+                if (zap == null)
+                {
+                    _logger.LogWarning(
+                        "Zaposlenik ID {ZaposlenikId} nije pronađen za brisanje. Admin: {Admin}",
+                        id,
+                        User.Identity.Name
+                    );
+                    TempData["Greska"] = "Zaposlenik nije pronađen.";
+                    return NotFound();
+                }
+
+                return View(zap);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Greška prilikom učitavanja zaposlenika za brisanje ID: {ZaposlenikId}. Admin: {Admin}",
+                    id,
+                    User.Identity.Name
+                );
+
+                TempData["Greska"] = "Došlo je do greške prilikom učitavanja podataka za brisanje.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // POST: Zaposlenici/Delete/5
@@ -148,10 +472,62 @@ namespace InformacioniSistemTeretane.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var zap = await _context.Zaposlenici.FindAsync(id);
-            _context.Zaposlenici.Remove(zap);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var zap = await _context.Zaposlenici.FindAsync(id);
+                if (zap == null)
+                {
+                    _logger.LogWarning(
+                        "Zaposlenik ID {ZaposlenikId} nije pronađen za brisanje. Admin: {Admin}",
+                        id,
+                        User.Identity.Name
+                    );
+
+                    TempData["Greska"] = "Zaposlenik nije pronađen.";
+                    return NotFound();
+                }
+
+                _context.Zaposlenici.Remove(zap);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation(
+                    "Uspješno obrisan zaposlenik ID: {ZaposlenikId}. Admin: {Admin}",
+                    id,
+                    User.Identity.Name
+                );
+
+                TempData["Uspjeh"] = "Zaposlenik je uspješno obrisan.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Greška prilikom brisanja zaposlenika ID: {ZaposlenikId}. Admin: {Admin}",
+                    id,
+                    User.Identity.Name
+                );
+
+                TempData["Greska"] = "Došlo je do greške prilikom brisanja zaposlenika. Provjerite da li postoje zavisni podaci.";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Neočekivana greška prilikom brisanja zaposlenika ID: {ZaposlenikId}. Admin: {Admin}",
+                    id,
+                    User.Identity.Name
+                );
+
+                TempData["Greska"] = "Došlo je do neočekivane greške prilikom brisanja zaposlenika.";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        private bool ZaposlenikExists(int id)
+        {
+            return _context.Zaposlenici.Any(e => e.Id == id);
         }
     }
 }

@@ -22,7 +22,9 @@
     <title>@ViewData["Title"] – GymChain IST</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/bootstrap.lux.min.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     
     @if (SignInManager.IsSignedIn(User)) {
         <link rel="icon" href="~/favicon-auth.ico" type="image/x-icon">
@@ -87,6 +89,7 @@
                                     <li><a class="dropdown-item" asp-controller="Takmicenja" asp-action="Index"><i class="bi bi-trophy-fill me-2"></i>Takmičenja</a></li>
                                     <li><a class="dropdown-item" asp-controller="Discipline" asp-action="Index"><i class="bi bi-list-task me-2"></i>Discipline</a></li>
                                     <li><a class="dropdown-item" asp-controller="Takmicari" asp-action="Index"><i class="bi bi-people-fill me-2"></i>Takmičari</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Sudije" asp-action="Index"><i class="bi bi-people-fill me-2"></i>Sudije</a></li>
                                 </ul>
                             </li>
                         }

@@ -1,24 +1,77 @@
-﻿@model InformacioniSistemTeretane.Models.Takmicar
+﻿@model Takmicar
 
-<h1>Obriši takmičara</h1>
-<h3>Jeste li sigurni?</h3>
+@{
+    ViewData["Title"] = "Obriši takmičara";
+}
 
-<dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.KlijentId)</dt>
-    <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad na listu
+        </a>
+    </div>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.DisciplinaId)</dt>
-    <dd class="col-sm-9">@Model.Disciplina?.Naziv</dd>
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["Uspjeh"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Rezultat)</dt>
-    <dd class="col-sm-9">@Model.Rezultat</dd>
+    <div class="alert alert-danger">
+        <h5 class="alert-heading">
+            <i class="fas fa-exclamation-triangle me-2"></i> Upozorenje!
+        </h5>
+        <p class="mb-0">
+            Jeste li sigurni da želite obrisati ovog takmičara? Ova radnja je nepovratna.
+        </p>
+    </div>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Pozicija)</dt>
-    <dd class="col-sm-9">@Model.Pozicija</dd>
-</dl>
+    <div class="card shadow-sm border-danger">
+        <div class="card-header bg-danger text-white">
+            <h2 class="h5 mb-0">@Model.Klijent?.Ime @Model.Klijent?.Prezime</h2>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-4">Klijent:</dt>
+                <dd class="col-sm-8">@Model.Klijent?.Ime @Model.Klijent?.Prezime</dd>
 
-<form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Obriši</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-</form>
+                <dt class="col-sm-4">Disciplina:</dt>
+                <dd class="col-sm-8">@Model.Disciplina?.Naziv</dd>
+
+                <dt class="col-sm-4">Rezultat:</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.Rezultat)</dd>
+
+                <dt class="col-sm-4">Pozicija:</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.Pozicija)</dd>
+
+                <dt class="col-sm-4">Status:</dt>
+                <dd class="col-sm-8">
+                    <span class="badge bg-success">Aktivan</span>
+                </dd>
+            </dl>
+        </div>
+        <div class="card-footer bg-light">
+            <form asp-action="DeleteConfirmed">
+                <input type="hidden" asp-for="Id" />
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt me-1"></i> Potvrdi brisanje
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i> Odustani
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

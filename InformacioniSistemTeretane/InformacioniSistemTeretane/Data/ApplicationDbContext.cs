@@ -118,6 +118,12 @@ namespace InformacioniSistemTeretane.Data
                 .WithMany(k => k.GrupneRezervacije)
                 .HasForeignKey(zg => zg.KlijentId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Takmicenje>()
+                .HasOne(t => t.Sudija)
+                .WithMany()
+                .HasForeignKey(t => t.SudijaId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

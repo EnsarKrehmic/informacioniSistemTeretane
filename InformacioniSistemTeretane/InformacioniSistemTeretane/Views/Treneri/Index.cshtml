@@ -1,32 +1,97 @@
-﻿@model IEnumerable<InformacioniSistemTeretane.Models.Trener>
+﻿@model IEnumerable<Trener>
 
 @{
     ViewData["Title"] = "Treneri";
 }
 
-<h1>@ViewData["Title"]</h1>
-<p>
-    <a asp-action="Create" class="btn btn-primary">Novi trener</a>
-</p>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(m => m.First().ZaposlenikId)</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+        @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
         {
-            <tr>
-                <td>@item.Zaposlenik?.Prezime, @item.Zaposlenik?.Ime</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
-                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
-                </td>
-            </tr>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> Dodaj novog trenera
+            </a>
         }
-    </tbody>
-</table>
+    </div>
+
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["Uspjeh"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (Model.Any())
+    {
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Trener</th>
+                                <th>Broj treninga</th>
+                                <th class="text-end">Akcije</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Zaposlenik?.Ime @item.Zaposlenik?.Prezime</td>
+                                    <td>
+                                        @{
+                                            var totalTrainings =
+                                            (item.GrupniTreninzi?.Count ?? 0) +
+                                            (item.PersonalniTreninzi?.Count ?? 0) +
+                                            (item.ProbniTreninzi?.Count ?? 0);
+                                        }
+                                        @totalTrainings
+                                    </td>
+                                    <td class="text-end">
+                                        <a asp-action="Details" asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-outline-info" title="Detalji">
+                                            <i class="fas fa-info-circle"></i>
+                                        </a>
+
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@item.Id"
+                                               class="btn btn-sm btn-outline-warning" title="Uredi">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        }
+
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <a asp-action="Delete" asp-route-id="@item.Id"
+                                               class="btn btn-sm btn-outline-danger" title="Obriši">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info mt-4">
+            <i class="fas fa-info-circle me-2"></i> Trenutno nema evidentiranih trenera.
+        </div>
+    }
+</div>

@@ -4,45 +4,57 @@
     ViewData["Title"] = "Uredi uplatu";
 }
 
+@if (TempData["Greska"] != null)
+{
+    <div class="alert alert-danger">@TempData["Greska"]</div>
+}
+
 <h1>@ViewData["Title"]</h1>
 
-<form asp-action="Edit" method="post" class="mt-4">
+<form asp-action="Edit">
     <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="form-group mb-3">
-        <label asp-for="KlijentId"></label>
-        <select asp-for="KlijentId" class="form-control" asp-items="ViewBag.KlijentId"></select>
+        <label asp-for="KlijentId" class="control-label"></label>
+        <select asp-for="KlijentId" class="form-control" asp-items="ViewBag.KlijentId">
+            <option value="">-- Odaberite klijenta --</option>
+        </select>
         <span asp-validation-for="KlijentId" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="PaketId"></label>
-        <select asp-for="PaketId" class="form-control" asp-items="ViewBag.PaketId"></select>
+        <label asp-for="PaketId" class="control-label"></label>
+        <select asp-for="PaketId" class="form-control" asp-items="ViewBag.PaketId">
+            <option value="">-- Odaberite paket --</option>
+        </select>
         <span asp-validation-for="PaketId" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="DatumUplate"></label>
+        <label asp-for="DatumUplate" class="control-label"></label>
         <input asp-for="DatumUplate" type="date" class="form-control" />
         <span asp-validation-for="DatumUplate" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="NacinUplate"></label>
+        <label asp-for="NacinUplate" class="control-label"></label>
         <input asp-for="NacinUplate" class="form-control" />
         <span asp-validation-for="NacinUplate" class="text-danger"></span>
     </div>
 
-    <div class="form-group mb-4">
-        <label asp-for="Iznos"></label>
+    <div class="form-group mb-3">
+        <label asp-for="Iznos" class="control-label"></label>
         <input asp-for="Iznos" type="number" step="0.01" class="form-control" />
         <span asp-validation-for="Iznos" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Spremi</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
+    <div class="form-group mt-4">
+        <button type="submit" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Sačuvaj izmjene
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad
+        </a>
+    </div>
 </form>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}

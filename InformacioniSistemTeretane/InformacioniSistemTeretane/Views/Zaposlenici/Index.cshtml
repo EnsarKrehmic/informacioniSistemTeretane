@@ -4,36 +4,43 @@
     ViewData["Title"] = "Zaposlenici";
 }
 
+@if (TempData["Uspjeh"] != null)
+{
+    <div class="alert alert-success">@TempData["Uspjeh"]</div>
+}
+@if (TempData["Greska"] != null)
+{
+    <div class="alert alert-danger">@TempData["Greska"]</div>
+}
+
 <h1>@ViewData["Title"]</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Novi zaposlenik</a>
+    <a asp-action="Create" class="btn btn-primary">Dodaj novog zaposlenika</a>
 </p>
 
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor((Zaposlenik m) => m.Ime)</th>
-            <th>@Html.DisplayNameFor((Zaposlenik m) => m.Prezime)</th>
-            <th>@Html.DisplayNameFor((Zaposlenik m) => m.Pozicija)</th>
-            <th>@Html.DisplayNameFor((Zaposlenik m) => m.Telefon)</th>
-            <th>@Html.DisplayNameFor((Zaposlenik m) => m.UserId)</th>
-            <th></th>
+            <th>Ime i prezime</th>
+            <th>Pozicija</th>
+            <th>Telefon</th>
+            <th>Korisnički nalog</th>
+            <th>Akcije</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>@Html.DisplayFor(_ => item.Ime)</td>
-                <td>@Html.DisplayFor(_ => item.Prezime)</td>
-                <td>@Html.DisplayFor(_ => item.Pozicija)</td>
-                <td>@Html.DisplayFor(_ => item.Telefon)</td>
-                <td>@item.User?.UserName</td>
+                <td>@item.Ime @item.Prezime</td>
+                <td>@item.Pozicija</td>
+                <td>@item.Telefon</td>
+                <td>@(item.User?.UserName ?? "Nepoznato")</td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
-                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a>   |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Detalji</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Uredi</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Obriši</a>
                 </td>
             </tr>
         }

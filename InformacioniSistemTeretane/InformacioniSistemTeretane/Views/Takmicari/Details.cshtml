@@ -1,23 +1,77 @@
-﻿@model InformacioniSistemTeretane.Models.Takmicar
+﻿@model Takmicar
 
-<h1>Detalji takmičara</h1>
+@{
+    ViewData["Title"] = "Detalji takmičara";
+}
 
-<dl class="row">
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.KlijentId)</dt>
-    <dd class="col-sm-9">@Model.Klijent?.Prezime, @Model.Klijent?.Ime</dd>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad na listu
+        </a>
+    </div>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.DisciplinaId)</dt>
-    <dd class="col-sm-9">@Model.Disciplina?.Naziv</dd>
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["Uspjeh"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> @TempData["Greska"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Rezultat)</dt>
-    <dd class="col-sm-9">@Model.Rezultat</dd>
+    <div class="card shadow-sm border-primary">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h5 mb-0">@Model.Klijent?.Ime @Model.Klijent?.Prezime</h2>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Klijent:</dt>
+                <dd class="col-sm-9">@Model.Klijent?.Ime @Model.Klijent?.Prezime</dd>
 
-    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Pozicija)</dt>
-    <dd class="col-sm-9">@Model.Pozicija</dd>
-</dl>
+                <dt class="col-sm-3">Disciplina:</dt>
+                <dd class="col-sm-9">@Model.Disciplina?.Naziv</dd>
 
-<p>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Uredi</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger ms-2">Obriši</a>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Nazad</a>
-</p>
+                <dt class="col-sm-3">Rezultat:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Rezultat)</dd>
+
+                <dt class="col-sm-3">Pozicija:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Pozicija)</dd>
+
+                <dt class="col-sm-3">Status:</dt>
+                <dd class="col-sm-9">
+                    <span class="badge bg-success">Aktivan</span>
+                </dd>
+            </dl>
+        </div>
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-between">
+                <div>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id"
+                           class="btn btn-warning">
+                            <i class="fas fa-edit me-1"></i> Uredi
+                        </a>
+                    }
+                </div>
+                <div>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Delete" asp-route-id="@Model.Id"
+                           class="btn btn-danger">
+                            <i class="fas fa-trash-alt me-1"></i> Obriši
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

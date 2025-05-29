@@ -1,0 +1,16 @@
+﻿@model ProbniTrening
+
+<h4 class="mt-4">Detalji probnog treninga</h4>
+<dl class="row">
+    <dt class="col-sm-3">Trener</dt>
+    <dd class="col-sm-9">@Model.Trener?.Zaposlenik.Ime @Model.Trener?.Zaposlenik.Prezime</dd>
+
+    <dt class="col-sm-3">Klijent</dt>
+    <dd class="col-sm-9">@Model.Klijent?.Ime @Model.Klijent?.Prezime</dd>
+
+    <dt class="col-sm-3">Datum treninga</dt>
+    <dd class="col-sm-9">@Model.Datum.ToString("dd.MM.yyyy")</dd>
+
+    <dt class="col-sm-3">Ocjena</dt>
+    <dd class="col-sm-9">@Model.Ocjena</dd>
+</dl>
