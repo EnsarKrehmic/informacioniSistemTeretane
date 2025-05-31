@@ -12,6 +12,9 @@ public class ZakazaniGrupniController : Controller
     private readonly ApplicationDbContext _context;
     public ZakazaniGrupniController(ApplicationDbContext ctx) => _context = ctx;
 
+    [HttpGet]
+    [Route("")]
+    [Route("[Controller]/[Action]")]
     public async Task<IActionResult> Index()
     {
         var q = _context.ZakazaniGrupni
@@ -20,6 +23,8 @@ public class ZakazaniGrupniController : Controller
         return View(await q.ToListAsync());
     }
 
+    [HttpGet]
+    [Route("[Controller]/[Action]/{id?}")]
     public async Task<IActionResult> Details(int? id)
     {
         if (id == null) return NotFound();
@@ -31,6 +36,8 @@ public class ZakazaniGrupniController : Controller
         return View(zap);
     }
 
+    [HttpGet]
+    [Route("[Controller]/[Action]")]
     public IActionResult Create()
     {
         ViewData["GrupniTreningId"] = new SelectList(_context.GrupniTreninzi, "Id", "Naziv");
@@ -38,7 +45,9 @@ public class ZakazaniGrupniController : Controller
         return View();
     }
 
-    [HttpPost, ValidateAntiForgeryToken]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Route("[Controller]/[Action]")]
     public async Task<IActionResult> Create([Bind("GrupniTreningId,KlijentId,DatumPrijave")] ZakazaniGrupni z)
     {
         if (ModelState.IsValid)
@@ -52,6 +61,8 @@ public class ZakazaniGrupniController : Controller
         return View(z);
     }
 
+    [HttpGet]
+    [Route("[Controller]/[Action]/{id?}")]
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null) return NotFound();
@@ -62,7 +73,9 @@ public class ZakazaniGrupniController : Controller
         return View(z);
     }
 
-    [HttpPost, ValidateAntiForgeryToken]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Route("[Controller]/[Action]/{id}")]
     public async Task<IActionResult> Edit(int id, [Bind("Id,GrupniTreningId,KlijentId,DatumPrijave")] ZakazaniGrupni z)
     {
         if (id != z.Id) return NotFound();
@@ -77,6 +90,8 @@ public class ZakazaniGrupniController : Controller
         return View(z);
     }
 
+    [HttpGet]
+    [Route("[Controller]/[Action]/{id?}")]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null) return NotFound();
@@ -88,7 +103,10 @@ public class ZakazaniGrupniController : Controller
         return View(z);
     }
 
-    [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
+    [HttpPost]
+    [ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    [Route("[Controller]/[Action]/{id}")]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var z = await _context.ZakazaniGrupni.FindAsync(id);

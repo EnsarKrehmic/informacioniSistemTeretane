@@ -28,7 +28,9 @@ namespace InformacioniSistemTeretane.Controllers
             _userManager = userManager;
         }
 
-        // GET: Igraonice
+        // GET: Igraonice/Index
+        [HttpGet]
+        [Route("[controller]/[action]")]
         public async Task<IActionResult> Index()
         {
             _logger.LogInformation("Korisnik {UserName} pregleda igraonice", User.Identity.Name);
@@ -40,7 +42,9 @@ namespace InformacioniSistemTeretane.Controllers
             return View(igraonice);
         }
 
-        // GET: Igraonice/Details/5
+        // GET: Igraonice/Details/{id}
+        [HttpGet]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -51,7 +55,7 @@ namespace InformacioniSistemTeretane.Controllers
 
             var igraonica = await _context.Igraonice
                 .Include(i => i.Lokacija)
-                .Include(i => i.Ponude) // Uključujemo ponude za prikaz u detaljima
+                .Include(i => i.Ponude)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (igraonica == null)
@@ -67,7 +71,9 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: Igraonice/Create
+        [HttpGet]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]")]
         public IActionResult Create()
         {
             _logger.LogInformation("Korisnik {UserName} pokreće kreiranje nove igraonice", User.Identity.Name);
@@ -80,6 +86,7 @@ namespace InformacioniSistemTeretane.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]")]
         public async Task<IActionResult> Create([Bind("Naziv,Kapacitet,LokacijaId")] Igraonica igraonica)
         {
             _logger.LogInformation("Korisnik {UserName} kreira novu igraonicu", User.Identity.Name);
@@ -115,8 +122,10 @@ namespace InformacioniSistemTeretane.Controllers
             }
         }
 
-        // GET: Igraonice/Edit/5
+        // GET: Igraonice/Edit/{id}
+        [HttpGet]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -139,10 +148,11 @@ namespace InformacioniSistemTeretane.Controllers
             return View(igraonica);
         }
 
-        // POST: Igraonice/Edit/5
+        // POST: Igraonice/Edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]/{id}")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Naziv,Kapacitet,LokacijaId")] Igraonica igraonica)
         {
             _logger.LogInformation("Korisnik {UserName} ažurira igraonicu ID: {IgraonicaId}", User.Identity.Name, id);
@@ -192,8 +202,10 @@ namespace InformacioniSistemTeretane.Controllers
             }
         }
 
-        // GET: Igraonice/Delete/5
+        // GET: Igraonice/Delete/{id}
+        [HttpGet]
         [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -204,7 +216,7 @@ namespace InformacioniSistemTeretane.Controllers
 
             var igraonica = await _context.Igraonice
                 .Include(i => i.Lokacija)
-                .Include(i => i.Ponude) // Uključujemo povezane ponude za provjeru
+                .Include(i => i.Ponude)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (igraonica == null)
@@ -219,14 +231,16 @@ namespace InformacioniSistemTeretane.Controllers
             return View(igraonica);
         }
 
-        // POST: Igraonice/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // POST: Igraonice/DeleteConfirmed/{id}
+        [HttpPost]
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id}")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var igraonica = await _context.Igraonice
-                .Include(i => i.Ponude) // Uključujemo povezane ponude za provjeru zavisnosti
+                .Include(i => i.Ponude)
                 .FirstOrDefaultAsync(i => i.Id == id);
 
             if (igraonica == null)
@@ -236,7 +250,6 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            // Provjera da li igraonica ima povezane ponude
             if (igraonica.Ponude?.Any() == true)
             {
                 _logger.LogWarning("Pokušaj brisanja igraonice '{IgraonicaNaziv}' koja ima povezane ponude (korisnik: {UserName})",

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace InformacioniSistemTeretane.Controllers
 {
-    [Authorize] // Zahtjeva autentifikaciju za sve akcije
+    [Authorize]
     public class PaketiController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,14 +22,19 @@ namespace InformacioniSistemTeretane.Controllers
             _logger = logger;
         }
 
-        // GET: Paketi
+        // GET: Paketi/Index
+        [HttpGet]
+        [Route("[controller]/[action]")]
         public async Task<IActionResult> Index()
         {
             _logger.LogInformation("----- GET: Paketi/Index ----- Korisnik: {Korisnik}", User.Identity.Name);
-            return View(await _context.Paketi.ToListAsync());
+            var paketi = await _context.Paketi.ToListAsync();
+            return View(paketi);
         }
 
-        // GET: Paketi/Details/5
+        // GET: Paketi/Details/{id}
+        [HttpGet]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -53,7 +58,9 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: Paketi/Create
+        [HttpGet]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]")]
         public IActionResult Create()
         {
             _logger.LogInformation("Create: Prikaz forme za novi paket - Korisnik: {Korisnik}", User.Identity.Name);
@@ -64,6 +71,7 @@ namespace InformacioniSistemTeretane.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]")]
         public async Task<IActionResult> Create([Bind("Naziv,Opis,Cijena,TrajanjeDana")] Paket paket)
         {
             _logger.LogInformation("----- POST: Paketi/Create ----- Korisnik: {Korisnik}", User.Identity.Name);
@@ -74,21 +82,16 @@ namespace InformacioniSistemTeretane.Controllers
             {
                 try
                 {
-                    // Provjera jedinstvenosti naziva
                     if (await _context.Paketi.AnyAsync(p => p.Naziv == paket.Naziv))
                     {
                         ModelState.AddModelError("Naziv", "Paket s ovim nazivom već postoji");
                         throw new InvalidOperationException("Naziv paketa nije jedinstven");
                     }
-
-                    // Provjera minimalne cijene
                     if (paket.Cijena <= 0)
                     {
                         ModelState.AddModelError("Cijena", "Cijena mora biti veća od 0");
                         throw new InvalidOperationException("Nevaljana cijena paketa");
                     }
-
-                    // Provjera trajanja
                     if (paket.TrajanjeDana <= 0)
                     {
                         ModelState.AddModelError("TrajanjeDana", "Trajanje mora biti veće od 0 dana");
@@ -100,17 +103,16 @@ namespace InformacioniSistemTeretane.Controllers
 
                     _logger.LogInformation("Kreiran novi paket ID {Id}", paket.Id);
                     TempData["Uspjeh"] = "Paket uspješno kreiran!";
-
                     return RedirectToAction(nameof(Index));
+                }
+                catch (InvalidOperationException ex)
+                {
+                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
                 }
                 catch (DbUpdateException ex)
                 {
                     _logger.LogError(ex, "Greška pri kreiranju paketa");
                     ModelState.AddModelError("", "Greška pri spremanju podataka. Pokušajte ponovno.");
-                }
-                catch (InvalidOperationException ex)
-                {
-                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
                 }
             }
 
@@ -118,8 +120,10 @@ namespace InformacioniSistemTeretane.Controllers
             return View(paket);
         }
 
-        // GET: Paketi/Edit/5
+        // GET: Paketi/Edit/{id}
+        [HttpGet]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -139,10 +143,11 @@ namespace InformacioniSistemTeretane.Controllers
             return View(paket);
         }
 
-        // POST: Paketi/Edit/5
+        // POST: Paketi/Edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]/{id}")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Naziv,Opis,Cijena,TrajanjeDana")] Paket paket)
         {
             _logger.LogInformation("----- POST: Paketi/Edit/{id} ----- Korisnik: {Korisnik}", id, User.Identity.Name);
@@ -159,21 +164,16 @@ namespace InformacioniSistemTeretane.Controllers
             {
                 try
                 {
-                    // Provjera jedinstvenosti naziva (osim trenutnog paketa)
                     if (await _context.Paketi.AnyAsync(p => p.Naziv == paket.Naziv && p.Id != paket.Id))
                     {
                         ModelState.AddModelError("Naziv", "Paket s ovim nazivom već postoji");
                         throw new InvalidOperationException("Naziv paketa nije jedinstven");
                     }
-
-                    // Provjera minimalne cijene
                     if (paket.Cijena <= 0)
                     {
                         ModelState.AddModelError("Cijena", "Cijena mora biti veća od 0");
                         throw new InvalidOperationException("Nevaljana cijena paketa");
                     }
-
-                    // Provjera trajanja
                     if (paket.TrajanjeDana <= 0)
                     {
                         ModelState.AddModelError("TrajanjeDana", "Trajanje mora biti veće od 0 dana");
@@ -185,12 +185,15 @@ namespace InformacioniSistemTeretane.Controllers
 
                     _logger.LogInformation("Paket ID {Id} uspješno ažuriran", id);
                     TempData["Uspjeh"] = "Paket uspješno ažuriran!";
-
                     return RedirectToAction(nameof(Index));
+                }
+                catch (InvalidOperationException ex)
+                {
+                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
-                    if (!PaketExists(paket.Id))
+                    if (!PaketiExists(paket.Id))
                     {
                         _logger.LogWarning("Edit POST: Paket s ID-om {Id} više ne postoji u bazi", id);
                         return NotFound();
@@ -203,18 +206,16 @@ namespace InformacioniSistemTeretane.Controllers
                     _logger.LogError(ex, "Greška pri ažuriranju paketa ID {Id}", id);
                     ModelState.AddModelError("", "Greška pri spremanju promjena. Pokušajte ponovno.");
                 }
-                catch (InvalidOperationException ex)
-                {
-                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
-                }
             }
 
             _logger.LogWarning("Neuspješna validacija: {BrojGrešaka} grešaka", ModelState.ErrorCount);
             return View(paket);
         }
 
-        // GET: Paketi/Delete/5
+        // GET: Paketi/Delete/{id}
+        [HttpGet]
         [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -233,7 +234,6 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            // Provjera zavisnosti
             bool imaUplata = paket.Uplate?.Any() ?? false;
             ViewData["ImaUplata"] = imaUplata;
             ViewData["BrojUplata"] = paket.Uplate?.Count ?? 0;
@@ -242,10 +242,11 @@ namespace InformacioniSistemTeretane.Controllers
             return View(paket);
         }
 
-        // POST: Paketi/Delete/5
+        // POST: Paketi/Delete/{id}
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id}")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             _logger.LogInformation("----- POST: Paketi/Delete/{id} ----- Korisnik: {Korisnik}", id, User.Identity.Name);
@@ -261,16 +262,15 @@ namespace InformacioniSistemTeretane.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            if (paket.Uplate?.Any() == true)
+            {
+                _logger.LogWarning("Brisanje onemogućeno: Paket ID {Id} ima vezane uplate", id);
+                TempData["Greska"] = "Ne možete obrisati paket jer postoje vezane uplate!";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
             try
             {
-                // Provjera zavisnosti
-                if (paket.Uplate?.Any() == true)
-                {
-                    _logger.LogWarning("Brisanje onemogućeno: Paket ID {Id} ima vezane uplate", id);
-                    TempData["Greska"] = "Ne možete obrisati paket jer postoje vezane uplate!";
-                    return RedirectToAction(nameof(Delete), new { id });
-                }
-
                 _context.Paketi.Remove(paket);
                 await _context.SaveChangesAsync();
 
@@ -287,7 +287,7 @@ namespace InformacioniSistemTeretane.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PaketExists(int id)
+        private bool PaketiExists(int id)
         {
             return _context.Paketi.Any(e => e.Id == id);
         }

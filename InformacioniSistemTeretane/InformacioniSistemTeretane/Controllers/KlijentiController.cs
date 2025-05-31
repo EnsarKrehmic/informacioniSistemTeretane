@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace InformacioniSistemTeretane.Controllers
 {
-    [Authorize] // Zahtjeva autentifikaciju za sve akcije
+    [Authorize]
     public class KlijentiController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -23,7 +23,9 @@ namespace InformacioniSistemTeretane.Controllers
             _logger = logger;
         }
 
-        // GET: Klijenti
+        // GET: Klijenti/Index
+        [HttpGet]
+        [Route("[controller]/[action]")]
         public async Task<IActionResult> Index()
         {
             _logger.LogInformation("----- GET: Klijenti/Index ----- Korisnik: {Korisnik}", User.Identity.Name);
@@ -32,7 +34,9 @@ namespace InformacioniSistemTeretane.Controllers
             return View(await klijenti.ToListAsync());
         }
 
-        // GET: Klijenti/Details/5
+        // GET: Klijenti/Details/{id}
+        [HttpGet]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -56,7 +60,9 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: Klijenti/Create
+        [HttpGet]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]")]
         public IActionResult Create()
         {
             _logger.LogInformation("Create: Prikaz forme za novog klijenta - Korisnik: {Korisnik}", User.Identity.Name);
@@ -69,6 +75,7 @@ namespace InformacioniSistemTeretane.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]")]
         public async Task<IActionResult> Create([Bind("Ime,Prezime,DatumRodjenja,UserId")] Klijent klijent)
         {
             _logger.LogInformation("----- POST: Klijenti/Create ----- Korisnik: {Korisnik}", User.Identity.Name);
@@ -99,8 +106,10 @@ namespace InformacioniSistemTeretane.Controllers
             return View(klijent);
         }
 
-        // GET: Klijenti/Edit/5
+        // GET: Klijenti/Edit/{id}
+        [HttpGet]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -121,10 +130,11 @@ namespace InformacioniSistemTeretane.Controllers
             return View(klijent);
         }
 
-        // POST: Klijenti/Edit/5
+        // POST: Klijenti/Edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]/{id}")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Ime,Prezime,DatumRodjenja,UserId")] Klijent klijent)
         {
             _logger.LogInformation("----- POST: Klijenti/Edit/{id} ----- Korisnik: {Korisnik}", id, User.Identity.Name);
@@ -171,8 +181,10 @@ namespace InformacioniSistemTeretane.Controllers
             return View(klijent);
         }
 
-        // GET: Klijenti/Delete/5
+        // GET: Klijenti/Delete/{id}
+        [HttpGet]
         [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -195,10 +207,11 @@ namespace InformacioniSistemTeretane.Controllers
             return View(klijent);
         }
 
-        // POST: Klijenti/Delete/5
+        // POST: Klijenti/Delete/{id}
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id}")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             _logger.LogInformation("----- POST: Klijenti/Delete/{id} ----- Korisnik: {Korisnik}", id, User.Identity.Name);

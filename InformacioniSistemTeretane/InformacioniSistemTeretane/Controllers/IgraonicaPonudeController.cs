@@ -28,7 +28,9 @@ namespace InformacioniSistemTeretane.Controllers
             _userManager = userManager;
         }
 
-        // GET: IgraonicaPonude
+        // GET: IgraonicaPonude/Index
+        [HttpGet]
+        [Route("[controller]/[action]")]
         public async Task<IActionResult> Index()
         {
             _logger.LogInformation("Korisnik {UserName} pregleda ponude igraonica", User.Identity.Name);
@@ -40,7 +42,9 @@ namespace InformacioniSistemTeretane.Controllers
             return View(ponude);
         }
 
-        // GET: IgraonicaPonude/Details/5
+        // GET: IgraonicaPonude/Details/{id}
+        [HttpGet]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -66,7 +70,9 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: IgraonicaPonude/Create
+        [HttpGet]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]")]
         public IActionResult Create()
         {
             _logger.LogInformation("Korisnik {UserName} pokreće kreiranje nove ponude za igraonicu", User.Identity.Name);
@@ -79,6 +85,7 @@ namespace InformacioniSistemTeretane.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]")]
         public async Task<IActionResult> Create([Bind("IgraonicaId,OpisUsluge,Cijena,Trajanje")] IgraonicaPonuda ponuda)
         {
             _logger.LogInformation("Korisnik {UserName} kreira novu ponudu za igraonicu", User.Identity.Name);
@@ -114,8 +121,10 @@ namespace InformacioniSistemTeretane.Controllers
             }
         }
 
-        // GET: IgraonicaPonude/Edit/5
+        // GET: IgraonicaPonude/Edit/{id}
+        [HttpGet]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -138,10 +147,11 @@ namespace InformacioniSistemTeretane.Controllers
             return View(ponuda);
         }
 
-        // POST: IgraonicaPonude/Edit/5
+        // POST: IgraonicaPonude/Edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]/{id}")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,IgraonicaId,OpisUsluge,Cijena,Trajanje")] IgraonicaPonuda ponuda)
         {
             _logger.LogInformation("Korisnik {UserName} ažurira ponudu ID: {PonudaId}", User.Identity.Name, id);
@@ -191,8 +201,10 @@ namespace InformacioniSistemTeretane.Controllers
             }
         }
 
-        // GET: IgraonicaPonude/Delete/5
+        // GET: IgraonicaPonude/Delete/{id}
+        [HttpGet]
         [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -217,10 +229,12 @@ namespace InformacioniSistemTeretane.Controllers
             return View(ponuda);
         }
 
-        // POST: IgraonicaPonude/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // POST: IgraonicaPonude/DeleteConfirmed/{id}
+        [HttpPost]
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id}")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var ponuda = await _context.IgraonicaPonude
@@ -246,8 +260,7 @@ namespace InformacioniSistemTeretane.Controllers
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError(ex, "Greška pri brisanju ponude ID: {PonudaId} (korisnik: {UserName})",
-                    id, User.Identity.Name);
+                _logger.LogError(ex, "Greška pri brisanju ponude ID: {PonudaId} (korisnik: {UserName})", id, User.Identity.Name);
 
                 TempData["Greska"] = $"Došlo je do greške pri brisanju ponude '{ponuda.OpisUsluge}'!";
                 return RedirectToAction(nameof(Index));

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace InformacioniSistemTeretane.Controllers
 {
-    [Authorize] // Zahtjeva autentifikaciju za sve akcije
+    [Authorize]
     public class LokacijeController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,14 +22,19 @@ namespace InformacioniSistemTeretane.Controllers
             _logger = logger;
         }
 
-        // GET: Lokacije
+        // GET: Lokacije/Index
+        [HttpGet]
+        [Route("[controller]/[action]")]
         public async Task<IActionResult> Index()
         {
             _logger.LogInformation("----- GET: Lokacije/Index ----- Korisnik: {Korisnik}", User.Identity.Name);
-            return View(await _context.Lokacije.ToListAsync());
+            var lokacije = await _context.Lokacije.ToListAsync();
+            return View(lokacije);
         }
 
-        // GET: Lokacije/Details/5
+        // GET: Lokacije/Details/{id}
+        [HttpGet]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -54,7 +59,9 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: Lokacije/Create
+        [HttpGet]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]")]
         public IActionResult Create()
         {
             _logger.LogInformation("Create: Prikaz forme za novu lokaciju - Korisnik: {Korisnik}", User.Identity.Name);
@@ -65,6 +72,7 @@ namespace InformacioniSistemTeretane.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]")]
         public async Task<IActionResult> Create([Bind("Naziv,Adresa,KontaktTelefon,Email")] Lokacija lokacija)
         {
             _logger.LogInformation("----- POST: Lokacije/Create ----- Korisnik: {Korisnik}", User.Identity.Name);
@@ -75,7 +83,6 @@ namespace InformacioniSistemTeretane.Controllers
             {
                 try
                 {
-                    // Provjera jedinstvenosti naziva lokacije
                     if (await _context.Lokacije.AnyAsync(l => l.Naziv == lokacija.Naziv))
                     {
                         ModelState.AddModelError("Naziv", "Lokacija s ovim nazivom već postoji");
@@ -87,17 +94,16 @@ namespace InformacioniSistemTeretane.Controllers
 
                     _logger.LogInformation("Kreirana nova lokacija ID {Id}", lokacija.Id);
                     TempData["Uspjeh"] = "Lokacija uspješno kreirana!";
-
                     return RedirectToAction(nameof(Index));
+                }
+                catch (InvalidOperationException ex)
+                {
+                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
                 }
                 catch (DbUpdateException ex)
                 {
                     _logger.LogError(ex, "Greška pri kreiranju lokacije");
                     ModelState.AddModelError("", "Greška pri spremanju podataka. Pokušajte ponovno.");
-                }
-                catch (InvalidOperationException ex)
-                {
-                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
                 }
             }
 
@@ -105,8 +111,10 @@ namespace InformacioniSistemTeretane.Controllers
             return View(lokacija);
         }
 
-        // GET: Lokacije/Edit/5
+        // GET: Lokacije/Edit/{id}
+        [HttpGet]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -126,10 +134,11 @@ namespace InformacioniSistemTeretane.Controllers
             return View(lokacija);
         }
 
-        // POST: Lokacije/Edit/5
+        // POST: Lokacije/Edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]/{id}")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Naziv,Adresa,KontaktTelefon,Email")] Lokacija lokacija)
         {
             _logger.LogInformation("----- POST: Lokacije/Edit/{id} ----- Korisnik: {Korisnik}", id, User.Identity.Name);
@@ -146,7 +155,6 @@ namespace InformacioniSistemTeretane.Controllers
             {
                 try
                 {
-                    // Provjera jedinstvenosti naziva (osim trenutne lokacije)
                     if (await _context.Lokacije.AnyAsync(l => l.Naziv == lokacija.Naziv && l.Id != lokacija.Id))
                     {
                         ModelState.AddModelError("Naziv", "Lokacija s ovim nazivom već postoji");
@@ -158,8 +166,11 @@ namespace InformacioniSistemTeretane.Controllers
 
                     _logger.LogInformation("Lokacija ID {Id} uspješno ažurirana", id);
                     TempData["Uspjeh"] = "Lokacija uspješno ažurirana!";
-
                     return RedirectToAction(nameof(Index));
+                }
+                catch (InvalidOperationException ex)
+                {
+                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
@@ -176,18 +187,16 @@ namespace InformacioniSistemTeretane.Controllers
                     _logger.LogError(ex, "Greška pri ažuriranju lokacije ID {Id}", id);
                     ModelState.AddModelError("", "Greška pri spremanju promjena. Pokušajte ponovno.");
                 }
-                catch (InvalidOperationException ex)
-                {
-                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
-                }
             }
 
             _logger.LogWarning("Neuspješna validacija: {BrojGrešaka} grešaka", ModelState.ErrorCount);
             return View(lokacija);
         }
 
-        // GET: Lokacije/Delete/5
+        // GET: Lokacije/Delete/{id}
+        [HttpGet]
         [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -207,12 +216,9 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            // Provjera zavisnosti
             bool imaSale = lokacija.Sale?.Any() ?? false;
             bool imaIgraonice = lokacija.Igraonice?.Any() ?? false;
-            bool imaZavisnosti = imaSale || imaIgraonice;
-
-            ViewData["ImaZavisnosti"] = imaZavisnosti;
+            ViewData["ImaZavisnosti"] = imaSale || imaIgraonice;
             ViewData["ImaSale"] = imaSale;
             ViewData["ImaIgraonice"] = imaIgraonice;
 
@@ -220,10 +226,11 @@ namespace InformacioniSistemTeretane.Controllers
             return View(lokacija);
         }
 
-        // POST: Lokacije/Delete/5
+        // POST: Lokacije/Delete/{id}
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id}")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             _logger.LogInformation("----- POST: Lokacije/Delete/{id} ----- Korisnik: {Korisnik}", id, User.Identity.Name);
@@ -240,16 +247,15 @@ namespace InformacioniSistemTeretane.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            if (lokacija.Sale?.Any() == true || lokacija.Igraonice?.Any() == true)
+            {
+                _logger.LogWarning("Brisanje onemogućeno: Lokacija ID {Id} ima vezane sale ili igraonice", id);
+                TempData["Greska"] = "Ne možete obrisati lokaciju jer postoje vezani entiteti (sale ili igraonice)!";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
             try
             {
-                // Provjera zavisnosti
-                if (lokacija.Sale?.Any() == true || lokacija.Igraonice?.Any() == true)
-                {
-                    _logger.LogWarning("Brisanje onemogućeno: Lokacija ID {Id} ima vezane sale ili igraonice", id);
-                    TempData["Greska"] = "Ne možete obrisati lokaciju jer postoje vezani entiteti (sale ili igraonice)!";
-                    return RedirectToAction(nameof(Delete), new { id });
-                }
-
                 _context.Lokacije.Remove(lokacija);
                 await _context.SaveChangesAsync();
 

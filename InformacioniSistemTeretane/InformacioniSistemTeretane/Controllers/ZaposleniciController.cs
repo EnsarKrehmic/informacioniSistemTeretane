@@ -12,6 +12,7 @@ using InformacioniSistemTeretane.Models;
 namespace InformacioniSistemTeretane.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [Route("[Controller]/[Action]")]
     public class ZaposleniciController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -25,7 +26,9 @@ namespace InformacioniSistemTeretane.Controllers
             _logger = logger;
         }
 
-        // GET: Zaposlenici
+        [HttpGet]
+        [Route("")]
+        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
             try
@@ -50,7 +53,8 @@ namespace InformacioniSistemTeretane.Controllers
             }
         }
 
-        // GET: Zaposlenici/Details/5
+        [HttpGet]
+        [Route("{id?}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -101,7 +105,7 @@ namespace InformacioniSistemTeretane.Controllers
             }
         }
 
-        // GET: Zaposlenici/Create
+        [HttpGet]
         public IActionResult Create()
         {
             try
@@ -125,7 +129,6 @@ namespace InformacioniSistemTeretane.Controllers
             }
         }
 
-        // POST: Zaposlenici/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Ime,Prezime,Pozicija,Telefon,UserId")] Zaposlenik zap)
@@ -235,7 +238,8 @@ namespace InformacioniSistemTeretane.Controllers
             }
         }
 
-        // GET: Zaposlenici/Edit/5
+        [HttpGet]
+        [Route("{id?}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -285,9 +289,9 @@ namespace InformacioniSistemTeretane.Controllers
             }
         }
 
-        // POST: Zaposlenici/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("{id}")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Ime,Prezime,Pozicija,Telefon,UserId")] Zaposlenik zap)
         {
             if (id != zap.Id)
@@ -421,7 +425,8 @@ namespace InformacioniSistemTeretane.Controllers
             }
         }
 
-        // GET: Zaposlenici/Delete/5
+        [HttpGet]
+        [Route("{id?}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -467,9 +472,10 @@ namespace InformacioniSistemTeretane.Controllers
             }
         }
 
-        // POST: Zaposlenici/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Route("{id}")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try

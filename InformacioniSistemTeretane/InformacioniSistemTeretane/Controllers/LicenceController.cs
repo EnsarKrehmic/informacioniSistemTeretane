@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace InformacioniSistemTeretane.Controllers
 {
-    [Authorize] // Zahtjeva autentifikaciju za sve akcije
+    [Authorize]
     public class LicenceController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -23,7 +23,9 @@ namespace InformacioniSistemTeretane.Controllers
             _logger = logger;
         }
 
-        // GET: Licence
+        // GET: Licence/Index
+        [HttpGet]
+        [Route("[controller]/[action]")]
         public async Task<IActionResult> Index()
         {
             _logger.LogInformation("----- GET: Licence/Index ----- Korisnik: {Korisnik}", User.Identity.Name);
@@ -36,7 +38,9 @@ namespace InformacioniSistemTeretane.Controllers
             return View(licence);
         }
 
-        // GET: Licence/Details/5
+        // GET: Licence/Details/{id}
+        [HttpGet]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -61,7 +65,9 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: Licence/Create
+        [HttpGet]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]")]
         public IActionResult Create()
         {
             _logger.LogInformation("Create: Prikaz forme za novu licencu - Korisnik: {Korisnik}", User.Identity.Name);
@@ -75,6 +81,7 @@ namespace InformacioniSistemTeretane.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]")]
         public async Task<IActionResult> Create([Bind("KlijentId,ProgramId,DatumIzdavanja,ValidnaDo")] Licenca licenca)
         {
             _logger.LogInformation("----- POST: Licence/Create ----- Korisnik: {Korisnik}", User.Identity.Name);
@@ -85,7 +92,6 @@ namespace InformacioniSistemTeretane.Controllers
             {
                 try
                 {
-                    // Provjera valjanosti datuma
                     if (licenca.ValidnaDo < licenca.DatumIzdavanja)
                     {
                         ModelState.AddModelError("ValidnaDo", "Datum isteka licence ne može biti prije datuma izdavanja");
@@ -100,14 +106,14 @@ namespace InformacioniSistemTeretane.Controllers
 
                     return RedirectToAction(nameof(Index));
                 }
+                catch (InvalidOperationException ex)
+                {
+                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
+                }
                 catch (DbUpdateException ex)
                 {
                     _logger.LogError(ex, "Greška pri kreiranju licence");
                     ModelState.AddModelError("", "Greška pri spremanju podataka. Pokušajte ponovno.");
-                }
-                catch (InvalidOperationException ex)
-                {
-                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
                 }
             }
 
@@ -117,8 +123,10 @@ namespace InformacioniSistemTeretane.Controllers
             return View(licenca);
         }
 
-        // GET: Licence/Edit/5
+        // GET: Licence/Edit/{id}
+        [HttpGet]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -140,10 +148,11 @@ namespace InformacioniSistemTeretane.Controllers
             return View(licenca);
         }
 
-        // POST: Licence/Edit/5
+        // POST: Licence/Edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]/{id}")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,KlijentId,ProgramId,DatumIzdavanja,ValidnaDo")] Licenca licenca)
         {
             _logger.LogInformation("----- POST: Licence/Edit/{id} ----- Korisnik: {Korisnik}", id, User.Identity.Name);
@@ -160,7 +169,6 @@ namespace InformacioniSistemTeretane.Controllers
             {
                 try
                 {
-                    // Provjera valjanosti datuma
                     if (licenca.ValidnaDo < licenca.DatumIzdavanja)
                     {
                         ModelState.AddModelError("ValidnaDo", "Datum isteka licence ne može biti prije datuma izdavanja");
@@ -174,6 +182,10 @@ namespace InformacioniSistemTeretane.Controllers
                     TempData["Uspjeh"] = "Licenca uspješno ažurirana!";
 
                     return RedirectToAction(nameof(Index));
+                }
+                catch (InvalidOperationException ex)
+                {
+                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
@@ -190,10 +202,6 @@ namespace InformacioniSistemTeretane.Controllers
                     _logger.LogError(ex, "Greška pri ažuriranju licence ID {Id}", id);
                     ModelState.AddModelError("", "Greška pri spremanju promjena. Pokušajte ponovno.");
                 }
-                catch (InvalidOperationException ex)
-                {
-                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
-                }
             }
 
             _logger.LogWarning("Neuspješna validacija: {BrojGrešaka} grešaka", ModelState.ErrorCount);
@@ -202,8 +210,10 @@ namespace InformacioniSistemTeretane.Controllers
             return View(licenca);
         }
 
-        // GET: Licence/Delete/5
+        // GET: Licence/Delete/{id}
+        [HttpGet]
         [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -223,7 +233,6 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            // Provjera statusa licence
             var status = licenca.ValidnaDo < DateTime.Now ? "Istekla" : "Aktivna";
             ViewData["Status"] = status;
 
@@ -231,10 +240,11 @@ namespace InformacioniSistemTeretane.Controllers
             return View(licenca);
         }
 
-        // POST: Licence/Delete/5
+        // POST: Licence/Delete/{id}
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id}")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             _logger.LogInformation("----- POST: Licence/Delete/{id} ----- Korisnik: {Korisnik}", id, User.Identity.Name);
@@ -247,15 +257,14 @@ namespace InformacioniSistemTeretane.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            if (licenca.ValidnaDo > DateTime.Now)
+            {
+                TempData["Greska"] = "Ne možete obrisati aktivnu licencu!";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
             try
             {
-                // Provjera aktivnosti licence
-                if (licenca.ValidnaDo > DateTime.Now)
-                {
-                    TempData["Greska"] = "Ne možete obrisati aktivnu licencu!";
-                    return RedirectToAction(nameof(Delete), new { id });
-                }
-
                 _context.Licence.Remove(licenca);
                 await _context.SaveChangesAsync();
 

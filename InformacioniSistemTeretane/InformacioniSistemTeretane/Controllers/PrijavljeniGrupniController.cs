@@ -24,6 +24,9 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: PrijavljeniGrupni
+        [HttpGet]
+        [Route("")]
+        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
             _logger.LogInformation("----- GET: PrijavljeniGrupni/Index ----- Korisnik: {Korisnik}", User.Identity.Name);
@@ -37,6 +40,8 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: PrijavljeniGrupni/Details/5
+        [HttpGet]
+        [Route("[Controller]/[Action]/{id}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -61,6 +66,8 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: PrijavljeniGrupni/Create
+        [HttpGet]
+        [Route("[Controller]/[Action]")]
         [Authorize(Roles = "Admin,Zaposlenik")]
         public IActionResult Create()
         {
@@ -74,6 +81,7 @@ namespace InformacioniSistemTeretane.Controllers
         // POST: PrijavljeniGrupni/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("[Controller]/[Action]")]
         [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Create([Bind("GrupniTreningId,KlijentId,Prisutan,VrijemeDolaska")] PrijavljeniGrupni prijava)
         {
@@ -133,6 +141,8 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: PrijavljeniGrupni/Edit/5
+        [HttpGet]
+        [Route("[Controller]/[Action]/{id}")]
         [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -158,6 +168,7 @@ namespace InformacioniSistemTeretane.Controllers
         // POST: PrijavljeniGrupni/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("[Controller]/[Action]/{id}")]
         [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,GrupniTreningId,KlijentId,Prisutan,VrijemeDolaska")] PrijavljeniGrupni prijava)
         {
@@ -223,6 +234,8 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: PrijavljeniGrupni/Delete/5
+        [HttpGet]
+        [Route("[Controller]/[Action]/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -259,6 +272,7 @@ namespace InformacioniSistemTeretane.Controllers
         // POST: PrijavljeniGrupni/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Route("[Controller]/[Action]/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

@@ -23,14 +23,19 @@ namespace InformacioniSistemTeretane.Controllers
             _logger = logger;
         }
 
-        // GET: LicencniProgrami
+        // GET: LicencniProgrami/Index
+        [HttpGet]
+        [Route("[controller]/[action]")]
         public async Task<IActionResult> Index()
         {
             _logger.LogInformation("----- GET: LicencniProgrami/Index ----- Korisnik: {Korisnik}", User.Identity.Name);
-            return View(await _context.LicencniProgrami.ToListAsync());
+            var programs = await _context.LicencniProgrami.ToListAsync();
+            return View(programs);
         }
 
-        // GET: LicencniProgrami/Details/5
+        // GET: LicencniProgrami/Details/{id}
+        [HttpGet]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -54,7 +59,9 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: LicencniProgrami/Create
+        [HttpGet]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]")]
         public IActionResult Create()
         {
             _logger.LogInformation("Create: Prikaz forme za novi program - Korisnik: {Korisnik}", User.Identity.Name);
@@ -65,6 +72,7 @@ namespace InformacioniSistemTeretane.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]")]
         public async Task<IActionResult> Create([Bind("Naziv,Opis,TrajanjeDana,Cijena")] LicencniProgram program)
         {
             _logger.LogInformation("----- POST: LicencniProgrami/Create ----- Korisnik: {Korisnik}", User.Identity.Name);
@@ -75,7 +83,6 @@ namespace InformacioniSistemTeretane.Controllers
             {
                 try
                 {
-                    // Provjera jedinstvenosti naziva
                     if (await _context.LicencniProgrami.AnyAsync(p => p.Naziv == program.Naziv))
                     {
                         ModelState.AddModelError("Naziv", "Program s ovim nazivom već postoji");
@@ -87,17 +94,16 @@ namespace InformacioniSistemTeretane.Controllers
 
                     _logger.LogInformation("Kreiran novi program ID {Id}", program.Id);
                     TempData["Uspjeh"] = "Program uspješno kreiran!";
-
                     return RedirectToAction(nameof(Index));
+                }
+                catch (InvalidOperationException ex)
+                {
+                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
                 }
                 catch (DbUpdateException ex)
                 {
                     _logger.LogError(ex, "Greška pri kreiranju programa");
                     ModelState.AddModelError("", "Greška pri spremanju podataka. Pokušajte ponovno.");
-                }
-                catch (InvalidOperationException ex)
-                {
-                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
                 }
             }
 
@@ -105,8 +111,10 @@ namespace InformacioniSistemTeretane.Controllers
             return View(program);
         }
 
-        // GET: LicencniProgrami/Edit/5
+        // GET: LicencniProgrami/Edit/{id}
+        [HttpGet]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -126,10 +134,11 @@ namespace InformacioniSistemTeretane.Controllers
             return View(program);
         }
 
-        // POST: LicencniProgrami/Edit/5
+        // POST: LicencniProgrami/Edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Zaposlenik")]
+        [Route("[controller]/[action]/{id}")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Naziv,Opis,TrajanjeDana,Cijena")] LicencniProgram program)
         {
             _logger.LogInformation("----- POST: LicencniProgrami/Edit/{id} ----- Korisnik: {Korisnik}", id, User.Identity.Name);
@@ -146,7 +155,6 @@ namespace InformacioniSistemTeretane.Controllers
             {
                 try
                 {
-                    // Provjera jedinstvenosti naziva (osim trenutnog programa)
                     if (await _context.LicencniProgrami.AnyAsync(p => p.Naziv == program.Naziv && p.Id != program.Id))
                     {
                         ModelState.AddModelError("Naziv", "Program s ovim nazivom već postoji");
@@ -158,12 +166,15 @@ namespace InformacioniSistemTeretane.Controllers
 
                     _logger.LogInformation("Program ID {Id} uspješno ažuriran", id);
                     TempData["Uspjeh"] = "Program uspješno ažuriran!";
-
                     return RedirectToAction(nameof(Index));
+                }
+                catch (InvalidOperationException ex)
+                {
+                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
-                    if (!ProgramExists(program.Id))
+                    if (!_context.LicencniProgrami.Any(e => e.Id == program.Id))
                     {
                         _logger.LogWarning("Edit POST: Program s ID-om {Id} više ne postoji u bazi", id);
                         return NotFound();
@@ -176,18 +187,16 @@ namespace InformacioniSistemTeretane.Controllers
                     _logger.LogError(ex, "Greška pri ažuriranju programa ID {Id}", id);
                     ModelState.AddModelError("", "Greška pri spremanju promjena. Pokušajte ponovno.");
                 }
-                catch (InvalidOperationException ex)
-                {
-                    _logger.LogWarning("Validacijska greška: {Poruka}", ex.Message);
-                }
             }
 
             _logger.LogWarning("Neuspješna validacija: {BrojGrešaka} grešaka", ModelState.ErrorCount);
             return View(program);
         }
 
-        // GET: LicencniProgrami/Delete/5
+        // GET: LicencniProgrami/Delete/{id}
+        [HttpGet]
         [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -206,17 +215,17 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
-            // Provjera zavisnosti
             ViewData["ImaLicenci"] = program.Licence?.Any() ?? false;
 
             _logger.LogInformation("Delete GET: Potvrda brisanja programa ID {Id}", id);
             return View(program);
         }
 
-        // POST: LicencniProgrami/Delete/5
+        // POST: LicencniProgrami/Delete/{id}
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id}")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             _logger.LogInformation("----- POST: LicencniProgrami/Delete/{id} ----- Korisnik: {Korisnik}", id, User.Identity.Name);
@@ -232,16 +241,14 @@ namespace InformacioniSistemTeretane.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            if (program.Licence?.Any() == true)
+            {
+                TempData["Greska"] = "Ne možete obrisati program jer postoje vezane licence!";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
             try
             {
-                // Provjera zavisnosti
-                if (program.Licence?.Any() == true)
-                {
-                    _logger.LogWarning("Brisanje onemogućeno: Program ID {Id} ima vezane licence", id);
-                    TempData["Greska"] = "Ne možete obrisati program jer postoje vezane licence!";
-                    return RedirectToAction(nameof(Delete), new { id });
-                }
-
                 _context.LicencniProgrami.Remove(program);
                 await _context.SaveChangesAsync();
 

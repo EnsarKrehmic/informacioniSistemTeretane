@@ -1,5 +1,4 @@
-﻿// Controllers/TreninziController.cs
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +26,9 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: Treninzi
+        [HttpGet]
+        [Route("")]
+        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
             try
@@ -51,6 +53,8 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: Treninzi/Details/5
+        [HttpGet]
+        [Route("[Controller]/[Action]/{id}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)

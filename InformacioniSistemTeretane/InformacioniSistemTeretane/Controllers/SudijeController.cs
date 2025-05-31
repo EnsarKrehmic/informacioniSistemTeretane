@@ -23,6 +23,9 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: Sudije
+        [HttpGet]
+        [Route("")]
+        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
             _logger.LogInformation("Pregled sudija - korisnik: {Korisnik}", User.Identity.Name);
@@ -35,6 +38,8 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: Sudije/Details/5
+        [HttpGet]
+        [Route("[Controller]/[Action]/{id}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -59,6 +64,8 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: Sudije/Create
+        [HttpGet]
+        [Route("[Controller]/[Action]")]
         [Authorize(Roles = "Admin,Zaposlenik")]
         public IActionResult Create()
         {
@@ -71,6 +78,7 @@ namespace InformacioniSistemTeretane.Controllers
         // POST: Sudije/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("[Controller]/[Action]")]
         [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Create([Bind("ZaposlenikId,DisciplinaId")] Sudija sudija)
         {
@@ -123,6 +131,8 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: Sudije/Edit/5
+        [HttpGet]
+        [Route("[Controller]/[Action]/{id}")]
         [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -148,6 +158,7 @@ namespace InformacioniSistemTeretane.Controllers
         // POST: Sudije/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("[Controller]/[Action]/{id}")]
         [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ZaposlenikId,DisciplinaId")] Sudija sudija)
         {
@@ -207,6 +218,8 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: Sudije/Delete/5
+        [HttpGet]
+        [Route("[Controller]/[Action]/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -234,6 +247,7 @@ namespace InformacioniSistemTeretane.Controllers
         // POST: Sudije/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Route("[Controller]/[Action]/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

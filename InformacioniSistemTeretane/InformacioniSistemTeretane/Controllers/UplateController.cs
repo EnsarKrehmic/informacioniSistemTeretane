@@ -24,6 +24,9 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: Uplate
+        [HttpGet]
+        [Route("")]
+        [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
             try
@@ -50,6 +53,8 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: Uplate/Details/5
+        [HttpGet]
+        [Route("[Controller]/[Action]/{id}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -102,6 +107,8 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: Uplate/Create
+        [HttpGet]
+        [Route("[Controller]/[Action]")]
         [Authorize(Roles = "Admin,Zaposlenik")]
         public IActionResult Create()
         {
@@ -135,6 +142,7 @@ namespace InformacioniSistemTeretane.Controllers
         // POST: Uplate/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("[Controller]/[Action]")]
         [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Create([Bind("KlijentId,PaketId,DatumUplate,NacinUplate,Iznos")] Uplata u)
         {
@@ -243,6 +251,8 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: Uplate/Edit/5
+        [HttpGet]
+        [Route("[Controller]/[Action]/{id}")]
         [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -305,6 +315,7 @@ namespace InformacioniSistemTeretane.Controllers
         // POST: Uplate/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("[Controller]/[Action]/{id}")]
         [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,KlijentId,PaketId,DatumUplate,NacinUplate,Iznos")] Uplata u)
         {
@@ -442,6 +453,8 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: Uplate/Delete/5
+        [HttpGet]
+        [Route("[Controller]/[Action]/{id}")]
         [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -492,6 +505,7 @@ namespace InformacioniSistemTeretane.Controllers
         // POST: Uplate/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Route("[Controller]/[Action]/{id}")]
         [Authorize(Roles = "Admin,Zaposlenik")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

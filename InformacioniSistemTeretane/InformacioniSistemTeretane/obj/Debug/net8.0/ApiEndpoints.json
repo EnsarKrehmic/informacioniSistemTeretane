@@ -10,6 +10,1127 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "InformacioniSistemTeretane.Controllers.DisciplineController",
+    "Method": "Create",
+    "RelativePath": "Discipline/Create",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InformacioniSistemTeretane.Controllers.DisciplineController",
+    "Method": "Create",
+    "RelativePath": "Discipline/Create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "TakmicenjeId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Naziv",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Datum",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.LokacijaId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Lokacija.Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Lokacija.Naziv",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Lokacija.Adresa",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Lokacija.KontaktTelefon",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Lokacija.Email",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Lokacija.Sale",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Sala, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Lokacija.Igraonice",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Igraonica, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Lokacija.Takmicenja",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Takmicenje, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.SudijaId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.ZaposlenikId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.Ime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.Prezime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.Pozicija",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.Telefon",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.UserId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.Ime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.Prezime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.DatumRodjenja",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.UserId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Klijent",
+        "Type": "InformacioniSistemTeretane.Models.Klijent",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.Ime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.Prezime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.Pozicija",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.Telefon",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.UserId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.User",
+        "Type": "InformacioniSistemTeretane.Models.ApplicationUser",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.TrenerskiPodaci",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Trener, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.Sudije",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Sudija, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Id",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.UserName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.NormalizedUserName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Email",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.NormalizedEmail",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.EmailConfirmed",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.PasswordHash",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.SecurityStamp",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.ConcurrencyStamp",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.PhoneNumber",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.PhoneNumberConfirmed",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.TwoFactorEnabled",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.LockoutEnd",
+        "Type": "System.Nullable\u00601[[System.DateTimeOffset, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.LockoutEnabled",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.AccessFailedCount",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.Uplate",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Uplata, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.GrupneRezervacije",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.ZakazaniGrupni, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.PersonalniTreninzi",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.PersonalniTrening, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.ProbniTreninzi",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.ProbniTrening, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.GrupnePrijave",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.PrijavljeniGrupni, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.Takmicenja",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Takmicar, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.Licence",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Licenca, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.Ime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.Prezime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.Pozicija",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.Telefon",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.UserId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.User",
+        "Type": "InformacioniSistemTeretane.Models.ApplicationUser",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.TrenerskiPodaci",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Trener, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.Sudije",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Sudija, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Id",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.UserName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.NormalizedUserName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Email",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.NormalizedEmail",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.EmailConfirmed",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.PasswordHash",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.SecurityStamp",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.ConcurrencyStamp",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.PhoneNumber",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.PhoneNumberConfirmed",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.TwoFactorEnabled",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.LockoutEnd",
+        "Type": "System.Nullable\u00601[[System.DateTimeOffset, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.LockoutEnabled",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.AccessFailedCount",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.TrenerskiPodaci",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Trener, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.Sudije",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Sudija, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.DisciplinaId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Disciplina.Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Disciplina.TakmicenjeId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Disciplina.Takmicenje",
+        "Type": "InformacioniSistemTeretane.Models.Takmicenje",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Disciplina.Naziv",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Disciplina.Opis",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Disciplina.MaxUcesnika",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Disciplina.Takmicari",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Takmicar, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Opis",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Kotizacija",
+        "Type": "System.Decimal",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Discipline",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Disciplina, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Naziv",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Opis",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "MaxUcesnika",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicari",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Takmicar, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InformacioniSistemTeretane.Controllers.DisciplineController",
+    "Method": "Delete",
+    "RelativePath": "Discipline/Delete/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InformacioniSistemTeretane.Controllers.DisciplineController",
+    "Method": "DeleteConfirmed",
+    "RelativePath": "Discipline/Delete/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InformacioniSistemTeretane.Controllers.DisciplineController",
+    "Method": "Details",
+    "RelativePath": "Discipline/Details/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InformacioniSistemTeretane.Controllers.DisciplineController",
+    "Method": "Edit",
+    "RelativePath": "Discipline/Edit/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InformacioniSistemTeretane.Controllers.DisciplineController",
+    "Method": "Edit",
+    "RelativePath": "Discipline/Edit/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "TakmicenjeId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Naziv",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Datum",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.LokacijaId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Lokacija.Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Lokacija.Naziv",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Lokacija.Adresa",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Lokacija.KontaktTelefon",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Lokacija.Email",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Lokacija.Sale",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Sala, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Lokacija.Igraonice",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Igraonica, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Lokacija.Takmicenja",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Takmicenje, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.SudijaId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.ZaposlenikId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.Ime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.Prezime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.Pozicija",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.Telefon",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.UserId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.Ime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.Prezime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.DatumRodjenja",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.UserId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Klijent",
+        "Type": "InformacioniSistemTeretane.Models.Klijent",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.Ime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.Prezime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.Pozicija",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.Telefon",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.UserId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.User",
+        "Type": "InformacioniSistemTeretane.Models.ApplicationUser",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.TrenerskiPodaci",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Trener, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Zaposlenik.Sudije",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Sudija, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Id",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.UserName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.NormalizedUserName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.Email",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.NormalizedEmail",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.EmailConfirmed",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.PasswordHash",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.SecurityStamp",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.ConcurrencyStamp",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.PhoneNumber",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.PhoneNumberConfirmed",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.TwoFactorEnabled",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.LockoutEnd",
+        "Type": "System.Nullable\u00601[[System.DateTimeOffset, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.LockoutEnabled",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.User.AccessFailedCount",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.Uplate",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Uplata, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.GrupneRezervacije",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.ZakazaniGrupni, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.PersonalniTreninzi",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.PersonalniTrening, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.ProbniTreninzi",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.ProbniTrening, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.GrupnePrijave",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.PrijavljeniGrupni, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.Takmicenja",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Takmicar, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Klijent.Licence",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Licenca, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.Ime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.Prezime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.Pozicija",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.Telefon",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.UserId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.User",
+        "Type": "InformacioniSistemTeretane.Models.ApplicationUser",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.TrenerskiPodaci",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Trener, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Zaposlenik.Sudije",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Sudija, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Id",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.UserName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.NormalizedUserName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.Email",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.NormalizedEmail",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.EmailConfirmed",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.PasswordHash",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.SecurityStamp",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.ConcurrencyStamp",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.PhoneNumber",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.PhoneNumberConfirmed",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.TwoFactorEnabled",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.LockoutEnd",
+        "Type": "System.Nullable\u00601[[System.DateTimeOffset, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.LockoutEnabled",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.User.AccessFailedCount",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.TrenerskiPodaci",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Trener, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Zaposlenik.Sudije",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Sudija, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.DisciplinaId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Disciplina.Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Disciplina.TakmicenjeId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Disciplina.Takmicenje",
+        "Type": "InformacioniSistemTeretane.Models.Takmicenje",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Disciplina.Naziv",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Disciplina.Opis",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Disciplina.MaxUcesnika",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Sudija.Disciplina.Takmicari",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Takmicar, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Opis",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Kotizacija",
+        "Type": "System.Decimal",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicenje.Discipline",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Disciplina, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Naziv",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Opis",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "MaxUcesnika",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Takmicari",
+        "Type": "System.Collections.Generic.ICollection\u00601[[InformacioniSistemTeretane.Models.Takmicar, InformacioniSistemTeretane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InformacioniSistemTeretane.Controllers.DisciplineController",
+    "Method": "Index",
+    "RelativePath": "Discipline/Index",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "InformacioniSistemTeretane.Controllers.HomeController",
     "Method": "Error",
     "RelativePath": "Home/Error",
