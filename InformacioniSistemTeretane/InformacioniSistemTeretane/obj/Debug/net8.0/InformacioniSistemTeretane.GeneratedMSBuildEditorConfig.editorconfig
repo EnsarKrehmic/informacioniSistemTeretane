@@ -240,6 +240,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9rYWNpamVcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Me/source/repos/InformacioniSistemTeretane/InformacioniSistemTeretane/Views/Mapa/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFwYVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Me/source/repos/InformacioniSistemTeretane/InformacioniSistemTeretane/Views/Paketi/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGFrZXRpXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -338,6 +342,26 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Me/source/repos/InformacioniSistemTeretane/InformacioniSistemTeretane/Views/Sale/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FsZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Me/source/repos/InformacioniSistemTeretane/InformacioniSistemTeretane/Views/Screenshots/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2NyZWVuc2hvdHNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Me/source/repos/InformacioniSistemTeretane/InformacioniSistemTeretane/Views/Screenshots/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2NyZWVuc2hvdHNcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Me/source/repos/InformacioniSistemTeretane/InformacioniSistemTeretane/Views/Screenshots/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2NyZWVuc2hvdHNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Me/source/repos/InformacioniSistemTeretane/InformacioniSistemTeretane/Views/Screenshots/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2NyZWVuc2hvdHNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Me/source/repos/InformacioniSistemTeretane/InformacioniSistemTeretane/Views/Screenshots/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2NyZWVuc2hvdHNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Me/source/repos/InformacioniSistemTeretane/InformacioniSistemTeretane/Views/Shared/Error.cshtml]
@@ -470,6 +494,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Me/source/repos/InformacioniSistemTeretane/InformacioniSistemTeretane/Views/Uplate/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXBsYXRlXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Me/source/repos/InformacioniSistemTeretane/InformacioniSistemTeretane/Views/Video/Embed.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmlkZW9cRW1iZWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Me/source/repos/InformacioniSistemTeretane/InformacioniSistemTeretane/Views/Video/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmlkZW9cSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Me/source/repos/InformacioniSistemTeretane/InformacioniSistemTeretane/Views/ZakazaniGrupni/Create.cshtml]

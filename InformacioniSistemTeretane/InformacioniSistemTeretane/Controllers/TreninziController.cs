@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace InformacioniSistemTeretane.Controllers
 {
-    [Authorize]
     public class TreninziController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -27,7 +26,6 @@ namespace InformacioniSistemTeretane.Controllers
 
         // GET: Treninzi
         [HttpGet]
-        [Route("")]
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {

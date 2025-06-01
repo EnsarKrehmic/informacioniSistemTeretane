@@ -299,6 +299,44 @@ namespace InformacioniSistemTeretane.Data.Migrations
                     b.ToTable("Lokacija", (string)null);
                 });
 
+            modelBuilder.Entity("InformacioniSistemTeretane.Models.Mapa", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Adresa")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Naziv")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Opis")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("Tip")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(4);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Mape");
+                });
+
             modelBuilder.Entity("InformacioniSistemTeretane.Models.Paket", b =>
                 {
                     b.Property<int>("Id")
@@ -382,6 +420,32 @@ namespace InformacioniSistemTeretane.Data.Migrations
                     b.HasIndex("LokacijaId");
 
                     b.ToTable("Sala", (string)null);
+                });
+
+            modelBuilder.Entity("InformacioniSistemTeretane.Models.Screenshot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DatumKreiranja")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("Naziv")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Opis")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Screenshots");
                 });
 
             modelBuilder.Entity("InformacioniSistemTeretane.Models.Sudija", b =>
@@ -560,6 +624,38 @@ namespace InformacioniSistemTeretane.Data.Migrations
                     b.HasIndex("PaketId");
 
                     b.ToTable("Uplata", (string)null);
+                });
+
+            modelBuilder.Entity("InformacioniSistemTeretane.Models.VideoSadrzaj", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DatumDodavanja")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("Naziv")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Opis")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("YouTubeVideoId")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VideoSadrzaji");
                 });
 
             modelBuilder.Entity("InformacioniSistemTeretane.Models.ZakazaniGrupni", b =>

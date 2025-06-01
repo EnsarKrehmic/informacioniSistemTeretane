@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace InformacioniSistemTeretane.Controllers
 {
-    [Authorize]
     public class IgraonicaPonudeController : Controller
     {
         private readonly ApplicationDbContext _context;

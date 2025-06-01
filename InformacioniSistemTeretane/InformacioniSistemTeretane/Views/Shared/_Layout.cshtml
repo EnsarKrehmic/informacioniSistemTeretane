@@ -24,13 +24,44 @@
     <link rel="stylesheet" href="~/css/bootstrap.lux.min.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">    
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+@if (ViewData["Title"]?.ToString() == "Početna stranica")
+{
+    <style>
+        .feature-section {
+            margin: 3rem 0;
+            padding: 2rem 0;
+            background-color: #f8f9fa;
+            border-radius: 0.5rem;
+        }
+        .section-title {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+            text-align: center;
+        }
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(to right, #007bff, #00bfff);
+        }
+    </style>
+}
     
     @if (SignInManager.IsSignedIn(User)) {
         <link rel="icon" href="~/favicon-auth.ico" type="image/x-icon">
     } else {
         <link rel="icon" href="~/favicon.ico" type="image/x-icon">
     }
+
+    @RenderSection("Styles", required: false)
 </head>
 <body class="d-flex flex-column min-vh-100">
     <header>
@@ -141,6 +172,7 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

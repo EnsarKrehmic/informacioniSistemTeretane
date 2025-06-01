@@ -1,0 +1,67 @@
+﻿@model IEnumerable<InformacioniSistemTeretane.Models.Screenshot>
+
+@{
+    ViewData["Title"] = "Lista Screenshotova";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert alert-success">@TempData["Uspjeh"]</div>
+    }
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Greska"]</div>
+    }
+
+    <p>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Dodaj novi screenshot
+        </a>
+    </p>
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="@item.Opis" class="card-img-top" alt="@item.Naziv" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Naziv</h5>
+                        <div class="btn-group" role="group">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                                <i class="fas fa-info-circle"></i> Detalji
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Uredi
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash-alt"></i> Obriši
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <style>
+        .card {
+            transition: transform 0.3s;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            }
+
+        .btn-group .btn {
+            margin-right: 5px;
+        }
+    </style>
+}

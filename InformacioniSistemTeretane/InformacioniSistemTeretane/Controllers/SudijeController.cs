@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace InformacioniSistemTeretane.Controllers
 {
-    [Authorize] // Zahtjeva autentifikaciju za sve akcije
     public class SudijeController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,7 +23,6 @@ namespace InformacioniSistemTeretane.Controllers
 
         // GET: Sudije
         [HttpGet]
-        [Route("")]
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {

@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace InformacioniSistemTeretane.Controllers
 {
-    [Authorize]
     public class LokacijeController : Controller
     {
         private readonly ApplicationDbContext _context;

@@ -1,0 +1,73 @@
+﻿@model InformacioniSistemTeretane.Models.VideoSadrzaj
+
+@{
+    ViewData["Title"] = "Ugradi video";
+    Layout = null; // Isključujemo layout jer ćemo ovo embedovati
+}
+
+<div class="video-embed-container">
+    <div class="embed-responsive embed-responsive-16by9 mb-3">
+        <iframe class="embed-responsive-item"
+                src="https://www.youtube.com/embed/@Model.YouTubeVideoId"
+                allowfullscreen></iframe>
+    </div>
+
+    <div class="embed-code-container bg-light p-3 rounded">
+        <h5 class="mb-3">Ugradni kod:</h5>
+        <div class="input-group">
+            <input type="text" class="form-control"
+                   value='<iframe width="560" height="315" src="https://www.youtube.com/embed/@Model.YouTubeVideoId" frameborder="0" allowfullscreen></iframe>'
+                   id="embedCode" readonly>
+            <button class="btn btn-primary copy-embed-btn" type="button">
+                <i class="fas fa-copy"></i> Kopiraj
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .video-embed-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .embed-code-container {
+        border: 1px solid #dee2e6;
+    }
+
+    .copy-embed-btn {
+        position: relative;
+    }
+
+        .copy-embed-btn::after {
+            content: "Kopirano!";
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .copy-embed-btn.copied::after {
+            opacity: 1;
+        }
+</style>
+
+<script>
+    document.querySelector('.copy-embed-btn').addEventListener('click', function() {
+        const embedCode = document.getElementById('embedCode');
+        embedCode.select();
+        document.execCommand('copy');
+
+        this.classList.add('copied');
+        setTimeout(() => {
+            this.classList.remove('copied');
+        }, 2000);
+    });
+</script>

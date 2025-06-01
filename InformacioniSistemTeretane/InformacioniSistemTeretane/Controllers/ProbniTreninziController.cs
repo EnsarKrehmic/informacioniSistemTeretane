@@ -10,7 +10,6 @@ using InformacioniSistemTeretane.Models;
 
 namespace InformacioniSistemTeretane.Controllers
 {
-    [Authorize] // Zahtjeva autentifikaciju za sve akcije
     public class ProbniTreninziController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -26,7 +25,6 @@ namespace InformacioniSistemTeretane.Controllers
 
         // GET: ProbniTreninzi
         [HttpGet]
-        [Route("")]
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {

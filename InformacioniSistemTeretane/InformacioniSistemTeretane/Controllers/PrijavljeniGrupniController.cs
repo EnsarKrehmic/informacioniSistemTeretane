@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace InformacioniSistemTeretane.Controllers
 {
-    [Authorize] // Zahtjeva autentifikaciju za sve akcije
     public class PrijavljeniGrupniController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -25,7 +24,6 @@ namespace InformacioniSistemTeretane.Controllers
 
         // GET: PrijavljeniGrupni
         [HttpGet]
-        [Route("")]
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {

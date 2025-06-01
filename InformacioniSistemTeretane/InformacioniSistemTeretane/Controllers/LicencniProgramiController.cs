@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace InformacioniSistemTeretane.Controllers
 {
-    [Authorize] // Zahtjeva autentifikaciju za sve akcije
     public class LicencniProgramiController : Controller
     {
         private readonly ApplicationDbContext _context;

@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace InformacioniSistemTeretane.Controllers
 {
-    [Authorize]
     public class KlijentiController : Controller
     {
         private readonly ApplicationDbContext _context;

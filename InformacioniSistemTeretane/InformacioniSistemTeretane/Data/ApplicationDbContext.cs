@@ -15,17 +15,20 @@ namespace InformacioniSistemTeretane.Data
         public DbSet<Licenca> Licence { get; set; }
         public DbSet<LicencniProgram> LicencniProgrami { get; set; }
         public DbSet<Lokacija> Lokacije { get; set; }
+        public DbSet<Mapa> Mape { get; set; }
         public DbSet<Paket> Paketi { get; set; }
         public DbSet<PersonalniTrening> PersonalniTreninzi { get; set; }
         public DbSet<PrijavljeniGrupni> PrijavljeniGrupni { get; set; }
         public DbSet<ProbniTrening> ProbniTreninzi { get; set; }
         public DbSet<Sala> Sale { get; set; }
         public DbSet<Sudija> Sudije { get; set; }
+        public DbSet<Screenshot> Screenshots { get; set; }
         public DbSet<Takmicar> Takmicari { get; set; }
         public DbSet<Takmicenje> Takmicenja { get; set; }
         public DbSet<Trener> Treneri { get; set; }
         public DbSet<Trening> Treninzi { get; set; }
         public DbSet<Uplata> Uplate { get; set; }
+        public DbSet<VideoSadrzaj> VideoSadrzaji { get; set; }
         public DbSet<ZakazaniGrupni> ZakazaniGrupni { get; set; }
         public DbSet<Zaposlenik> Zaposlenici { get; set; }
 
@@ -51,6 +54,24 @@ namespace InformacioniSistemTeretane.Data
             modelBuilder.Entity<Uplata>().ToTable("Uplata");
             modelBuilder.Entity<ZakazaniGrupni>().ToTable("ZakazaniGrupni");
             modelBuilder.Entity<Zaposlenik>().ToTable("Zaposlenik");
+
+            // Konfiguracija za Screenshot
+            modelBuilder.Entity<Screenshot>()
+                .Ignore(s => s.DatotekaSlike);
+
+            modelBuilder.Entity<Screenshot>()
+                .Property(s => s.DatumKreiranja)
+                .HasDefaultValueSql("GETDATE()");
+
+            // Konfiguracija za VideoSadrzaj
+            modelBuilder.Entity<VideoSadrzaj>()
+                .Property(v => v.DatumDodavanja)
+                .HasDefaultValueSql("GETDATE()");
+
+            // Konfiguracija za Mapu
+            modelBuilder.Entity<Mapa>()
+                .Property(l => l.Tip)
+                .HasDefaultValue(TipMape.Ostalo);
 
             // TPH mapiranje za sve treninge u jednoj tablici "Treninzi"
             modelBuilder.Entity<Trening>()

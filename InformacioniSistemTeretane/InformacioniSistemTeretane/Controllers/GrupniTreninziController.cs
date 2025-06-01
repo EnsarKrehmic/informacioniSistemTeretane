@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace InformacioniSistemTeretane.Controllers
 {
-    [Authorize]
     public class GrupniTreninziController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -29,6 +28,8 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: GrupniTreninzi
+        [HttpGet]
+        [Route("[controller]/[action]")]
         public async Task<IActionResult> Index()
         {
             _logger.LogInformation("Korisnik {UserName} pregleda grupne treninge", User.Identity.Name);

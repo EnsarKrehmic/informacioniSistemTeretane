@@ -1,34 +1,47 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using InformacioniSistemTeretane.Models
+@using InformacioniSistemTeretane.Data
+@using Microsoft.EntityFrameworkCore
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
-
-@functions {
-    async Task<bool> InRole(string role) => 
-        SignInManager.IsSignedIn(User) && 
-        await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), role);
-}
+@inject ApplicationDbContext Context
 
 @{
     ViewData["Title"] = "Početna stranica";
     
     var welcomeMessage = "Dobrodošli u GymChain IST";
     var userRole = "Gost";
+    var userRoles = new List<string>();
 
-    if (SignInManager.IsSignedIn(User)) {
+    if (SignInManager.IsSignedIn(User)) 
+    {
         var user = await UserManager.GetUserAsync(User);
         welcomeMessage = $"Dobrodošli, {user.UserName}!";
-
-        if (await UserManager.IsInRoleAsync(user, "Admin")) {
-            userRole = "Administrator";
-        }
-        else if (await UserManager.IsInRoleAsync(user, "Zaposlenik")) {
-            userRole = "Zaposlenik";
-        }
-        else {
-            userRole = "Član teretane";
-        }
+        
+        // Dohvati sve uloge korisnika
+        userRoles = (List<string>)await UserManager.GetRolesAsync(user);
+        
+        // Postavi statusnu poruku
+        if (userRoles.Contains("Admin")) userRole = "Administrator";
+        else if (userRoles.Contains("Zaposlenik")) userRole = "Zaposlenik";
+        else if (userRoles.Contains("Trener")) userRole = "Trener";
+        else if (userRoles.Contains("Sudija")) userRole = "Sudija";
+        else if (userRoles.Contains("Klijent")) userRole = "Član teretane";
     }
+
+    // Dohvatanje podataka za multimediju
+    var featuredScreenshots = await Context.Screenshots
+        .OrderByDescending(s => s.DatumKreiranja)
+        .Take(3)
+        .ToListAsync();
+        
+    var featuredVideo = await Context.VideoSadrzaji
+        .OrderByDescending(v => v.DatumDodavanja)
+        .FirstOrDefaultAsync();
+        
+    var gymLocations = await Context.Mape
+        .Where(m => m.Tip == TipMape.Teretana)
+        .ToListAsync();
 }
 
 <div class="welcome-banner bg-gradient-primary text-white text-center py-5 mb-4">
@@ -43,7 +56,9 @@
 
 <div class="container">
     <div class="row g-4">
-        @if (await InRole("Zaposlenik") || await InRole("Admin")) {
+        <!-- Provjera uloga pomoću userRoles liste -->
+        @if (userRoles.Contains("Zaposlenik") || userRoles.Contains("Admin"))
+        {
             <div class="col-6 col-md-4 col-lg-3">
                 <a asp-controller="Paketi" asp-action="Index" class="card h-100 text-decoration-none custom-card">
                     <div class="card-body text-center p-3">
@@ -131,7 +146,9 @@
             </div>
         }
 
-        @if (await InRole("Admin")) {
+        <!-- Provjera admin uloge pomoću userRoles liste -->
+        @if (userRoles.Contains("Admin"))
+        {
             <div class="col-6 col-md-4 col-lg-3">
                 <a asp-controller="Lokacije" asp-action="Index" class="card h-100 text-decoration-none custom-card">
                     <div class="card-body text-center p-3">
@@ -181,4 +198,191 @@
             </div>
         }
     </div>
+
+<!-- Sekcija za galeriju screenshotova -->
+    @if (featuredScreenshots.Any())
+    {
+        <div class="feature-section mt-5">
+            <div class="container">
+                <h2 class="section-title">Naši Treninzi u Akciji</h2>
+                <div class="row g-4">
+                    @foreach (var screenshot in featuredScreenshots)
+                    {
+                        <div class="col-md-4">
+                            <div class="card h-100 shadow-sm">
+                                <img src="@screenshot.Opis" class="card-img-top" alt="@screenshot.Naziv" style="height: 250px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h5 class="card-title">@screenshot.Naziv</h5>
+                                    <p class="card-text text-muted small">
+                                        <i class="fas fa-calendar-alt"></i> @screenshot.DatumKreiranja.ToString("dd.MM.yyyy")
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="text-center mt-4">
+                    <a asp-controller="Screenshots" asp-action="Index" class="btn btn-outline-primary">
+                        <i class="fas fa-images me-1"></i> Pogledaj više slika
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Sekcija za video -->
+    @if (featuredVideo != null)
+    {
+        <div class="feature-section">
+            <div class="container">
+                <h2 class="section-title">Promotivni Video</h2>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="card shadow-sm">
+                            <div class="embed-responsive embed-responsive-16by9">
+                                <iframe class="embed-responsive-item" 
+                                        src="https://www.youtube.com/embed/@featuredVideo.YouTubeVideoId" 
+                                        allowfullscreen></iframe>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">@featuredVideo.Naziv</h5>
+                                <p class="card-text">@featuredVideo.Opis</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <a asp-controller="Video" asp-action="Index" class="btn btn-outline-primary">
+                        <i class="fas fa-video me-1"></i> Pogledaj više videa
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Sekcija za mape lokacija -->
+    @if (gymLocations.Any())
+    {
+        <div class="feature-section">
+            <div class="container">
+                <h2 class="section-title">Naše Lokacije</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div id="mapContainer" style="height: 400px; border-radius: 0.5rem; overflow: hidden;"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4">Teretane u našem lancu</h5>
+                                <ul class="list-group list-group-flush">
+                                    @foreach (var location in gymLocations)
+                                    {
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1">@location.Naziv</h6>
+                                                <small class="text-muted">@location.Adresa</small>
+                                            </div>
+                                            <span class="badge bg-primary rounded-pill">@location.Tip.ToString()</span>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
+
+@section Scripts {
+    @if (gymLocations.Any())
+    {
+        <script>
+            // Inicijalizacija mape
+            function initMap() {
+                // Centar na Politehnički fakultet Zenica
+                const defaultCenter = [44.2019, 17.9083];
+                const zoomLevel = 16;
+                
+                // Kreiranje mape
+                const map = L.map('mapContainer').setView(defaultCenter, zoomLevel);
+                
+                // Dodavanje OpenStreetMap sloja
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+                
+                // Lokacije iz kontrolera
+                const locations = @Html.Raw(ViewBag.gymLocations);
+                
+                // Custom ikona za marker
+                const gymIcon = L.icon({
+                    iconUrl: 'https://cdn-icons-png.flaticon.com/512/619/619032.png',
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 32],
+                    popupAnchor: [0, -32]
+                });
+                
+                // Dodavanje markera za svaku lokaciju
+                locations.forEach(location => {
+                    const marker = L.marker(
+                        [location.latitude, location.longitude],
+                        { icon: gymIcon }
+                    ).addTo(map);
+                    
+                    // Popup sa informacijama
+                    marker.bindPopup(`
+                        <div class="map-popup">
+                            <h6>${location.naziv}</h6>
+                            <p class="mb-1">${location.adresa}</p>
+                            <p class="text-muted small mb-0">
+                                <i class="fas fa-dumbbell"></i> ${location.tip === 0 ? 'Teretana' : location.tip}
+                            </p>
+                        </div>
+                    `);
+                });
+                
+                // Ako imamo samo jednu lokaciju, fokusiraj se na nju
+                if (locations.length === 1) {
+                    map.setView([locations[0].latitude, locations[0].longitude], 18);
+                }
+                
+                // Dodaj marker za Politehnički fakultet ako već nije dodan
+                const hasPF = locations.some(l => 
+                    l.naziv.includes("Politehnički") || 
+                    (l.latitude === 44.2019 && l.longitude === 17.9083)
+                );
+                
+                if (!hasPF) {
+                    const pfMarker = L.marker(defaultCenter, { icon: gymIcon }).addTo(map);
+                    pfMarker.bindPopup(`
+                        <div class="map-popup">
+                            <h6>Politehnički fakultet Zenica</h6>
+                            <p class="mb-1">Zmaja od Bosne bb, 72000 Zenica</p>
+                            <p class="text-muted small mb-0">
+                                <i class="fas fa-dumbbell"></i> Teretana
+                            </p>
+                        </div>
+                    `);
+                }
+            }
+            
+            // Inicijaliziraj mapu kada se stranica učita
+            document.addEventListener('DOMContentLoaded', initMap);
+        </script>
+        
+        <style>
+            .map-popup {
+                min-width: 200px;
+            }
+            .map-popup h6 {
+                color: #007bff;
+                margin-bottom: 5px;
+            }
+            .leaflet-popup-content {
+                margin: 12px;
+            }
+        </style>
+    }
+}

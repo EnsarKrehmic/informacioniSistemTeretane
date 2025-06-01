@@ -1,0 +1,42 @@
+﻿@model InformacioniSistemTeretane.Models.Screenshot
+
+@{
+    ViewData["Title"] = "Detalji screenshot-a";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+
+    <div class="card">
+        <div class="card-header">
+            <h4>@Model.Naziv</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="@Model.Opis" class="img-fluid rounded" alt="@Model.Naziv">
+                </div>
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">ID:</dt>
+                        <dd class="col-sm-8">@Model.Id</dd>
+
+                        <dt class="col-sm-4">Naziv:</dt>
+                        <dd class="col-sm-8">@Model.Naziv</dd>
+
+                        <dt class="col-sm-4">Datum kreiranja:</dt>
+                        <dd class="col-sm-8">@Model.DatumKreiranja.ToString("dd.MM.yyyy HH:mm")</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Uredi
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Nazad na listu
+            </a>
+        </div>
+    </div>
+</div>

@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace InformacioniSistemTeretane.Controllers
 {
-    [Authorize]
     public class DisciplineController : Controller
     {
         private readonly ApplicationDbContext _context;

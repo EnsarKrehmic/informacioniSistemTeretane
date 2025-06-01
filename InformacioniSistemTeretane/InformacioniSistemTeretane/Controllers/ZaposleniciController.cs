@@ -11,8 +11,7 @@ using InformacioniSistemTeretane.Models;
 
 namespace InformacioniSistemTeretane.Controllers
 {
-    [Authorize(Roles = "Admin")]
-    [Route("[Controller]/[Action]")]
+    [Authorize]
     public class ZaposleniciController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -27,7 +26,6 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         [HttpGet]
-        [Route("")]
         [Route("[Controller]/[Action]")]
         public async Task<IActionResult> Index()
         {
@@ -54,7 +52,7 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         [HttpGet]
-        [Route("{id?}")]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -106,6 +104,8 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]")]
         public IActionResult Create()
         {
             try
@@ -131,6 +131,8 @@ namespace InformacioniSistemTeretane.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]")]
         public async Task<IActionResult> Create([Bind("Ime,Prezime,Pozicija,Telefon,UserId")] Zaposlenik zap)
         {
             _logger.LogInformation(
@@ -239,7 +241,8 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         [HttpGet]
-        [Route("{id?}")]
+        [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -291,7 +294,8 @@ namespace InformacioniSistemTeretane.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("{id}")]
+        [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id}")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Ime,Prezime,Pozicija,Telefon,UserId")] Zaposlenik zap)
         {
             if (id != zap.Id)
@@ -426,7 +430,8 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         [HttpGet]
-        [Route("{id?}")]
+        [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id?}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -475,7 +480,8 @@ namespace InformacioniSistemTeretane.Controllers
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Route("{id}")]
+        [Authorize(Roles = "Admin")]
+        [Route("[controller]/[action]/{id}")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
