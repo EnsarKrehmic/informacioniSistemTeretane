@@ -71,7 +71,7 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // GET: GrupniTreninzi/Create
-        [Authorize(Roles = "Admin,Zaposlenik")]
+        [Authorize(Roles = "Admin, Zaposlenik")]
         public IActionResult Create()
         {
             _logger.LogInformation("Korisnik {UserName} pokreće kreiranje novog grupnog treninga", User.Identity.Name);
@@ -90,25 +90,27 @@ namespace InformacioniSistemTeretane.Controllers
         // POST: GrupniTreninzi/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Zaposlenik")]
-        public async Task<IActionResult> Create([Bind("Naziv,Opis,SalaId,TrenerId,Datum,Vrijeme,MaxUcesnika")] GrupniTrening g)
+        [Authorize(Roles = "Admin, Zaposlenik")]
+        public async Task<IActionResult> Create(GrupniTrening g)
         {
             _logger.LogInformation("Korisnik {UserName} kreira novi grupni trening", User.Identity.Name);
             _logger.LogDebug("Parametri: Naziv={Naziv}, SalaId={SalaId}, TrenerId={TrenerId}, Datum={Datum}, Vrijeme={Vrijeme}, MaxUcesnika={MaxUcesnika}",
                 g.Naziv, g.SalaId, g.TrenerId, g.Datum, g.Vrijeme, g.MaxUcesnika);
 
+            g.VrstaTreninga = "Grupni";
+
+            ModelState.Remove(nameof(g.VrstaTreninga));
+
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("Neuspješna validacija za novi grupni trening (korisnik: {UserName})", User.Identity.Name);
 
+                // Napuni ViewData/SelectList ponovno
                 ViewData["SalaId"] = new SelectList(_context.Sale, "Id", "Naziv", g.SalaId);
-                ViewData["TrenerId"] = new SelectList(_context.Treneri
-                    .Include(t => t.Zaposlenik)
-                    .Select(t => new {
-                        t.Id,
-                        Name = $"{t.Zaposlenik.Prezime}, {t.Zaposlenik.Ime}"
-                    }), "Id", "Name", g.TrenerId);
-
+                ViewData["TrenerId"] = new SelectList(
+                    _context.Treneri.Include(t => t.Zaposlenik)
+                        .Select(t => new { t.Id, Name = $"{t.Zaposlenik.Prezime}, {t.Zaposlenik.Ime}" }),
+                    "Id", "Name", g.TrenerId);
                 return View(g);
             }
 
@@ -129,12 +131,10 @@ namespace InformacioniSistemTeretane.Controllers
                 ModelState.AddModelError("", "Došlo je do greške pri čuvanju podataka. Pokušajte ponovo.");
 
                 ViewData["SalaId"] = new SelectList(_context.Sale, "Id", "Naziv", g.SalaId);
-                ViewData["TrenerId"] = new SelectList(_context.Treneri
-                    .Include(t => t.Zaposlenik)
-                    .Select(t => new {
-                        t.Id,
-                        Name = $"{t.Zaposlenik.Prezime}, {t.Zaposlenik.Ime}"
-                    }), "Id", "Name", g.TrenerId);
+                ViewData["TrenerId"] = new SelectList(
+                    _context.Treneri.Include(t => t.Zaposlenik)
+                        .Select(t => new { t.Id, Name = $"{t.Zaposlenik.Prezime}, {t.Zaposlenik.Ime}" }),
+                    "Id", "Name", g.TrenerId);
 
                 return View(g);
             }
@@ -188,18 +188,19 @@ namespace InformacioniSistemTeretane.Controllers
                 return NotFound();
             }
 
+            g.VrstaTreninga = "Grupni";
+
+            ModelState.Remove(nameof(g.VrstaTreninga));
+
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("Neuspješna validacija za ažuriranje treninga (korisnik: {UserName})", User.Identity.Name);
 
                 ViewData["SalaId"] = new SelectList(_context.Sale, "Id", "Naziv", g.SalaId);
-                ViewData["TrenerId"] = new SelectList(_context.Treneri
-                    .Include(t => t.Zaposlenik)
-                    .Select(t => new {
-                        t.Id,
-                        Name = $"{t.Zaposlenik.Prezime}, {t.Zaposlenik.Ime}"
-                    }), "Id", "Name", g.TrenerId);
-
+                ViewData["TrenerId"] = new SelectList(
+                    _context.Treneri.Include(t => t.Zaposlenik)
+                        .Select(t => new { t.Id, Name = $"{t.Zaposlenik.Prezime}, {t.Zaposlenik.Ime}" }),
+                    "Id", "Name", g.TrenerId);
                 return View(g);
             }
 
@@ -227,12 +228,23 @@ namespace InformacioniSistemTeretane.Controllers
                 ModelState.AddModelError("", "Došlo je do greške pri čuvanju izmjena. Pokušajte ponovo.");
 
                 ViewData["SalaId"] = new SelectList(_context.Sale, "Id", "Naziv", g.SalaId);
-                ViewData["TrenerId"] = new SelectList(_context.Treneri
-                    .Include(t => t.Zaposlenik)
-                    .Select(t => new {
-                        t.Id,
-                        Name = $"{t.Zaposlenik.Prezime}, {t.Zaposlenik.Ime}"
-                    }), "Id", "Name", g.TrenerId);
+                ViewData["TrenerId"] = new SelectList(
+                    _context.Treneri.Include(t => t.Zaposlenik)
+                        .Select(t => new { t.Id, Name = $"{t.Zaposlenik.Prezime}, {t.Zaposlenik.Ime}" }),
+                    "Id", "Name", g.TrenerId);
+
+                return View(g);
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Greška pri ažuriranju treninga (ID: {TreningId})", g.Id);
+                ModelState.AddModelError("", "Došlo je do greške pri čuvanju izmjena. Pokušajte ponovo.");
+
+                ViewData["SalaId"] = new SelectList(_context.Sale, "Id", "Naziv", g.SalaId);
+                ViewData["TrenerId"] = new SelectList(
+                    _context.Treneri.Include(t => t.Zaposlenik)
+                        .Select(t => new { t.Id, Name = $"{t.Zaposlenik.Prezime}, {t.Zaposlenik.Ime}" }),
+                    "Id", "Name", g.TrenerId);
 
                 return View(g);
             }

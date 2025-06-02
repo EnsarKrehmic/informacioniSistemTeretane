@@ -66,7 +66,7 @@ namespace InformacioniSistemTeretane.Controllers
         // GET: PersonalniTreninzi/Create
         [HttpGet]
         [Route("[Controller]/[Action]")]
-        [Authorize(Roles = "Admin,Zaposlenik")]
+        [Authorize(Roles = "Admin, Zaposlenik")]
         public IActionResult Create()
         {
             _logger.LogInformation("Create: Prikaz forme za novi personalni trening - Korisnik: {Korisnik}", User.Identity.Name);
@@ -85,13 +85,17 @@ namespace InformacioniSistemTeretane.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("[Controller]/[Action]")]
-        [Authorize(Roles = "Admin,Zaposlenik")]
-        public async Task<IActionResult> Create([Bind("Naziv,Opis,TrenerId,KlijentId,Datum,Vrijeme,Napredak")] PersonalniTrening personalniTrening)
+        [Authorize(Roles = "Admin, Zaposlenik")]
+        public async Task<IActionResult> Create(PersonalniTrening personalniTrening)
         {
             _logger.LogInformation("----- POST: PersonalniTreninzi/Create ----- Korisnik: {Korisnik}", User.Identity.Name);
             _logger.LogInformation("Parametri: Naziv={Naziv}, TrenerId={TrenerId}, KlijentId={KlijentId}, Datum={Datum}, Vrijeme={Vrijeme}",
                 personalniTrening.Naziv, personalniTrening.TrenerId, personalniTrening.KlijentId,
                 personalniTrening.Datum, personalniTrening.Vrijeme);
+
+            personalniTrening.VrstaTreninga = "Personalni";
+
+            ModelState.Remove(nameof(personalniTrening.VrstaTreninga));
 
             if (ModelState.IsValid)
             {
@@ -99,9 +103,10 @@ namespace InformacioniSistemTeretane.Controllers
                 {
                     // Provjera zauzetosti termina za trenera
                     bool terminZauzet = await _context.PersonalniTreninzi
-                        .AnyAsync(t => t.TrenerId == personalniTrening.TrenerId &&
-                                      t.Datum == personalniTrening.Datum &&
-                                      t.Vrijeme == personalniTrening.Vrijeme);
+                        .AnyAsync(t =>
+                            t.TrenerId == personalniTrening.TrenerId &&
+                            t.Datum == personalniTrening.Datum &&
+                            t.Vrijeme == personalniTrening.Vrijeme);
 
                     if (terminZauzet)
                     {
@@ -111,9 +116,10 @@ namespace InformacioniSistemTeretane.Controllers
 
                     // Provjera zauzetosti termina za klijenta
                     bool klijentZauzet = await _context.PersonalniTreninzi
-                        .AnyAsync(t => t.KlijentId == personalniTrening.KlijentId &&
-                                      t.Datum == personalniTrening.Datum &&
-                                      t.Vrijeme == personalniTrening.Vrijeme);
+                        .AnyAsync(t =>
+                            t.KlijentId == personalniTrening.KlijentId &&
+                            t.Datum == personalniTrening.Datum &&
+                            t.Vrijeme == personalniTrening.Vrijeme);
 
                     if (klijentZauzet)
                     {
@@ -140,7 +146,18 @@ namespace InformacioniSistemTeretane.Controllers
                 }
             }
 
+            // Ako ima grešaka, ispuni ViewBag ponovno i vrati View
             _logger.LogWarning("Neuspješna validacija: {BrojGrešaka} grešaka", ModelState.ErrorCount);
+
+            foreach (var key in ModelState.Keys)
+            {
+                var state = ModelState[key];
+                foreach (var error in state.Errors)
+                {
+                    _logger.LogWarning("ModelState greška za '{Polje}': {Poruka}", key, error.ErrorMessage);
+                }
+            }
+
             ViewBag.TrenerId = new SelectList(
                 _context.Treneri
                     .Include(t => t.Zaposlenik)
@@ -148,13 +165,14 @@ namespace InformacioniSistemTeretane.Controllers
                 "Id", "Name", personalniTrening.TrenerId
             );
             ViewBag.KlijentId = new SelectList(_context.Klijenti, "Id", "Prezime", personalniTrening.KlijentId);
+
             return View(personalniTrening);
         }
 
         // GET: PersonalniTreninzi/Edit/5
         [HttpGet]
         [Route("[Controller]/[Action]/{id}")]
-        [Authorize(Roles = "Admin,Zaposlenik")]
+        [Authorize(Roles = "Admin, Zaposlenik")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -185,7 +203,7 @@ namespace InformacioniSistemTeretane.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("[Controller]/[Action]/{id}")]
-        [Authorize(Roles = "Admin,Zaposlenik")]
+        [Authorize(Roles = "Admin, Zaposlenik")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Naziv,Opis,TrenerId,KlijentId,Datum,Vrijeme,Napredak")] PersonalniTrening personalniTrening)
         {
             _logger.LogInformation("----- POST: PersonalniTreninzi/Edit/{id} ----- Korisnik: {Korisnik}", id, User.Identity.Name);
@@ -193,9 +211,13 @@ namespace InformacioniSistemTeretane.Controllers
                 personalniTrening.Id, personalniTrening.Naziv, personalniTrening.TrenerId, personalniTrening.KlijentId,
                 personalniTrening.Datum, personalniTrening.Vrijeme);
 
+            personalniTrening.VrstaTreninga = "Personalni";
+
+            ModelState.Remove(nameof(personalniTrening.VrstaTreninga));
+
             if (id != personalniTrening.Id)
             {
-                _logger.LogWarning("Edit POST: ID u rutu ({RutaId}) i modelu ({ModelId}) se ne podudaraju", id, personalniTrening.Id);
+                _logger.LogWarning("Edit POST: ID u ruti ({RutaId}) i modelu ({ModelId}) se ne podudaraju", id, personalniTrening.Id);
                 return NotFound();
             }
 
@@ -203,7 +225,6 @@ namespace InformacioniSistemTeretane.Controllers
             {
                 try
                 {
-                    // Provjera zauzetosti termina za trenera (osim trenutnog treninga)
                     bool terminZauzet = await _context.PersonalniTreninzi
                         .AnyAsync(t => t.TrenerId == personalniTrening.TrenerId &&
                                       t.Datum == personalniTrening.Datum &&
@@ -216,7 +237,6 @@ namespace InformacioniSistemTeretane.Controllers
                         throw new InvalidOperationException("Termin trenera je zauzet");
                     }
 
-                    // Provjera zauzetosti termina za klijenta (osim trenutnog treninga)
                     bool klijentZauzet = await _context.PersonalniTreninzi
                         .AnyAsync(t => t.KlijentId == personalniTrening.KlijentId &&
                                       t.Datum == personalniTrening.Datum &&
@@ -234,7 +254,6 @@ namespace InformacioniSistemTeretane.Controllers
 
                     _logger.LogInformation("Personalni trening ID {Id} uspješno ažuriran", id);
                     TempData["Uspjeh"] = "Personalni trening uspješno ažuriran!";
-
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException ex)
@@ -259,6 +278,7 @@ namespace InformacioniSistemTeretane.Controllers
             }
 
             _logger.LogWarning("Neuspješna validacija: {BrojGrešaka} grešaka", ModelState.ErrorCount);
+
             ViewBag.TrenerId = new SelectList(
                 _context.Treneri
                     .Include(t => t.Zaposlenik)
@@ -266,6 +286,7 @@ namespace InformacioniSistemTeretane.Controllers
                 "Id", "Name", personalniTrening.TrenerId
             );
             ViewBag.KlijentId = new SelectList(_context.Klijenti, "Id", "Prezime", personalniTrening.KlijentId);
+
             return View(personalniTrening);
         }
 

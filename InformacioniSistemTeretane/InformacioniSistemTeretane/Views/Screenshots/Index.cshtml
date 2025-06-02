@@ -16,11 +16,14 @@
         <div class="alert alert-danger">@TempData["Greska"]</div>
     }
 
-    <p>
-        <a asp-action="Create" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Dodaj novi screenshot
-        </a>
-    </p>
+    @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+    {
+        <p>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Dodaj novi screenshot
+            </a>
+        </p>
+    }
 
     <div class="row">
         @foreach (var item in Model)
@@ -30,17 +33,26 @@
                     <img src="@item.Opis" class="card-img-top" alt="@item.Naziv" style="height: 200px; object-fit: cover;">
                     <div class="card-body">
                         <h5 class="card-title">@item.Naziv</h5>
-                        <div class="btn-group" role="group">
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">
-                                <i class="fas fa-info-circle"></i> Detalji
+                        @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                        {
+                            <div class="btn-group" role="group">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                                    <i class="fas fa-info-circle"></i> Detalji
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Uredi
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash-alt"></i> Obriši
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-info-circle"></i> Pregled
                             </a>
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit"></i> Uredi
-                            </a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash-alt"></i> Obriši
-                            </a>
-                        </div>
+                        }
                     </div>
                 </div>
             </div>

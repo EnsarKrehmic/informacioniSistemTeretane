@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace InformacioniSistemTeretane.Models
 {
@@ -11,6 +12,7 @@ namespace InformacioniSistemTeretane.Models
         public int TrenerId { get; set; }
 
         [ForeignKey(nameof(TrenerId))]
+        [ValidateNever]
         public Trener Trener { get; set; }
 
         [Required]
@@ -18,6 +20,7 @@ namespace InformacioniSistemTeretane.Models
         public int KlijentId { get; set; }
 
         [ForeignKey(nameof(KlijentId))]
+        [ValidateNever]
         public Klijent Klijent { get; set; }
 
         [Display(Name = "Datum treninga")]

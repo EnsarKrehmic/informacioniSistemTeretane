@@ -40,7 +40,6 @@
         .FirstOrDefaultAsync();
         
     var gymLocations = await Context.Mape
-        .Where(m => m.Tip == TipMape.Teretana)
         .ToListAsync();
 }
 
@@ -263,26 +262,38 @@
     <!-- Sekcija za mape lokacija -->
     @if (gymLocations.Any())
     {
-        <div class="feature-section">
+        <div class="feature-section mt-5">
             <div class="container">
                 <h2 class="section-title">Naše Lokacije</h2>
                 <div class="row">
+                    <!-- Lijevi stupac: Leaflet mapa -->
                     <div class="col-md-6">
                         <div id="mapContainer" style="height: 400px; border-radius: 0.5rem; overflow: hidden;"></div>
                     </div>
+                    <!-- Desni stupac: Popis svih lokacija s badgeovima u različitim bojama -->
                     <div class="col-md-6">
                         <div class="card h-100 shadow-sm">
                             <div class="card-body">
-                                <h5 class="card-title mb-4">Teretane u našem lancu</h5>
+                                <h5 class="card-title mb-4">Sve dostupne lokacije</h5>
                                 <ul class="list-group list-group-flush">
                                     @foreach (var location in gymLocations)
                                     {
+                                        var badgeClass = location.Tip switch
+                                        {
+                                            TipMape.Teretana => "bg-primary",
+                                            TipMape.Bazen => "bg-info",
+                                            TipMape.ProstorZaTrening => "bg-success",
+                                            TipMape.SportskiCentar => "bg-warning",
+                                            _ => "bg-secondary"
+                                        };
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
                                             <div>
                                                 <h6 class="mb-1">@location.Naziv</h6>
                                                 <small class="text-muted">@location.Adresa</small>
                                             </div>
-                                            <span class="badge bg-primary rounded-pill">@location.Tip.ToString()</span>
+                                            <span class="badge @badgeClass rounded-pill">
+                                                @Html.DisplayFor(m => location.Tip)
+                                            </span>
                                         </li>
                                     }
                                 </ul>
@@ -293,85 +304,95 @@
             </div>
         </div>
     }
-</div>
 
 @section Scripts {
     @if (gymLocations.Any())
     {
+        <!-- 1) Uvoz Leaflet JS -->
+        <script 
+            src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-o9N1j7kS3zWZzS0hbnAw4ZlWx53A0M2K5l29I+o0mH0="
+            crossorigin="">
+        </script>
+
+        <!-- 2) InitMap skripta -->
         <script>
-            // Inicijalizacija mape
+            // Ovo pretvara stringani JSON iz ViewBag‐a u JS polje objekata
+            const locations = @Html.Raw(ViewBag.gymLocations);
+
+            function getTipNaziv(tip) {
+                switch (tip) {
+                    case 0: return 'Teretana';
+                    case 1: return 'Bazeni';
+                    case 2: return 'Prostor za trening';
+                    case 3: return 'Sportski centar';
+                    default: return 'Ostalo';
+                }
+            }
+
             function initMap() {
-                // Centar na Politehnički fakultet Zenica
+                // Zadana središnja pozicija (ako nema neke lokacije s vidljivim tipom)
                 const defaultCenter = [44.2019, 17.9083];
-                const zoomLevel = 16;
-                
-                // Kreiranje mape
+                const zoomLevel = 13;
+
+                // Kreiramo Leaflet mapu unutar div#mapContainer
                 const map = L.map('mapContainer').setView(defaultCenter, zoomLevel);
-                
-                // Dodavanje OpenStreetMap sloja
+
+                // Dodajemo OpenStreetMap tile layer
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 }).addTo(map);
-                
-                // Lokacije iz kontrolera
-                const locations = @Html.Raw(ViewBag.gymLocations);
-                
-                // Custom ikona za marker
+
+                // Jedna ikona za sve (možete ih proširiti pa npr. razne tipove mapirati na razne ikone)
                 const gymIcon = L.icon({
                     iconUrl: 'https://cdn-icons-png.flaticon.com/512/619/619032.png',
                     iconSize: [32, 32],
                     iconAnchor: [16, 32],
                     popupAnchor: [0, -32]
                 });
-                
-                // Dodavanje markera za svaku lokaciju
-                locations.forEach(location => {
-                    const marker = L.marker(
-                        [location.latitude, location.longitude],
-                        { icon: gymIcon }
-                    ).addTo(map);
-                    
-                    // Popup sa informacijama
+
+                // Za svaku lokaciju (bilo kojeg tipa) dodaj marker
+                locations.forEach(loc => {
+                    const marker = L.marker([loc.latitude, loc.longitude], { icon: gymIcon }).addTo(map);
+
                     marker.bindPopup(`
                         <div class="map-popup">
-                            <h6>${location.naziv}</h6>
-                            <p class="mb-1">${location.adresa}</p>
+                            <h6>${loc.naziv}</h6>
+                            <p class="mb-1">${loc.adresa}</p>
                             <p class="text-muted small mb-0">
-                                <i class="fas fa-dumbbell"></i> ${location.tip === 0 ? 'Teretana' : location.tip}
+                                <i class="fas fa-map-marker-alt me-1"></i> ${getTipNaziv(loc.tip)}
                             </p>
                         </div>
                     `);
                 });
-                
-                // Ako imamo samo jednu lokaciju, fokusiraj se na nju
+
+                // Ako je samo jedna lokacija, zoomiraj dublje
                 if (locations.length === 1) {
-                    map.setView([locations[0].latitude, locations[0].longitude], 18);
+                    map.setView([locations[0].latitude, locations[0].longitude], 16);
                 }
-                
-                // Dodaj marker za Politehnički fakultet ako već nije dodan
-                const hasPF = locations.some(l => 
-                    l.naziv.includes("Politehnički") || 
+
+                // Ako lista ne sadrži “Politehnički fakultet Zenica”, dodajemo ga
+                const hasPF = locations.some(l =>
+                    l.naziv.includes("Politehnički") ||
                     (l.latitude === 44.2019 && l.longitude === 17.9083)
                 );
-                
+
                 if (!hasPF) {
                     const pfMarker = L.marker(defaultCenter, { icon: gymIcon }).addTo(map);
                     pfMarker.bindPopup(`
                         <div class="map-popup">
                             <h6>Politehnički fakultet Zenica</h6>
                             <p class="mb-1">Zmaja od Bosne bb, 72000 Zenica</p>
-                            <p class="text-muted small mb-0">
-                                <i class="fas fa-dumbbell"></i> Teretana
-                            </p>
+                            <p class="text-muted small mb-0"><i class="fas fa-map-marker-alt me-1"></i> Teretana</p>
                         </div>
                     `);
                 }
             }
-            
-            // Inicijaliziraj mapu kada se stranica učita
+
             document.addEventListener('DOMContentLoaded', initMap);
         </script>
-        
+
+        <!-- 3) Stilovi za popup, možete ih staviti i u site.css -->
         <style>
             .map-popup {
                 min-width: 200px;
@@ -384,5 +405,6 @@
                 margin: 12px;
             }
         </style>
+
     }
 }

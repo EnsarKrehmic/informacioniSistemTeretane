@@ -1,0 +1,93 @@
+﻿@model Mapa
+
+@{
+    ViewData["Title"] = "Obriši Lokaciju";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4 text-danger">Obriši lokaciju</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad na listu
+        </a>
+    </div>
+
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Greska"]</div>
+    }
+
+    <div class="alert alert-warning">
+        <h5 class="alert-heading">Jeste li sigurni da želite obrisati ovu lokaciju?</h5>
+        <p class="mb-0">Ova akcija je trajna i ne može se poništiti.</p>
+    </div>
+
+    <div class="card border-danger shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">Detalji lokacije za brisanje</h5>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Naziv:</dt>
+                <dd class="col-sm-9">@Model.Naziv</dd>
+
+                <dt class="col-sm-3">Tip:</dt>
+                <dd class="col-sm-9">
+                    <span class="badge bg-primary">@Model.Tip.ToString()</span>
+                </dd>
+
+                <dt class="col-sm-3">Adresa:</dt>
+                <dd class="col-sm-9">@Model.Adresa</dd>
+
+                <dt class="col-sm-3">Koordinate:</dt>
+                <dd class="col-sm-9">
+                    @Model.Latitude.ToString("F6"), @Model.Longitude.ToString("F6")
+                </dd>
+            </dl>
+
+            <div class="mt-4 card">
+                <div class="card-body p-0">
+                    <div id="mapPreview" style="height: 250px; border-radius: 4px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form asp-action="Delete" class="mt-4">
+        <input type="hidden" asp-for="Id" />
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button type="submit" class="btn btn-danger me-md-2">
+                <i class="fas fa-trash-alt me-1"></i> Trajno obriši
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="fas fa-times me-1"></i> Odustani
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        // Inicijalizacija mape za pregled
+        function initPreviewMap() {
+            const center = [@Model.Latitude, @Model.Longitude];
+            const map = L.map('mapPreview').setView(center, 16);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            const gymIcon = L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/619/619032.png',
+                iconSize: [40, 40],
+                iconAnchor: [20, 40]
+            });
+
+            L.marker(center, { icon: gymIcon }).addTo(map)
+                .bindPopup(`<b>@Model.Naziv</b><br>@Model.Adresa`);
+        }
+
+        // Inicijaliziraj mapu pri učitavanju
+        document.addEventListener('DOMContentLoaded', initPreviewMap);
+    </script>
+}

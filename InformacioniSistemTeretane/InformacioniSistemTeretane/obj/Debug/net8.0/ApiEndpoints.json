@@ -3938,8 +3938,54 @@
   },
   {
     "ContainingType": "InformacioniSistemTeretane.Controllers.MapaController",
-    "Method": "Prikazi",
-    "RelativePath": "Mapa/Prikazi/{id}",
+    "Method": "Create",
+    "RelativePath": "Mapa/Create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Naziv",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Adresa",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Latitude",
+        "Type": "System.Double",
+        "IsRequired": false
+      },
+      {
+        "Name": "Longitude",
+        "Type": "System.Double",
+        "IsRequired": false
+      },
+      {
+        "Name": "Opis",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Tip",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InformacioniSistemTeretane.Controllers.MapaController",
+    "Method": "Delete",
+    "RelativePath": "Mapa/Delete/{id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -3950,6 +3996,115 @@
         "IsRequired": true
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InformacioniSistemTeretane.Controllers.MapaController",
+    "Method": "DeleteConfirmed",
+    "RelativePath": "Mapa/Delete/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InformacioniSistemTeretane.Controllers.MapaController",
+    "Method": "Details",
+    "RelativePath": "Mapa/Details/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InformacioniSistemTeretane.Controllers.MapaController",
+    "Method": "Edit",
+    "RelativePath": "Mapa/Edit/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InformacioniSistemTeretane.Controllers.MapaController",
+    "Method": "Edit",
+    "RelativePath": "Mapa/Edit/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "Naziv",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Adresa",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Latitude",
+        "Type": "System.Double",
+        "IsRequired": false
+      },
+      {
+        "Name": "Longitude",
+        "Type": "System.Double",
+        "IsRequired": false
+      },
+      {
+        "Name": "Opis",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Tip",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InformacioniSistemTeretane.Controllers.MapaController",
+    "Method": "Index",
+    "RelativePath": "Mapa/Index",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {
@@ -8562,22 +8717,6 @@
       {
         "Name": "id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "InformacioniSistemTeretane.Controllers.ProbniTreninziController",
-    "Method": "DeleteConfirmed",
-    "RelativePath": "ProbniTreninzi/Delete/{id}",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
         "IsRequired": true
       }
     ],

@@ -1,0 +1,98 @@
+﻿@model Mapa
+
+@{
+    ViewData["Title"] = "Dodaj Novu Lokaciju";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad na listu
+        </a>
+    </div>
+
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Greska"]</div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Naziv" class="form-label">Naziv lokacije</label>
+                        <input asp-for="Naziv" class="form-control" placeholder="Unesite naziv teretane" />
+                        <span asp-validation-for="Naziv" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Tip" class="form-label">Tip lokacije</label>
+                        <select asp-for="Tip" class="form-select">
+                            <option value="@TipMape.Teretana">Teretana</option>
+                            <option value="@TipMape.Bazen">Bazen</option>
+                            <option value="@TipMape.ProstorZaTrening">Prostor za trening</option>
+                            <option value="@TipMape.SportskiCentar">Sportski centar</option>
+                            <option value="@TipMape.Ostalo">Ostalo</option>
+                        </select>
+                        <span asp-validation-for="Tip" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Adresa" class="form-label">Adresa</label>
+                    <input asp-for="Adresa" class="form-control" placeholder="Unesite kompletnu adresu" />
+                    <span asp-validation-for="Adresa" class="text-danger"></span>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label asp-for="Latitude" class="form-label">Geografska širina</label>
+                        <input asp-for="Latitude" class="form-control" placeholder="Primjer: 44.2019" />
+                        <span asp-validation-for="Latitude" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Longitude" class="form-label">Geografska dužina</label>
+                        <input asp-for="Longitude" class="form-control" placeholder="Primjer: 17.9083" />
+                        <span asp-validation-for="Longitude" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Spremi lokaciju
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i> Odustani
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Geokodiranje adrese
+        document.getElementById('Adresa').addEventListener('blur', function() {
+            const address = this.value;
+            if (!address) return;
+
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        document.getElementById('Latitude').value = data[0].lat;
+                        document.getElementById('Longitude').value = data[0].lon;
+                    }
+                })
+                .catch(error => console.error('Greška pri geokodiranju:', error));
+        });
+    </script>
+}

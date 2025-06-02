@@ -36,10 +36,10 @@ namespace InformacioniSistemTeretane.Models
         Teretana,
         [Display(Name = "Bazeni")]
         Bazen,
-        [Display(Name = "Sportski tereni")]
-        SportskiTereni,
-        [Display(Name = "Planinarske staze")]
-        PlaninarskeStaze,
+        [Display(Name = "Prostor za trening")]
+        ProstorZaTrening,
+        [Display(Name = "Sportski centar")]
+        SportskiCentar,
         Ostalo
     }
 }

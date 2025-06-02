@@ -1,0 +1,103 @@
+﻿@model Mapa
+
+@{
+    ViewData["Title"] = Model.Naziv;
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">@Model.Naziv</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad na listu
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Detalji lokacije</h5>
+                    <dl class="row">
+                        <dt class="col-sm-4">Adresa:</dt>
+                        <dd class="col-sm-8">@Model.Adresa</dd>
+
+                        <dt class="col-sm-4">Tip lokacije:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-primary">
+                                @Model.Tip.ToString()
+                            </span>
+                        </dd>
+
+                        <dt class="col-sm-4">Geografska širina:</dt>
+                        <dd class="col-sm-8">@Model.Latitude.ToString("F6")</dd>
+
+                        <dt class="col-sm-4">Geografska dužina:</dt>
+                        <dd class="col-sm-8">@Model.Longitude.ToString("F6")</dd>
+                    </dl>
+
+                    <div class="mt-4">
+                        <a asp-action="Edit" asp-route-id="@Model.Id"
+                           class="btn btn-primary me-2">
+                            <i class="fas fa-edit me-1"></i> Uredi
+                        </a>
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-list me-1"></i> Sve lokacije
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body p-0">
+                    <div id="mapContainer" style="height: 400px; border-radius: 4px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function initMap() {
+            // Centar na lokaciju
+            const center = [@Model.Latitude, @Model.Longitude];
+            const zoomLevel = 16;
+
+            // Kreiranje mape
+            const map = L.map('mapContainer').setView(center, zoomLevel);
+
+            // Dodavanje OpenStreetMap sloja
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Custom ikona za marker
+            const gymIcon = L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/619/619032.png',
+                iconSize: [40, 40],
+                iconAnchor: [20, 40],
+                popupAnchor: [0, -40]
+            });
+
+            // Dodavanje markera
+            const marker = L.marker(center, { icon: gymIcon }).addTo(map);
+
+            // Popup sa informacijama
+            marker.bindPopup(`
+                <div class="map-popup">
+                    <h5>@Model.Naziv</h5>
+                    <p class="mb-1">@Model.Adresa</p>
+                    <p class="text-muted small mb-0">
+                        <i class="fas fa-dumbbell me-1"></i>
+                        @Model.Tip.ToString()
+                    </p>
+                </div>
+            `).openPopup();
+        }
+
+        // Inicijaliziraj mapu kada se stranica učita
+        document.addEventListener('DOMContentLoaded', initMap);
+    </script>
+}

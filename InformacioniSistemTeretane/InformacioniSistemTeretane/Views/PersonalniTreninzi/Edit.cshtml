@@ -39,7 +39,10 @@
         <div class="card-body">
             <form asp-action="Edit" method="post">
                 <input type="hidden" asp-for="Id" />
-                
+                <!-- Hidden za obaveznu vrstu treninga: -->
+                <input type="hidden" asp-for="VrstaTreninga"/>
+                <span asp-validation-for="VrstaTreninga" class="text-danger"></span>
+
                 <div class="row mb-3">
                     <div class="col-md-12">
                         <label asp-for="Naziv" class="form-label required"></label>

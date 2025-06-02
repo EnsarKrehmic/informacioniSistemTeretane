@@ -32,10 +32,14 @@
                             <p class="card-text">@video.Opis</p>
                         }
                     </div>
+
                     <div class="card-footer bg-white">
-                        <a asp-action="Embed" asp-route-id="@video.Id" class="btn btn-sm btn-outline-primary">
-                            <i class="fas fa-code"></i> Ugradi kod
-                        </a>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Zaposlenik"))
+                        {
+                            <a asp-action="Embed" asp-route-id="@video.Id" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-code"></i> Ugradi kod
+                            </a>
+                        }
                         <button class="btn btn-sm btn-outline-secondary copy-btn"
                                 data-embed='<iframe width="560" height="315" src="https://www.youtube.com/embed/@video.YouTubeVideoId" frameborder="0" allowfullscreen></iframe>'>
                             <i class="fas fa-copy"></i> Kopiraj

@@ -25,15 +25,11 @@ namespace InformacioniSistemTeretane.Controllers
         [Route("[controller]/[action]")]
         public async Task<IActionResult> Index()
         {
-            // Dohvati sve lokacije teretana
-            var gymLocations = await _context.Mape
-                .Where(m => m.Tip == TipMape.Teretana)
-                .ToListAsync();
+            var sveLokacije = await _context.Mape.ToListAsync();
 
-            // Dodaj defaultnu lokaciju ako nema drugih
-            if (!gymLocations.Any())
+            if (!sveLokacije.Any())
             {
-                gymLocations.Add(new Mapa
+                sveLokacije.Add(new Mapa
                 {
                     Id = 0,
                     Naziv = "Politehnički fakultet Zenica",
@@ -45,10 +41,9 @@ namespace InformacioniSistemTeretane.Controllers
                 });
             }
 
-            // Proslijedi lokacije u ViewBag kao JSON
-            ViewBag.GymLocations = JsonSerializer.Serialize(gymLocations);
+            ViewBag.gymLocations = JsonSerializer.Serialize(sveLokacije);
 
-            return View();
+            return View(sveLokacije);
         }
 
         [HttpGet]

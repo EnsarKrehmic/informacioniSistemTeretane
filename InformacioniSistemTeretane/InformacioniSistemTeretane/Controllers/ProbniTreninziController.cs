@@ -91,11 +91,15 @@ namespace InformacioniSistemTeretane.Controllers
         [ValidateAntiForgeryToken]
         [Route("[Controller]/[Action]")]
         [Authorize(Roles = "Admin,Zaposlenik")]
-        public async Task<IActionResult> Create([Bind("Naziv,Opis,KlijentId,TrenerId,Datum,Ocjena")] ProbniTrening probniTrening)
+        public async Task<IActionResult> Create(ProbniTrening probniTrening)
         {
             _logger.LogInformation(
                 "Kreiranje novog probnog treninga - korisnik: {Korisnik}. Podaci: {@ProbniTrening}",
                 User.Identity.Name, probniTrening);
+
+            probniTrening.VrstaTreninga = "Probni";
+
+            ModelState.Remove(nameof(probniTrening.VrstaTreninga));
 
             if (ModelState.IsValid)
             {
@@ -189,6 +193,10 @@ namespace InformacioniSistemTeretane.Controllers
                 "Ažuriranje probnog treninga ID: {Id} - korisnik: {Korisnik}. Podaci: {@ProbniTrening}",
                 id, User.Identity.Name, probniTrening);
 
+            probniTrening.VrstaTreninga = "Probni";
+
+            ModelState.Remove(nameof(probniTrening.VrstaTreninga));
+
             if (ModelState.IsValid)
             {
                 try
@@ -245,7 +253,7 @@ namespace InformacioniSistemTeretane.Controllers
 
         // GET: ProbniTreninzi/Delete/5
         [HttpGet]
-        [Route("[Controller]/[Action]/{id}")]
+        [Route("[controller]/[action]/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -272,9 +280,9 @@ namespace InformacioniSistemTeretane.Controllers
         }
 
         // POST: ProbniTreninzi/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Route("[Controller]/[Action]/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

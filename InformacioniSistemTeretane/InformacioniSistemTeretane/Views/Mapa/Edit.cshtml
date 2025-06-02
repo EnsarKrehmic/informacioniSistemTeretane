@@ -1,0 +1,131 @@
+﻿@model Mapa
+
+@{
+    ViewData["Title"] = "Uredi Lokaciju";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">Uređivanje lokacije</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Nazad na listu
+        </a>
+    </div>
+
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Greska"]</div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form asp-action="Edit">
+                <input type="hidden" asp-for="Id" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Naziv" class="form-label">Naziv lokacije</label>
+                        <input asp-for="Naziv" class="form-control" />
+                        <span asp-validation-for="Naziv" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Tip" class="form-label">Tip lokacije</label>
+                        <select asp-for="Tip" class="form-select">
+                            <option value="@TipMape.Teretana">Teretana</option>
+                            <option value="@TipMape.Bazen">Bazen</option>
+                            <option value="@TipMape.ProstorZaTrening">Prostor za trening</option>
+                            <option value="@TipMape.SportskiCentar">Sportski centar</option>
+                            <option value="@TipMape.Ostalo">Ostalo</option>
+                        </select>
+                        <span asp-validation-for="Tip" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Adresa" class="form-label">Adresa</label>
+                    <input asp-for="Adresa" class="form-control" />
+                    <span asp-validation-for="Adresa" class="text-danger"></span>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label asp-for="Latitude" class="form-label">Geografska širina</label>
+                        <input asp-for="Latitude" class="form-control" />
+                        <span asp-validation-for="Latitude" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Longitude" class="form-label">Geografska dužina</label>
+                        <input asp-for="Longitude" class="form-control" />
+                        <span asp-validation-for="Longitude" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Spremi promjene
+                    </button>
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-info">
+                        <i class="fas fa-map-marker-alt me-1"></i> Pregled lokacije
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-4 card shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Pregled lokacije na karti</h5>
+        </div>
+        <div class="card-body p-0">
+            <div id="mapPreview" style="height: 300px; border-radius: 4px;"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Inicijalizacija mape za pregled
+        function initPreviewMap() {
+            const center = [@Model.Latitude, @Model.Longitude];
+            const map = L.map('mapPreview').setView(center, 16);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            const gymIcon = L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/619/619032.png',
+                iconSize: [40, 40],
+                iconAnchor: [20, 40]
+            });
+
+            L.marker(center, { icon: gymIcon }).addTo(map)
+                .bindPopup(`<b>@Model.Naziv</b><br>@Model.Adresa`);
+        }
+
+        // Geokodiranje adrese
+        document.getElementById('Adresa').addEventListener('blur', function() {
+            const address = this.value;
+            if (!address) return;
+
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        document.getElementById('Latitude').value = data[0].lat;
+                        document.getElementById('Longitude').value = data[0].lon;
+                        initPreviewMap(); // Refresh mape
+                    }
+                })
+                .catch(error => console.error('Greška pri geokodiranju:', error));
+        });
+
+        // Inicijaliziraj mapu pri učitavanju
+        document.addEventListener('DOMContentLoaded', initPreviewMap);
+    </script>
+}
