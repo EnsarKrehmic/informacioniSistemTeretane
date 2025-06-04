@@ -3,6 +3,26 @@
   "WorkspaceRootPath": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{3BFBBA11-DEAF-414C-9B73-5F611A054523}|IST.TestProject\\IST.TestProject.csproj|c:\\users\\me\\source\\repos\\informacionisistemteretane\\ist.testproject\\test1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3BFBBA11-DEAF-414C-9B73-5F611A054523}|IST.TestProject\\IST.TestProject.csproj|solutionrelative:ist.testproject\\test1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BBF468EC-1D5D-4B83-BB03-6DC4B1F701BE}|InformacioniSistemTeretane\\InformacioniSistemTeretane.csproj|c:\\users\\me\\source\\repos\\informacionisistemteretane\\informacionisistemteretane\\models\\klijent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BBF468EC-1D5D-4B83-BB03-6DC4B1F701BE}|InformacioniSistemTeretane\\InformacioniSistemTeretane.csproj|solutionrelative:informacionisistemteretane\\models\\klijent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BBF468EC-1D5D-4B83-BB03-6DC4B1F701BE}|InformacioniSistemTeretane\\InformacioniSistemTeretane.csproj|c:\\users\\me\\source\\repos\\informacionisistemteretane\\informacionisistemteretane\\models\\takmicar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BBF468EC-1D5D-4B83-BB03-6DC4B1F701BE}|InformacioniSistemTeretane\\InformacioniSistemTeretane.csproj|solutionrelative:informacionisistemteretane\\models\\takmicar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BBF468EC-1D5D-4B83-BB03-6DC4B1F701BE}|InformacioniSistemTeretane\\InformacioniSistemTeretane.csproj|c:\\users\\me\\source\\repos\\informacionisistemteretane\\informacionisistemteretane\\controllers\\disciplinecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BBF468EC-1D5D-4B83-BB03-6DC4B1F701BE}|InformacioniSistemTeretane\\InformacioniSistemTeretane.csproj|solutionrelative:informacionisistemteretane\\controllers\\disciplinecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BBF468EC-1D5D-4B83-BB03-6DC4B1F701BE}|InformacioniSistemTeretane\\InformacioniSistemTeretane.csproj|c:\\users\\me\\source\\repos\\informacionisistemteretane\\informacionisistemteretane\\models\\disciplina.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BBF468EC-1D5D-4B83-BB03-6DC4B1F701BE}|InformacioniSistemTeretane\\InformacioniSistemTeretane.csproj|solutionrelative:informacionisistemteretane\\models\\disciplina.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{BBF468EC-1D5D-4B83-BB03-6DC4B1F701BE}|InformacioniSistemTeretane\\InformacioniSistemTeretane.csproj|c:\\users\\me\\source\\repos\\informacionisistemteretane\\informacionisistemteretane\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BBF468EC-1D5D-4B83-BB03-6DC4B1F701BE}|InformacioniSistemTeretane\\InformacioniSistemTeretane.csproj|solutionrelative:informacionisistemteretane\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -22,7 +42,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 1308,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 9,
           "Children": [
             {
               "$type": "Bookmark",
@@ -46,7 +66,72 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Klijent.cs",
+              "DocumentMoniker": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\InformacioniSistemTeretane\\Models\\Klijent.cs",
+              "RelativeDocumentMoniker": "InformacioniSistemTeretane\\Models\\Klijent.cs",
+              "ToolTip": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\InformacioniSistemTeretane\\Models\\Klijent.cs",
+              "RelativeToolTip": "InformacioniSistemTeretane\\Models\\Klijent.cs",
+              "ViewState": "AgIAABoAAAAAAAAAAAAwwCIAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-04T10:20:47.028Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "Takmicar.cs",
+              "DocumentMoniker": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\InformacioniSistemTeretane\\Models\\Takmicar.cs",
+              "RelativeDocumentMoniker": "InformacioniSistemTeretane\\Models\\Takmicar.cs",
+              "ToolTip": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\InformacioniSistemTeretane\\Models\\Takmicar.cs",
+              "RelativeToolTip": "InformacioniSistemTeretane\\Models\\Takmicar.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAADwvw0AAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-04T10:20:37.174Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Disciplina.cs",
+              "DocumentMoniker": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\InformacioniSistemTeretane\\Models\\Disciplina.cs",
+              "RelativeDocumentMoniker": "InformacioniSistemTeretane\\Models\\Disciplina.cs",
+              "ToolTip": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\InformacioniSistemTeretane\\Models\\Disciplina.cs",
+              "RelativeToolTip": "InformacioniSistemTeretane\\Models\\Disciplina.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAcAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-04T10:20:26.715Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "DisciplineController.cs",
+              "DocumentMoniker": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\InformacioniSistemTeretane\\Controllers\\DisciplineController.cs",
+              "RelativeDocumentMoniker": "InformacioniSistemTeretane\\Controllers\\DisciplineController.cs",
+              "ToolTip": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\InformacioniSistemTeretane\\Controllers\\DisciplineController.cs",
+              "RelativeToolTip": "InformacioniSistemTeretane\\Controllers\\DisciplineController.cs",
+              "ViewState": "AgIAANcAAAAAAAAAAAAcwP0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-04T10:03:25.073Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Test1.cs",
+              "DocumentMoniker": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\IST.TestProject\\Test1.cs",
+              "RelativeDocumentMoniker": "IST.TestProject\\Test1.cs",
+              "ToolTip": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\IST.TestProject\\Test1.cs",
+              "RelativeToolTip": "IST.TestProject\\Test1.cs",
+              "ViewState": "AgIAAFgAAAAAAAAAAAAAwF4AAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-04T09:53:34.738Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "_Layout.cshtml",
               "DocumentMoniker": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\InformacioniSistemTeretane\\Views\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "InformacioniSistemTeretane\\Views\\Shared\\_Layout.cshtml",
@@ -54,11 +139,12 @@
               "RelativeToolTip": "InformacioniSistemTeretane\\Views\\Shared\\_Layout.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAIoAAACTAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-02T13:16:50.698Z"
+              "WhenOpened": "2025-06-02T13:16:50.698Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 5,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\InformacioniSistemTeretane\\Program.cs",
               "RelativeDocumentMoniker": "InformacioniSistemTeretane\\Program.cs",
@@ -71,7 +157,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 6,
               "Title": "ApplicationDbContext.cs",
               "DocumentMoniker": "C:\\Users\\Me\\source\\repos\\InformacioniSistemTeretane\\InformacioniSistemTeretane\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "InformacioniSistemTeretane\\Data\\ApplicationDbContext.cs",
@@ -79,7 +165,8 @@
               "RelativeToolTip": "InformacioniSistemTeretane\\Data\\ApplicationDbContext.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAFsAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-02T10:16:43.41Z"
+              "WhenOpened": "2025-06-02T10:16:43.41Z",
+              "EditorCaption": ""
             }
           ]
         },
