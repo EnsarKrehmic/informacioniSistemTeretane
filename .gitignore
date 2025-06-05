@@ -1,0 +1,40 @@
+############### .NET / ASP.NET Core ###############
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+############### Visual Studio 2022 ###############
+.vscode/
+*.vsp
+*.vspscc
+*.vssscc
+*.pdb
+*.cache
+*.log
+
+############### ASP.NET dodatno ###############
+wwwroot/lib/
+wwwroot/node_modules/
+
+############### Docker ###############
+*.tar
+docker-compose.override.yml
+.dockerignore
+
+############### Konfiguracijski fajlovi (sensitive) ###############
+appsettings.Development.json
+appsettings.Local.json
+.env
+*.secrets.json
+
+############### OS fajlovi / ostaci ###############
+.DS_Store
+Thumbs.db
+
+############### Backup / privremeno ###############
+*.bak
+*.tmp
+*.old
